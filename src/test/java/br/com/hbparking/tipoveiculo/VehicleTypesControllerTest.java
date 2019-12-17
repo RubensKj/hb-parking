@@ -21,9 +21,6 @@ import static org.mockito.BDDMockito.given;
 public class VehicleTypesControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
     private VehicleTypeController vehicleTypeController;
 
     @MockBean

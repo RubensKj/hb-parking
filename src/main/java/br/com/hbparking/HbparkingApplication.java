@@ -1,4 +1,4 @@
-package br.com.hbparking.Configuration;
+package br.com.hbparking;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

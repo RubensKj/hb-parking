@@ -1,27 +1,29 @@
-package br.com.hbparking.Configuration.marcas;
+package br.com.hbparking.marcas;
 
+import javax.persistence.*;
 
-public class MarcaDTO {
+@Entity
+@Table(name = "marcas")
+public class Marca {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
-    private TipoEnum tipoVeiculo;
-    private String nome;
 
-    public MarcaDTO() {
+    @Column(name = "tipoVeiculo")
+    @Enumerated(EnumType.STRING)
+    private TipoEnum tipoVeiculo;
+
+    @Column(name = "nome")
+    private  String nome;
+
+    public Marca() {
     }
 
-    public MarcaDTO(Long id, TipoEnum tipoVeiculo, String nome) {
-        this.id = id;
+    public Marca( TipoEnum tipoVeiculo, String nome) {
         this.tipoVeiculo = tipoVeiculo;
         this.nome = nome;
-    }
-
-    public static MarcaDTO of(Marca marca){
-        return new MarcaDTO(
-                marca.getId(),
-                marca.getTipoVeiculo(),
-                marca.getNome()
-                );
     }
 
     public Long getId() {
@@ -50,10 +52,10 @@ public class MarcaDTO {
 
     @Override
     public String toString() {
-        return "MarcaDTO{" +
+        return "Marca{" +
                 "id=" + id +
                 ", Nome ='" + getNome() + '\'' +
-                ", Tipo veiculo: ='" + getTipoVeiculo().getDescricao() + '\'' +
+                ", Tipo veiculo ='" + getTipoVeiculo().getDescricao() + '\'' +
                 '}';
     }
 }

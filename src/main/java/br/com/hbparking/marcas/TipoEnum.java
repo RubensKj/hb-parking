@@ -1,4 +1,4 @@
-package br.com.hbparking.Configuration.marcas;
+package br.com.hbparking.marcas;
 
 public enum TipoEnum {
     CARRO("CARRO"),

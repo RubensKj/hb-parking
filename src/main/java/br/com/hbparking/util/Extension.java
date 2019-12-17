@@ -1,4 +1,4 @@
-package br.com.hbparking.Configuration.util;
+package br.com.hbparking.util;
 
 public enum Extension {
 

@@ -1,21 +1,20 @@
-package br.com.hbparking.Configuration.marcas;
+package br.com.hbparking.marcas;
 
-import br.com.hbparking.Configuration.util.Extension;
-import com.opencsv.CSVParser;
-import com.opencsv.CSVParserBuilder;
-import com.opencsv.CSVReader;
-import com.opencsv.CSVReaderBuilder;
+import br.com.hbparking.util.Extension;
+import com.opencsv.*;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.enums.EnumUtils;
+import org.apache.commons.lang3.EnumUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.time.LocalDateTime;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,6 +60,7 @@ public class MarcaService {
         }
 
     }
+
     public MarcaDTO findById(Long id) {
 
         Optional<Marca> marca = this.iMarcaRepository.findById(id);
@@ -72,11 +72,55 @@ public class MarcaService {
         throw new IllegalArgumentException(String.format("ID %s não existe", id));
     }
 
+    public void exportFromData(HttpServletResponse response, String tipo) throws IOException {
+        if (EnumUtils.isValidEnum(TipoEnum.class, tipo)) {
+            String filename = "marcas.csv";
+
+            response.setContentType("text/csv");
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
+                    "attachment; filename=\"" + filename + "\"");
+
+            PrintWriter writer1 = response.getWriter();
+            ICSVWriter icsvWriter = new CSVWriterBuilder(writer1).
+                    withSeparator(';').
+                    withEscapeChar(CSVWriter.DEFAULT_ESCAPE_CHARACTER).
+                    withLineEnd(CSVWriter.DEFAULT_LINE_END).
+                    build();
+            String headerCSV[] = {"ID", "NOME_MARCA"};
+            icsvWriter.writeNext(headerCSV);
+
+            for (Marca marcaRow : this.findByTipo(tipo)) {
+
+
+                icsvWriter.writeNext(new String[]{
+                        String.valueOf(marcaRow.getId()), marcaRow.getNome()});
+
+                LOGGER.info("Exportando Marca de ID: {}", marcaRow.getId());
+            }
+        } else {
+            throw new IllegalArgumentException("Tipo de veiculo inválido");
+        }
+
+
+    }
+
     public List<Marca> findAll() {
 
         List<Marca> marcas = iMarcaRepository.findAll();
 
         return marcas;
+    }
+
+    public List<Marca> findByTipo(String tipo) {
+        if (EnumUtils.isValidEnum(TipoEnum.class, tipo)) {
+
+            List<Marca> marcas = iMarcaRepository.findMarcaBytipo(tipo);
+
+            return marcas;
+        } else {
+            throw new IllegalArgumentException("Tipo de veiculo inválido");
+        }
+
     }
 
     public MarcaDTO update(MarcaDTO marcaDTO, Long id) {
@@ -106,12 +150,18 @@ public class MarcaService {
 
     public void saveDataFromUploadFile(MultipartFile file, String tipo) throws Exception {
 
-        String extension = FilenameUtils.getExtension(file.getOriginalFilename());
-        if (Extension.CSV.getDescricao().equalsIgnoreCase(extension)) {
-            readDataFromCsv(file, tipo);
+        if (EnumUtils.isValidEnum(TipoEnum.class, tipo)) {
+            String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+            if (Extension.CSV.getDescricao().equalsIgnoreCase(extension)) {
+                readDataFromCsv(file, tipo);
+            } else {
+                throw new Exception("Formato de arquivo invalido");
+            }
         } else {
-            throw new Exception("Formato de arquivo invalido");
+            LOGGER.info("TIPO DE VEICULO INVÁLIDO");
+            throw new IllegalArgumentException("Tipo de veiculo inválido");
         }
+
 
     }
 
@@ -126,15 +176,25 @@ public class MarcaService {
 
         List<String[]> linhas = csvReader.readAll();
 
+        saveMarcasFromCsv(linhas, tipo);
+
+    }
+
+    public void saveMarcasFromCsv(List<String[]> linhas, String tipo) {
         for (String[] linha : linhas) {
 
             Marca marca = new Marca(TipoEnum.valueOf(tipo), linha[1]);
 
             validate(MarcaDTO.of(marca));
+            Optional<Marca> marcaExistente = iMarcaRepository.findMarcaByNome(marca.getNome());
 
-            this.iMarcaRepository.save(marca);
+            if (!marcaExistente.isPresent()) {
+                this.iMarcaRepository.save(marca);
+            } else {
+                LOGGER.info("Marca existente ignorada");
+            }
+
         }
-
     }
 }
 

@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,6 +41,7 @@ public class MarcaRest {
         LOGGER.info("Successmessage", "File Upload Successfully!");
     }
 
+
     @GetMapping("/export-marcas/{tipo}")
     public void exportCSV(HttpServletResponse response, @PathVariable("tipo") String tipo) throws Exception {
         LOGGER.info("Exportando marcas {}");
@@ -54,9 +57,9 @@ public class MarcaRest {
     }
 
     @RequestMapping("/allByTipo/{tipo}")
-    public Page<Marca> findMarcasByTipo(@PathVariable("tipo") String tipo) {
+    public Page<Marca> findMarcasByTipo(@PathVariable("tipo") String tipo, Pageable pageable) {
 
-        Page<Marca> marcas = marcaService.findAllByTipo(tipo,0 ,5);
+        Page<Marca> marcas = marcaService.findAllByTipoPage(tipo,pageable);
         return marcas;
 
     }

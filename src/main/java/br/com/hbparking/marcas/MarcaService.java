@@ -8,10 +8,10 @@ import org.apache.commons.lang3.EnumUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +20,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Service
 public class MarcaService {
@@ -75,6 +76,7 @@ public class MarcaService {
         throw new IllegalArgumentException(String.format("ID %s não existe", id));
     }
 
+    @Transactional(readOnly = true)
     public void exportFromData(HttpServletResponse response, String tipo) throws IOException {
         if (EnumUtils.isValidEnum(TipoVeiculoEnum.class, tipo)) {
             String filename = "marcas.csv";
@@ -92,14 +94,18 @@ public class MarcaService {
             String headerCSV[] = {"ID", "NOME_MARCA"};
             icsvWriter.writeNext(headerCSV);
 
-            for (Marca marcaRow : this.findAllByTipo(tipo, 0, 5)) {
+            try {
+                Stream<Marca> marcaRow = iMarcaRepository.streamAll(TipoVeiculoEnum.valueOf(tipo));
+                marcaRow.forEach(marca -> icsvWriter.writeNext(new String[]{
+                        String.valueOf(marca.getId()), marca.getNome()})
 
-
-                icsvWriter.writeNext(new String[]{
-                        String.valueOf(marcaRow.getId()), marcaRow.getNome()});
-
-                LOGGER.info("Exportando Marca de ID: {}", marcaRow.getId());
+                );
+            } catch (Exception e) {
+                LOGGER.info("Exceção ocorrida: " + e.getMessage(), e);
+                throw new RuntimeException("Exceção ocorrida no Stream da base ", e);
             }
+
+
         } else {
             throw new IllegalArgumentException("Tipo de veiculo inválido");
         }
@@ -107,30 +113,17 @@ public class MarcaService {
 
     }
 
-    public List<Marca> findAll() {
-
-        List<Marca> marcas = iMarcaRepository.findAll();
-
-        return marcas;
-    }
-
-    public Page<Marca> findAllByTipo(String tipo, int page, int size) {
+    public Page<Marca> findAllByTipoPage(String tipo, Pageable pageable) {
         if (EnumUtils.isValidEnum(TipoVeiculoEnum.class, tipo)) {
 
-            PageRequest pageRequest = PageRequest.of(
-                    page,
-                    size,
-                    Sort.Direction.ASC,
-                    "nome");
-
-            Page<Marca> marcas = iMarcaRepository.findAllBytipoVeiculo(TipoVeiculoEnum.valueOf(tipo), pageRequest);
-
+            Page<Marca> marcas = iMarcaRepository.findAllBytipoVeiculo(TipoVeiculoEnum.valueOf(tipo), pageable);
             return marcas;
+
         } else {
             throw new IllegalArgumentException("Tipo de veiculo inválido");
         }
-
     }
+
 
     public MarcaDTO update(MarcaDTO marcaDTO, Long id) {
         Optional<Marca> marcaOptional = this.iMarcaRepository.findById(id);

@@ -1,4 +1,5 @@
 package br.com.hbparking.marca;
+
 import br.com.hbparking.marcas.*;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -43,7 +44,7 @@ public class MarcaServiceTest {
 
         assertTrue(StringUtils.isNoneEmpty(createdMarca.getNome()), "Nome não deve ser nulo");
         assertTrue(StringUtils.isNoneEmpty(createdMarca.getTipoVeiculo().getDescricao()), "Tipo não deve ser nulo");
-        assertTrue(EnumUtils.isValidEnum(TipoEnum.class , createdMarca.getTipoVeiculo().getDescricao()), "Enum Inválido");
+        assertTrue(EnumUtils.isValidEnum(TipoEnum.class, createdMarca.getTipoVeiculo().getDescricao()), "Enum Inválido");
     }
 
     @Test
@@ -98,7 +99,7 @@ public class MarcaServiceTest {
 
         assertTrue(StringUtils.isNoneEmpty(createdMarca.getNome()), "Nome não deve ser nulo");
         assertTrue(StringUtils.isNoneEmpty(createdMarca.getTipoVeiculo().getDescricao()), "Tipo não deve ser nulo");
-        assertTrue(EnumUtils.isValidEnum(TipoEnum.class , createdMarca.getTipoVeiculo().getDescricao()), "Enum Inválido");
+        assertTrue(EnumUtils.isValidEnum(TipoEnum.class, createdMarca.getTipoVeiculo().getDescricao()), "Enum Inválido");
     }
 
     @Test
@@ -129,7 +130,7 @@ public class MarcaServiceTest {
 
         assertTrue(StringUtils.isNoneEmpty(createdMarca.getNome()), "Nome não deve ser nulo");
         assertTrue(StringUtils.isNoneEmpty(createdMarca.getTipoVeiculo().getDescricao()), "Tipo não deve ser nulo");
-        assertTrue(EnumUtils.isValidEnum(TipoEnum.class , createdMarca.getTipoVeiculo().getDescricao()), "Enum Inválido");
+        assertTrue(EnumUtils.isValidEnum(TipoEnum.class, createdMarca.getTipoVeiculo().getDescricao()), "Enum Inválido");
     }
 
 

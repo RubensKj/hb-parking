@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,7 +50,7 @@ public class MarcaService {
     }
 
     private void validate(MarcaDTO marcaDTO) {
-        LOGGER.info("Validando Fornecedor");
+        LOGGER.info("Validando Marca");
 
         if (marcaDTO == null) {
             throw new IllegalArgumentException("MarcaDTO não deve ser nulo");
@@ -89,7 +90,7 @@ public class MarcaService {
             String headerCSV[] = {"ID", "NOME_MARCA"};
             icsvWriter.writeNext(headerCSV);
 
-            for (Marca marcaRow : this.findByTipo(tipo)) {
+            for (Marca marcaRow : this.findAllByTipo(tipo)) {
 
 
                 icsvWriter.writeNext(new String[]{
@@ -111,7 +112,7 @@ public class MarcaService {
         return marcas;
     }
 
-    public List<Marca> findByTipo(String tipo) {
+    public List<Marca> findAllByTipo(String tipo) {
         if (EnumUtils.isValidEnum(TipoEnum.class, tipo)) {
 
             List<Marca> marcas = iMarcaRepository.findMarcaBytipo(tipo);
@@ -186,13 +187,15 @@ public class MarcaService {
             Marca marca = new Marca(TipoEnum.valueOf(tipo), linha[1]);
 
             validate(MarcaDTO.of(marca));
-            Optional<Marca> marcaExistente = iMarcaRepository.findMarcaByNome(marca.getNome());
 
-            if (!marcaExistente.isPresent()) {
+            try{
                 this.iMarcaRepository.save(marca);
-            } else {
-                LOGGER.info("Marca existente ignorada");
+            }catch (Exception e){
+                LOGGER.info("Erro ao salvar marca de ID: [{}]", marca.getNome());
+                LOGGER.error(e.toString());
             }
+
+
 
         }
     }

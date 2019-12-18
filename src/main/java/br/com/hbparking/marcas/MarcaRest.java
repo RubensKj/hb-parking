@@ -30,8 +30,8 @@ public class MarcaRest {
         return this.marcaService.save(marcaDTO);
     }
 
-    @PostMapping(value = "/fileupload")
-    public void uploadFile(@RequestParam MultipartFile marcasCSV, @RequestParam String tipo) throws Exception {
+    @PostMapping(value = "/fileupload/{tipo}")
+    public void uploadFile(@RequestParam("file") MultipartFile marcasCSV, @PathVariable("tipo") String tipo) throws Exception {
         try {
             marcaService.saveDataFromUploadFile(marcasCSV, tipo);
         } catch (Exception e) {
@@ -67,7 +67,7 @@ public class MarcaRest {
     @RequestMapping("/allByTipo/{tipo}")
     public List<Marca> findMarcasByTipo(@PathVariable("tipo") String tipo) {
 
-            List<Marca> marcas = marcaService.findByTipo(tipo);
+            List<Marca> marcas = marcaService.findAllByTipo(tipo);
             return marcas;
 
     }

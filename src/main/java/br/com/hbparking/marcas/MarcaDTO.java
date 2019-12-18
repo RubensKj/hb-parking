@@ -4,19 +4,19 @@ package br.com.hbparking.marcas;
 public class MarcaDTO {
 
     private Long id;
-    private TipoEnum tipoVeiculo;
+    private TipoVeiculoEnum tipoVeiculo;
     private String nome;
 
     public MarcaDTO() {
     }
 
-    public MarcaDTO(Long id, TipoEnum tipoVeiculo, String nome) {
+    public MarcaDTO(Long id, TipoVeiculoEnum tipoVeiculo, String nome) {
         this.id = id;
         this.tipoVeiculo = tipoVeiculo;
         this.nome = nome;
     }
 
-    public MarcaDTO(TipoEnum tipoVeiculo, String nome) {
+    public MarcaDTO(TipoVeiculoEnum tipoVeiculo, String nome) {
         this.tipoVeiculo = tipoVeiculo;
         this.nome = nome;
     }
@@ -37,11 +37,11 @@ public class MarcaDTO {
         this.id = id;
     }
 
-    public TipoEnum getTipoVeiculo() {
+    public TipoVeiculoEnum getTipoVeiculo() {
         return tipoVeiculo;
     }
 
-    public void setTipoVeiculo(TipoEnum tipoVeiculo) {
+    public void setTipoVeiculo(TipoVeiculoEnum tipoVeiculo) {
         this.tipoVeiculo = tipoVeiculo;
     }
 

@@ -7,6 +7,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,7 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -74,7 +76,7 @@ public class MarcaService {
     }
 
     public void exportFromData(HttpServletResponse response, String tipo) throws IOException {
-        if (EnumUtils.isValidEnum(TipoEnum.class, tipo)) {
+        if (EnumUtils.isValidEnum(TipoVeiculoEnum.class, tipo)) {
             String filename = "marcas.csv";
 
             response.setContentType("text/csv");
@@ -90,7 +92,7 @@ public class MarcaService {
             String headerCSV[] = {"ID", "NOME_MARCA"};
             icsvWriter.writeNext(headerCSV);
 
-            for (Marca marcaRow : this.findAllByTipo(tipo)) {
+            for (Marca marcaRow : this.findAllByTipo(tipo, 0, 5)) {
 
 
                 icsvWriter.writeNext(new String[]{
@@ -112,10 +114,16 @@ public class MarcaService {
         return marcas;
     }
 
-    public List<Marca> findAllByTipo(String tipo) {
-        if (EnumUtils.isValidEnum(TipoEnum.class, tipo)) {
+    public Page<Marca> findAllByTipo(String tipo, int page, int size) {
+        if (EnumUtils.isValidEnum(TipoVeiculoEnum.class, tipo)) {
 
-            List<Marca> marcas = iMarcaRepository.findMarcaBytipo(tipo);
+            PageRequest pageRequest = PageRequest.of(
+                    page,
+                    size,
+                    Sort.Direction.ASC,
+                    "nome");
+
+            Page<Marca> marcas = iMarcaRepository.findAllBytipoVeiculo(TipoVeiculoEnum.valueOf(tipo), pageRequest);
 
             return marcas;
         } else {
@@ -132,7 +140,7 @@ public class MarcaService {
             LOGGER.info("Atualizando marca... id: [{}]", marcaExistente.getId());
             LOGGER.debug("Payload: {}", marcaDTO);
             LOGGER.debug("Marca Existente: {}", marcaExistente);
-            TipoEnum.CARRO.ordinal();
+            TipoVeiculoEnum.CARRO.ordinal();
             marcaExistente.setNome(marcaDTO.getNome());
             marcaExistente.setTipoVeiculo(marcaDTO.getTipoVeiculo());
 
@@ -151,7 +159,7 @@ public class MarcaService {
 
     public void saveDataFromUploadFile(MultipartFile file, String tipo) throws Exception {
 
-        if (EnumUtils.isValidEnum(TipoEnum.class, tipo)) {
+        if (EnumUtils.isValidEnum(TipoVeiculoEnum.class, tipo)) {
             String extension = FilenameUtils.getExtension(file.getOriginalFilename());
             if (Extension.CSV.getDescricao().equalsIgnoreCase(extension)) {
                 readDataFromCsv(file, tipo);
@@ -184,17 +192,16 @@ public class MarcaService {
     public void saveMarcasFromCsv(List<String[]> linhas, String tipo) {
         for (String[] linha : linhas) {
 
-            Marca marca = new Marca(TipoEnum.valueOf(tipo), linha[1]);
+            Marca marca = new Marca(TipoVeiculoEnum.valueOf(tipo), linha[1]);
 
             validate(MarcaDTO.of(marca));
 
-            try{
+            try {
                 this.iMarcaRepository.save(marca);
-            }catch (Exception e){
+            } catch (Exception e) {
                 LOGGER.info("Erro ao salvar marca de ID: [{}]", marca.getNome());
                 LOGGER.error(e.toString());
             }
-
 
 
         }

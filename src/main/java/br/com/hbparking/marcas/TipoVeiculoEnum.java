@@ -1,12 +1,12 @@
 package br.com.hbparking.marcas;
 
-public enum TipoEnum {
+public enum TipoVeiculoEnum {
     CARRO("CARRO"),
     MOTO("MOTO");
 
     private final String descricao;
 
-    TipoEnum(String descricao) {
+    TipoVeiculoEnum(String descricao) {
         this.descricao = descricao;
     }
 

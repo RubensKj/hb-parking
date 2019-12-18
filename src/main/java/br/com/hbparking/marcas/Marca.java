@@ -1,7 +1,6 @@
 package br.com.hbparking.marcas;
 
 import javax.persistence.*;
-
 @Entity
 @Table(name = "marcas")
 public class Marca {
@@ -13,7 +12,7 @@ public class Marca {
 
     @Column(name = "tipoVeiculo")
     @Enumerated(EnumType.STRING)
-    private TipoEnum tipoVeiculo;
+    private TipoVeiculoEnum tipoVeiculo;
 
     @Column(name = "nome")
     private  String nome;
@@ -21,7 +20,7 @@ public class Marca {
     public Marca() {
     }
 
-    public Marca( TipoEnum tipoVeiculo, String nome) {
+    public Marca(TipoVeiculoEnum tipoVeiculo, String nome) {
         this.tipoVeiculo = tipoVeiculo;
         this.nome = nome;
     }
@@ -34,11 +33,11 @@ public class Marca {
         this.id = id;
     }
 
-    public TipoEnum getTipoVeiculo() {
+    public TipoVeiculoEnum getTipoVeiculo() {
         return tipoVeiculo;
     }
 
-    public void setTipoVeiculo(TipoEnum tipoVeiculo) {
+    public void setTipoVeiculo(TipoVeiculoEnum tipoVeiculo) {
         this.tipoVeiculo = tipoVeiculo;
     }
 

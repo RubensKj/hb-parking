@@ -1,5 +1,7 @@
 package br.com.hbparking.marcas;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,12 +13,9 @@ import java.util.Optional;
 @Repository
 public interface IMarcaRepository extends JpaRepository<Marca, Long> {
 
-    @Query(value = "select * from marcas where tipo_veiculo like :tipo ", nativeQuery = true)
-    List<Marca> findMarcaBytipo(@Param("tipo") String tipo);
-
-    @Query(value = "select * from marcas where nome like :nome ", nativeQuery = true)
-    Optional<Marca> findMarcaByNome(@Param("nome") String nome);
-
+    //@Query(value = "select * from marcas where tipo_veiculo like :tipo ", nativeQuery = true)
+    //List<Marca> findMarcaBytipoVeiculo(@Param("tipo") String tipo);
+    Page<Marca> findAllBytipoVeiculo(TipoVeiculoEnum tipoVeiculo, Pageable pageable);
 
 
 

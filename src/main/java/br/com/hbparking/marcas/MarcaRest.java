@@ -3,6 +3,7 @@ package br.com.hbparking.marcas;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,19 +33,15 @@ public class MarcaRest {
 
     @PostMapping(value = "/fileupload/{tipo}")
     public void uploadFile(@RequestParam("file") MultipartFile marcasCSV, @PathVariable("tipo") String tipo) throws Exception {
-        try {
-            marcaService.saveDataFromUploadFile(marcasCSV, tipo);
-        } catch (Exception e) {
-            String erroAoImportarCSV = "Erro ao importar CSV";
-            LOGGER.error(erroAoImportarCSV, e);
-            throw new Exception(erroAoImportarCSV, e.getCause());
-        }
+
+        marcaService.saveDataFromUploadFile(marcasCSV, tipo);
+
 
         LOGGER.info("Successmessage", "File Upload Successfully!");
     }
 
     @GetMapping("/export-marcas/{tipo}")
-    public void exportCSV(HttpServletResponse response,@PathVariable("tipo") String tipo) throws Exception {
+    public void exportCSV(HttpServletResponse response, @PathVariable("tipo") String tipo) throws Exception {
         LOGGER.info("Exportando marcas {}");
         marcaService.exportFromData(response, tipo);
     }
@@ -57,18 +54,11 @@ public class MarcaRest {
         return this.marcaService.findById(id);
     }
 
-    @RequestMapping("/all")
-    public List<Marca> findMarcas() {
-
-        List<Marca> marcas = marcaService.findAll();
-        return marcas;
-    }
-
     @RequestMapping("/allByTipo/{tipo}")
-    public List<Marca> findMarcasByTipo(@PathVariable("tipo") String tipo) {
+    public Page<Marca> findMarcasByTipo(@PathVariable("tipo") String tipo) {
 
-            List<Marca> marcas = marcaService.findAllByTipo(tipo);
-            return marcas;
+        Page<Marca> marcas = marcaService.findAllByTipo(tipo,0 ,5);
+        return marcas;
 
     }
 

@@ -28,7 +28,7 @@ public class MarcaServiceTest {
 
     @Test
     public void save() {
-        MarcaDTO marcaDTO = new MarcaDTO(TipoEnum.valueOf("CARRO"), "meu.nome");
+        MarcaDTO marcaDTO = new MarcaDTO(TipoVeiculoEnum.CARRO, "meu.nome");
 
         Marca marcaMock = Mockito.mock(Marca.class);
 
@@ -44,7 +44,7 @@ public class MarcaServiceTest {
 
         assertTrue(StringUtils.isNoneEmpty(createdMarca.getNome()), "Nome não deve ser nulo");
         assertTrue(StringUtils.isNoneEmpty(createdMarca.getTipoVeiculo().getDescricao()), "Tipo não deve ser nulo");
-        assertTrue(EnumUtils.isValidEnum(TipoEnum.class, createdMarca.getTipoVeiculo().getDescricao()), "Enum Inválido");
+        assertTrue(EnumUtils.isValidEnum(TipoVeiculoEnum.class, createdMarca.getTipoVeiculo().getDescricao()), "Enum Inválido");
     }
 
     @Test
@@ -56,24 +56,24 @@ public class MarcaServiceTest {
 
     @Test
     public void isValidEnum() {
-        assertTrue(EnumUtils.isValidEnum(TipoEnum.class, "CARRO"));
-        assertTrue(EnumUtils.isValidEnum(TipoEnum.class, "MOTO"));
-        assertFalse(EnumUtils.isValidEnum(TipoEnum.class, "GREEN"));
-        assertFalse(EnumUtils.isValidEnum(TipoEnum.class, "PURPLE"));
-        assertFalse(EnumUtils.isValidEnum(TipoEnum.class, null));
+        assertTrue(EnumUtils.isValidEnum(TipoVeiculoEnum.class, "CARRO"));
+        assertTrue(EnumUtils.isValidEnum(TipoVeiculoEnum.class, "MOTO"));
+        assertFalse(EnumUtils.isValidEnum(TipoVeiculoEnum.class, "GREEN"));
+        assertFalse(EnumUtils.isValidEnum(TipoVeiculoEnum.class, "PURPLE"));
+        assertFalse(EnumUtils.isValidEnum(TipoVeiculoEnum.class, null));
     }
 
     @Test
     public void marcaComNomeVazio() {
         assertThrows(IllegalArgumentException.class, () -> {
-            MarcaDTO usuarioDTO = new MarcaDTO(TipoEnum.valueOf("MOTO"), "");
+            MarcaDTO usuarioDTO = new MarcaDTO(TipoVeiculoEnum.valueOf("MOTO"), "");
             this.marcaService.save(usuarioDTO);
         });
     }
 
     @Test
     public void readFromFileCARRO() {
-        MarcaDTO marcaDTO = new MarcaDTO(TipoEnum.valueOf("CARRO"), "meu.nome");
+        MarcaDTO marcaDTO = new MarcaDTO(TipoVeiculoEnum.valueOf("CARRO"), "meu.nome");
         List<String[]> linhas = new ArrayList<>();
         String[] header = {"ID", "NOME"};
         String[] linha1 = {"ID", "NOME1"};
@@ -99,12 +99,12 @@ public class MarcaServiceTest {
 
         assertTrue(StringUtils.isNoneEmpty(createdMarca.getNome()), "Nome não deve ser nulo");
         assertTrue(StringUtils.isNoneEmpty(createdMarca.getTipoVeiculo().getDescricao()), "Tipo não deve ser nulo");
-        assertTrue(EnumUtils.isValidEnum(TipoEnum.class, createdMarca.getTipoVeiculo().getDescricao()), "Enum Inválido");
+        assertTrue(EnumUtils.isValidEnum(TipoVeiculoEnum.class, createdMarca.getTipoVeiculo().getDescricao()), "Enum Inválido");
     }
 
     @Test
     public void readFromFileMOTO() {
-        MarcaDTO marcaDTO = new MarcaDTO(TipoEnum.valueOf("MOTO"), "meu.nome");
+        MarcaDTO marcaDTO = new MarcaDTO(TipoVeiculoEnum.valueOf("MOTO"), "meu.nome");
         List<String[]> linhas = new ArrayList<>();
         String[] header = {"ID", "NOME"};
         String[] linha1 = {"ID", "NOME1"};
@@ -130,7 +130,7 @@ public class MarcaServiceTest {
 
         assertTrue(StringUtils.isNoneEmpty(createdMarca.getNome()), "Nome não deve ser nulo");
         assertTrue(StringUtils.isNoneEmpty(createdMarca.getTipoVeiculo().getDescricao()), "Tipo não deve ser nulo");
-        assertTrue(EnumUtils.isValidEnum(TipoEnum.class, createdMarca.getTipoVeiculo().getDescricao()), "Enum Inválido");
+        assertTrue(EnumUtils.isValidEnum(TipoVeiculoEnum.class, createdMarca.getTipoVeiculo().getDescricao()), "Enum Inválido");
     }
 
 

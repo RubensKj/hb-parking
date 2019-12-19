@@ -3,6 +3,7 @@ package br.com.hbparking.tipoveiculo;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -10,7 +11,7 @@ import java.util.List;
 public class VehicleTypeService {
 
     public List<VehicleType> parseAllVehicleTypesToList() {
-        return new ArrayList<>(EnumSet.allOf(VehicleType.class));
+        return Arrays.asList(VehicleType.values());
     }
 
     public List<VehicleTypeDTO> getAllVehicleTypesInDTO() {

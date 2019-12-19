@@ -3,7 +3,6 @@ package br.com.hbparking.tipoveiculo;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
@@ -14,10 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VehicleTypesServiceTest {
-
-    @Mock
-    private VehicleTypeController vehicleTypeController;
-
+ 
     private VehicleTypeService vehicleTypeService;
 
     @Before

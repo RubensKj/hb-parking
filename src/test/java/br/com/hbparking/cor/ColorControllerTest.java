@@ -8,6 +8,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -32,6 +33,6 @@ public class ColorControllerTest {
 
         assertThat(colorList).isNotNull();
         assertThat(colorList).isNotEmpty();
-
+        assertThat(colorList).isEqualTo(Arrays.asList(Color.values()));
     }
 }

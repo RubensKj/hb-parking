@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,9 +22,11 @@ public class ColorServiceTest {
 
     @Test
     public void getAllColorsTest() {
+
         List<Color> colorList = colorService.getAllColors();
 
         assertThat(colorList).isNotNull();
         assertThat(colorList).isNotEmpty();
+        assertThat(colorList).isEqualTo(Arrays.asList(Color.values()));
     }
 }

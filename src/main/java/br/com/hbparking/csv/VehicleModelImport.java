@@ -1,12 +1,13 @@
 package br.com.hbparking.csv;
 
+import br.com.hbparking.marcas.CannotFindAnyMarcaWithId;
 import br.com.hbparking.marcas.Marca;
 import br.com.hbparking.marcas.MarcaService;
 import br.com.hbparking.vehicleException.ContentDispositionException;
 import br.com.hbparking.vehicleModel.VehicleModel;
-import br.com.hbparking.vehicleModel.VehicleModelDTO;
 import br.com.hbparking.vehicleModel.VehicleModelService;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -14,6 +15,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class VehicleModelImport {
@@ -25,33 +27,43 @@ public class VehicleModelImport {
         this.marcaService = marcaService;
     }
 
+    @Transactional
     public void importVehicle(MultipartFile multipartFile, HttpServletResponse response) throws Exception {
         List<String[]> dataArray = this.readFile(multipartFile);
         List<VehicleModel> vehicleModelList = new ArrayList<>();
 
-        //clear the table
-        this.vehicleModelService.clearTable();
-
         dataArray.forEach(lineData -> {
             for (int i = 0; i < lineData.length; i += 3) {
-                VehicleModelDTO vehicleModelDTO = new VehicleModelDTO();
                 if (!(lineData[i].isEmpty()) && !(lineData[i + 1].isEmpty())) {
 
+                    Marca marca;
+                    try {
+                        marca = this.marcaService.findEntityById(new Long(lineData[i]));
+                    } catch (CannotFindAnyMarcaWithId cannotFindAnyMarcaWithId) {
+                        return;
+                    }
+
                     VehicleModel vehicleModel = new VehicleModel();
-
-                    Marca marca = this.marcaService.findEntityById(new Long(lineData[i]));
-
                     vehicleModel.setFkMarca(marca);
                     vehicleModel.setModelo(lineData[i + 1]);
-
-                    if(marca != null){
-                        vehicleModelList.add(vehicleModel);
-                    }
+                    vehicleModelList.add(vehicleModel);
                 }
             }
         });
 
-        this.vehicleModelService.saveVehicle(vehicleModelList);
+        //verify if entries have been deleted
+        this.hasBeenDeleted(vehicleModelList);
+
+        vehicleModelList.stream().forEach(model -> {
+            if (!this.vehicleModelService.exists(model)) {
+                this.vehicleModelService.saveVehicle(model);
+            }
+        });
+    }
+
+    public void hasBeenDeleted(List<VehicleModel> csvList) {
+        List<String> nomes = csvList.stream().map(VehicleModel::getModelo).collect(Collectors.toList());
+        this.vehicleModelService.deleteAllByModeloIsNotIn(nomes);
     }
 
     public List<String[]> readFile(MultipartFile multipartFile) throws Exception {

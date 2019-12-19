@@ -198,13 +198,8 @@ public class MarcaService {
 
     }
 
-    public Marca findEntityById(Long idBrand){
-        Optional<Marca> marcaOptional = this.iMarcaRepository.findById(idBrand);
-
-        if (marcaOptional.isPresent()){
-            return marcaOptional.get();
-        }
-        return null;
+    public Marca findEntityById(Long idBrand) throws CannotFindAnyMarcaWithId {
+        return this.iMarcaRepository.findById(idBrand).orElseThrow(() -> new CannotFindAnyMarcaWithId(String.format("A marca informada(%s) não existe.", idBrand)));
     }
 }
 

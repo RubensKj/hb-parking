@@ -1,8 +1,10 @@
 package br.com.hbparking.vehiclemodel;
 
+import br.com.hbparking.csv.VehicleModelImport;
+import br.com.hbparking.marcas.IMarcaRepository;
+import br.com.hbparking.marcas.MarcaService;
 import br.com.hbparking.vehicleException.ContentDispositionException;
 import br.com.hbparking.vehicleModel.IVehicleModelRepository;
-import br.com.hbparking.csv.VehicleModelImport;
 import br.com.hbparking.vehicleModel.VehicleModelService;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,15 +18,16 @@ public class VehicleModelImportTest {
 
     @Mock
     private IVehicleModelRepository iVehicleModelRepository;
-
+    private IMarcaRepository marcaRepository;
     private VehicleModelService vehicleModelService;
-
     private VehicleModelImport vehicleModelImport;
+    private MarcaService marcaService;
 
     @Before
     public void setUp() {
         vehicleModelService = new VehicleModelService(iVehicleModelRepository);
-        vehicleModelImport = new VehicleModelImport(vehicleModelService);
+        marcaService = new MarcaService(marcaRepository);
+        vehicleModelImport = new VehicleModelImport(vehicleModelService, marcaService);
     }
 
     //testing that case the file uploaded is empty will return IllegalArgumentException

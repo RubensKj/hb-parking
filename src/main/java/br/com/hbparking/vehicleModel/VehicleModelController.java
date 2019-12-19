@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/model")
 public class VehicleModelController {
 
     private final VehicleModelExport vehicleModelExport;

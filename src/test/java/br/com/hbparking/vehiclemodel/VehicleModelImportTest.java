@@ -9,6 +9,7 @@ import br.com.hbparking.vehicleModel.VehicleModelService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.mock.web.MockMultipartFile;
@@ -18,17 +19,14 @@ public class VehicleModelImportTest {
 
     @Mock
     private IVehicleModelRepository iVehicleModelRepository;
+    @Mock
     private IMarcaRepository marcaRepository;
+    @InjectMocks
     private VehicleModelService vehicleModelService;
+    @InjectMocks
     private VehicleModelImport vehicleModelImport;
+    @InjectMocks
     private MarcaService marcaService;
-
-    @Before
-    public void setUp() {
-        vehicleModelService = new VehicleModelService(iVehicleModelRepository);
-        marcaService = new MarcaService(marcaRepository);
-        vehicleModelImport = new VehicleModelImport(vehicleModelService, marcaService);
-    }
 
     //testing that case the file uploaded is empty will return IllegalArgumentException
     @Test(expected = IllegalArgumentException.class)

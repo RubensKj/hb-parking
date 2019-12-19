@@ -102,7 +102,7 @@ public class MarcaService {
 
                 );
             } catch (Exception e) {
-                LOGGER.info("Exceção ocorrida: " + e.getMessage(), e);
+                LOGGER.error("Erro: ", e);
                 throw new RuntimeException("Exceção ocorrida no Stream da base ", e);
             }
 
@@ -117,7 +117,7 @@ public class MarcaService {
     public Page<Marca> findAllByTipoPage(String tipo, Pageable pageable) {
         if (EnumUtils.isValidEnum(TipoVeiculoEnum.class, tipo)) {
 
-
+            LOGGER.info("Retornando marcas em paginas");
             return iMarcaRepository.findAllBytipoVeiculo(TipoVeiculoEnum.valueOf(tipo), pageable);
 
         } else {
@@ -193,7 +193,7 @@ public class MarcaService {
                 this.iMarcaRepository.save(marca);
             } catch (Exception e) {
                 LOGGER.info("Erro ao salvar marca de ID: [{}]", marca.getNome());
-                LOGGER.error(e.toString());
+                LOGGER.error("Erro: ", e );
             }
 
 

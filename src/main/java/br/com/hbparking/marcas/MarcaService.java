@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -188,16 +189,14 @@ public class MarcaService {
             Marca marca = new Marca(TipoVeiculoEnum.valueOf(tipo), linha[1]);
 
             validate(MarcaDTO.of(marca));
-
             try {
                 this.iMarcaRepository.save(marca);
             } catch (Exception e) {
-                LOGGER.info("Erro ao salvar marca de ID: [{}]", marca.getNome());
                 LOGGER.error("Erro: ", e );
             }
 
-
         }
+
     }
 }
 

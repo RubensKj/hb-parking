@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.QueryHint;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
@@ -23,6 +24,8 @@ public interface IMarcaRepository extends JpaRepository<Marca, Long> {
     @QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "" + 10))
     @Query(value = "select m from Marca m where tipoVeiculo like :tipo ")
     Stream<Marca> streamAll(@Param("tipo") TipoVeiculoEnum tipo);
+
+
 
 
 }

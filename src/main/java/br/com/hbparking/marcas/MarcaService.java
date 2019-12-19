@@ -79,6 +79,7 @@ public class MarcaService {
     @Transactional(readOnly = true)
     public void exportFromData(HttpServletResponse response, String tipo) throws IOException {
         if (EnumUtils.isValidEnum(TipoVeiculoEnum.class, tipo)) {
+            String[] headerCSV = {"ID", "NOME_MARCA"};
             String filename = "marcas.csv";
 
             response.setContentType("text/csv");
@@ -91,7 +92,7 @@ public class MarcaService {
                     withEscapeChar(CSVWriter.DEFAULT_ESCAPE_CHARACTER).
                     withLineEnd(CSVWriter.DEFAULT_LINE_END).
                     build();
-            String headerCSV[] = {"ID", "NOME_MARCA"};
+
             icsvWriter.writeNext(headerCSV);
 
             try {
@@ -116,8 +117,8 @@ public class MarcaService {
     public Page<Marca> findAllByTipoPage(String tipo, Pageable pageable) {
         if (EnumUtils.isValidEnum(TipoVeiculoEnum.class, tipo)) {
 
-            Page<Marca> marcas = iMarcaRepository.findAllBytipoVeiculo(TipoVeiculoEnum.valueOf(tipo), pageable);
-            return marcas;
+
+            return iMarcaRepository.findAllBytipoVeiculo(TipoVeiculoEnum.valueOf(tipo), pageable);
 
         } else {
             throw new IllegalArgumentException("Tipo de veiculo inválido");
@@ -133,13 +134,12 @@ public class MarcaService {
             LOGGER.info("Atualizando marca... id: [{}]", marcaExistente.getId());
             LOGGER.debug("Payload: {}", marcaDTO);
             LOGGER.debug("Marca Existente: {}", marcaExistente);
-            TipoVeiculoEnum.CARRO.ordinal();
             marcaExistente.setNome(marcaDTO.getNome());
             marcaExistente.setTipoVeiculo(marcaDTO.getTipoVeiculo());
 
             marcaExistente = this.iMarcaRepository.save(marcaExistente);
 
-            return marcaDTO.of(marcaExistente);
+            return MarcaDTO.of(marcaExistente);
         }
         throw new IllegalArgumentException(String.format("ID %s não existe", id));
     }

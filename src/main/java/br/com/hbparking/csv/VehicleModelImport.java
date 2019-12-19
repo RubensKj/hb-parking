@@ -1,5 +1,7 @@
 package br.com.hbparking.csv;
 
+import br.com.hbparking.marcas.Marca;
+import br.com.hbparking.marcas.MarcaService;
 import br.com.hbparking.vehicleException.ContentDispositionException;
 import br.com.hbparking.vehicleModel.VehicleModel;
 import br.com.hbparking.vehicleModel.VehicleModelDTO;
@@ -16,9 +18,11 @@ import java.util.List;
 @Component
 public class VehicleModelImport {
     private final VehicleModelService vehicleModelService;
+    private final MarcaService marcaService;
 
-    public VehicleModelImport(VehicleModelService vehicleModelService) {
+    public VehicleModelImport(VehicleModelService vehicleModelService, MarcaService marcaService) {
         this.vehicleModelService = vehicleModelService;
+        this.marcaService = marcaService;
     }
 
     public void importVehicle(MultipartFile multipartFile, HttpServletResponse response) throws Exception {
@@ -35,10 +39,14 @@ public class VehicleModelImport {
 
                     VehicleModel vehicleModel = new VehicleModel();
 
-                    vehicleModel.setModelo(lineData[i + 1]);
-                    vehicleModel.setIdMarca(new Long(lineData[i]));
+                    Marca marca = this.marcaService.findEntityById(new Long(lineData[i]));
 
-                    vehicleModelList.add(vehicleModel);
+                    vehicleModel.setFkMarca(marca);
+                    vehicleModel.setModelo(lineData[i + 1]);
+
+                    if(marca != null){
+                        vehicleModelList.add(vehicleModel);
+                    }
                 }
             }
         });

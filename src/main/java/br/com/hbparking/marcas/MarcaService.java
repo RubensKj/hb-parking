@@ -126,7 +126,6 @@ public class MarcaService {
         }
     }
 
-
     public MarcaDTO update(MarcaDTO marcaDTO, Long id) {
         Optional<Marca> marcaOptional = this.iMarcaRepository.findById(id);
         if (marcaOptional.isPresent()) {
@@ -197,6 +196,15 @@ public class MarcaService {
 
         }
 
+    }
+
+    public Marca findEntityById(Long idBrand){
+        Optional<Marca> marcaOptional = this.iMarcaRepository.findById(idBrand);
+
+        if (marcaOptional.isPresent()){
+            return marcaOptional.get();
+        }
+        return null;
     }
 }
 

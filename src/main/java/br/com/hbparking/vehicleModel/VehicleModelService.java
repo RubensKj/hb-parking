@@ -1,5 +1,7 @@
 package br.com.hbparking.vehicleModel;
 
+import br.com.hbparking.csv.VehicleGroupDTO;
+import br.com.hbparking.marcas.Marca;
 import br.com.hbparking.vehicleException.EmptyMapException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,6 +10,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Service
 public class VehicleModelService {
@@ -29,14 +33,11 @@ public class VehicleModelService {
     }
 
     //return all models grouped by brand
-    public Map<Long, List<String>> getVehicleModelsOrderedByBrand() throws Exception {
-        Map<Long, List<String>> mapOfModelsByBrand = new HashMap<>();
+    public Map<Long, List<VehicleGroupDTO>> getVehicleModelsOrderedByBrand() throws Exception {
+        List<VehicleGroupDTO> list = this.vehicleModelRepository.findAllGroupByFkMarca();
 
+        Map<Long, List<VehicleGroupDTO>> mapModelsOrderedByMarca = list.stream().collect(Collectors.groupingBy(VehicleGroupDTO::getCodigoMarca));
 
-
-        if (!mapOfModelsByBrand.isEmpty()) {
-            return mapOfModelsByBrand;
-        }
-        throw new EmptyMapException("O banco não contem informações para serem exportadas.");
+        return mapModelsOrderedByMarca;
     }
 }

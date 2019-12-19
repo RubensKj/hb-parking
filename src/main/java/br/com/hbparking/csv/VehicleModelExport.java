@@ -7,7 +7,10 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 public class VehicleModelExport {
@@ -25,21 +28,19 @@ public class VehicleModelExport {
         //setting the response headers
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + this.generateFileName() + ".csv");
 
-        //map containing a list of String, that is the name of the vehicle model, ordered by brand
+        Map<Long, List<VehicleGroupDTO>> mapOfModelsOrderedByBrand = this.vehicleModelService.getVehicleModelsOrderedByBrand();
 
-        Map<Long, List<String>> mapOfModelsByBrand = this.vehicleModelService.getVehicleModelsOrderedByBrand();
-
-        Set<Long> brandCodeList = mapOfModelsByBrand.keySet();
-        int maxQtdOfLines = this.getQuantityOfLines(mapOfModelsByBrand);
+        Set<Long> brandCodeList = mapOfModelsOrderedByBrand.keySet();
+        int maxQtdOfLines = this.getQuantityOfLines(mapOfModelsOrderedByBrand);
         String csvText = this.getDefaultHeaders(brandCodeList);
 
         for (int i = 0; i < maxQtdOfLines; i++) {
             int j = 0;
-            for (Long codigoMarca : brandCodeList) {
+            for (Long brand : brandCodeList) {
                 j++;
-                List<String> vehicleModelList = mapOfModelsByBrand.get(codigoMarca);
+                List<VehicleGroupDTO> vehicleModelList = mapOfModelsOrderedByBrand.get(brand);
                 if (i < vehicleModelList.size()) {
-                    csvText = csvText.concat(this.addInfoToLine(codigoMarca.toString(), vehicleModelList.get(i), j));
+                    csvText = csvText.concat(this.addInfoToLine(brand.toString(), vehicleModelList.get(i).getModelo(), j));
                 } else {
                     csvText = csvText.concat(this.contentNotExistsAddTwoColumns(j));
                 }
@@ -58,7 +59,7 @@ public class VehicleModelExport {
         return fileName;
     }
 
-    private int getQuantityOfLines(Map<Long, List<String>> map) {
+    private int getQuantityOfLines(Map<Long, List<VehicleGroupDTO>> map) {
         return map
                 .values()
                 .stream()
@@ -69,7 +70,7 @@ public class VehicleModelExport {
 
     private String getDefaultHeaders(Set<Long> idBrands) {
         String csvInteiro = "";
-        for (Long codigoMarca : idBrands) {
+        for (Long brand : idBrands) {
             csvInteiro += "Codigo Marca;Descrição;;";
         }
         csvInteiro += "\n";

@@ -1,30 +1,28 @@
 package br.com.hbparking.vehicleModel;
 
+import br.com.hbparking.marcas.Marca;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "vehicle_models")
 public class VehicleModel {
 
+    public VehicleModel() {
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_modelo")
     private Long id;
 
-    @Column(name = "id_marca", nullable = false)
-    private Long idMarca;
+    @ManyToOne
+    @JoinColumn(name = "id_marca")
+    private Marca fkMarca;
 
 
     @Column(name = "model", nullable = false)
     private String modelo;
-
-    public VehicleModel() {
-    }
-
-    public VehicleModel(Long idMarca, String modelo) {
-        this.idMarca = idMarca;
-        this.modelo = modelo;
-    }
 
     public Long getId() {
         return id;
@@ -34,12 +32,12 @@ public class VehicleModel {
         this.id = id;
     }
 
-    public Long getIdMarca() {
-        return idMarca;
+    public Marca getFkMarca() {
+        return fkMarca;
     }
 
-    public void setIdMarca(Long idMarca) {
-        this.idMarca = idMarca;
+    public void setFkMarca(Marca fkMarca) {
+        this.fkMarca = fkMarca;
     }
 
     public String getModelo() {

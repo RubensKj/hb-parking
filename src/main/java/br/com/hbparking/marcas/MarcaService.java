@@ -206,10 +206,8 @@ public class MarcaService {
         for (String[] nome : nomeMarca) {
             nomes.add(nome[1]);
         }
-        String[] arrayNomes = new String[nomes.size()];
-        arrayNomes = nomes.toArray(arrayNomes);
         try{
-            iMarcaRepository.deleteAllByNomeIsNotInByTipo(arrayNomes, TipoVeiculoEnum.valueOf(tipo));
+            iMarcaRepository.deleteAllByNomeIsNotInByTipo(nomes, TipoVeiculoEnum.valueOf(tipo));
         }catch (Exception e){
             LOGGER.info("Erro ao deletar marcas");
             LOGGER.error(e.toString());

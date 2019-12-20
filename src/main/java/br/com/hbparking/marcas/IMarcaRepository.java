@@ -30,7 +30,7 @@ public interface IMarcaRepository extends JpaRepository<Marca, Long> {
     @Transactional
     @Modifying
     @Query(value = "DELETE FROM Marca  WHERE nome NOT IN  :nomes  AND tipoVeiculo like :tipo")
-    void deleteAllByNomeIsNotInByTipo(@Param("nomes")String[] nomes, @Param("tipo") TipoVeiculoEnum tipo);
+    void deleteAllByNomeIsNotInByTipo(@Param("nomes")List<String> nomes, @Param("tipo") TipoVeiculoEnum tipo);
 
 
 

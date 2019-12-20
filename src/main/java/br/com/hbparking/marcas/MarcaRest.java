@@ -33,9 +33,9 @@ public class MarcaRest {
     }
 
     @PostMapping(value = "/fileupload/{tipo}")
-    public void uploadFile(@RequestParam("file") MultipartFile marcasCSV, @PathVariable("tipo") String tipo) throws Exception {
+    public void uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("tipo") String tipo) throws Exception {
 
-        marcaService.saveDataFromUploadFile(marcasCSV, tipo);
+        marcaService.saveDataFromUploadFile(file, tipo);
 
 
         LOGGER.info("{}",

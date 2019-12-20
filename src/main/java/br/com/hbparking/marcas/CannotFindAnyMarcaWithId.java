@@ -1,0 +1,11 @@
+package br.com.hbparking.marcas;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class CannotFindAnyMarcaWithId extends Exception {
+    public CannotFindAnyMarcaWithId(String message) {
+        super(message);
+    }
+}

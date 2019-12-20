@@ -61,7 +61,7 @@ public class MarcaService {
         }
 
         if (StringUtils.isEmpty(marcaDTO.getNome())) {
-            throw new IllegalArgumentException("Nome não deve ser nulao/vazio");
+            throw new IllegalArgumentException("Nome não deve ser nulo/vazio");
         }
 
     }
@@ -179,22 +179,40 @@ public class MarcaService {
 
         List<String[]> linhas = csvReader.readAll();
 
+        deleteAllByTipoIsNotIn(linhas, tipo);
         saveMarcasFromCsv(linhas, tipo);
 
     }
 
     public void saveMarcasFromCsv(List<String[]> linhas, String tipo) {
         for (String[] linha : linhas) {
-
+            if(linha[1].length() < 1){
+                continue;
+            }
             Marca marca = new Marca(TipoVeiculoEnum.valueOf(tipo), linha[1]);
 
-            validate(MarcaDTO.of(marca));
             try {
                 this.iMarcaRepository.save(marca);
             } catch (Exception e) {
-                LOGGER.error("Erro: ", e );
+                LOGGER.error("Erro: ", e.toString());
             }
 
+        }
+
+    }
+
+    public void deleteAllByTipoIsNotIn(List<String[]> nomeMarca, String tipo) {
+        List<String> nomes = new ArrayList<>();
+        for (String[] nome : nomeMarca) {
+            nomes.add(nome[1]);
+        }
+        String[] arrayNomes = new String[nomes.size()];
+        arrayNomes = nomes.toArray(arrayNomes);
+        try{
+            iMarcaRepository.deleteAllByNomeIsNotInByTipo(arrayNomes, TipoVeiculoEnum.valueOf(tipo));
+        }catch (Exception e){
+            LOGGER.info("Erro ao deletar marcas");
+            LOGGER.error(e.toString());
         }
 
     }

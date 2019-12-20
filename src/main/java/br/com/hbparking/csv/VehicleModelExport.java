@@ -26,7 +26,9 @@ public class VehicleModelExport {
 
     public void export(HttpServletResponse response) throws Exception {
         //setting the response headers
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + this.generateFileName() + ".csv");
+        response.setHeader("filename", this.generateFileName()+".csv");
+        response.setHeader("Access-Control-Expose-Headers", "filename");
+        response.setContentType("text/csv;charset=cp1250");
 
         Map<Long, List<VehicleGroupDTO>> mapOfModelsOrderedByBrand = this.vehicleModelService.getVehicleModelsOrderedByBrand();
 

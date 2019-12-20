@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/api/model")
+@CrossOrigin(origins ="*", maxAge = 36000)
 public class VehicleModelController {
 
     private final VehicleModelExport vehicleModelExport;

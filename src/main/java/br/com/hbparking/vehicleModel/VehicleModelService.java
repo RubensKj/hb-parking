@@ -1,0 +1,41 @@
+package br.com.hbparking.vehicleModel;
+
+import br.com.hbparking.csv.VehicleGroupDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+@Service
+public class VehicleModelService {
+    private final IVehicleModelRepository vehicleModelRepository;
+
+    @Autowired
+    public VehicleModelService(IVehicleModelRepository vehicleModelRepository) {
+        this.vehicleModelRepository = vehicleModelRepository;
+    }
+
+    //save the vehicle model
+    public void saveVehicle(VehicleModel model) {
+        this.vehicleModelRepository.save(model);
+    }
+
+    //return all models grouped by brand
+    public Map<Long, List<VehicleGroupDTO>> getVehicleModelsOrderedByBrand() throws Exception {
+        List<VehicleGroupDTO> list = this.vehicleModelRepository.findAllGroupByFkMarca();
+
+        Map<Long, List<VehicleGroupDTO>> mapModelsOrderedByMarca = list.stream().collect(Collectors.groupingBy(VehicleGroupDTO::getCodigoMarca));
+
+        return mapModelsOrderedByMarca;
+    }
+
+    public boolean exists(VehicleModel model) {
+        return this.vehicleModelRepository.existsByModelo(model.getModelo());
+    }
+
+    public void deleteAllByModeloIsNotIn(List<String> nomes) {
+        this.vehicleModelRepository.deleteAllByModeloIsNotIn(nomes);
+    }
+}

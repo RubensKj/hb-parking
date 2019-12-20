@@ -159,7 +159,7 @@ public class MarcaService {
         try{
             iMarcaRepository.deleteAllByNomeIsNotInByTipo(nomes, TipoVeiculoEnum.valueOf(tipo));
         }catch (Exception e){
-            LOGGER.info("Erro ao deletar marcas");
+            LOGGER.error("Erro ao deletar marcas");
             LOGGER.error(e.toString());
         }
     }

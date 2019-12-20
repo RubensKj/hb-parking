@@ -26,9 +26,9 @@ public class VehicleModelExport {
 
     public void export(HttpServletResponse response) throws Exception {
         //setting the response headers
-        response.setHeader("filename", this.generateFileName()+".csv");
-        response.setHeader("Access-Control-Expose-Headers", "filename");
-        response.setContentType("text/csv;charset=cp1250");
+        response.setHeader("Content-Disposition", "attachment; filename="+this.generateFileName()+".csv");
+        response.setContentType("text/csv;charset=ISO-8859-1");
+        response.setHeader("Access-Control-Expose-Headers", "filename;Content-Type");
 
         Map<Long, List<VehicleGroupDTO>> mapOfModelsOrderedByBrand = this.vehicleModelService.getVehicleModelsOrderedByBrand();
 
@@ -54,7 +54,6 @@ public class VehicleModelExport {
         writer.print(csvText);
         writer.close();
     }
-
     private String generateFileName() {
         String fileName = FILE_NAME.trim().replaceAll(" ", "_");
         fileName = fileName.concat("_" + new Date().getTime());
@@ -73,7 +72,7 @@ public class VehicleModelExport {
     private String getDefaultHeaders(Set<Long> idBrands) {
         String csvInteiro = "";
         for (Long brand : idBrands) {
-            csvInteiro += "Codigo Marca;Descrição;;";
+            csvInteiro = csvInteiro.concat("Codigo Marca;Descrição;;");
         }
         csvInteiro += "\n";
 

@@ -11,16 +11,16 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
 @EnableSwagger2
-@CrossOrigin(origins = {"http://172.17.48.49", "http://172.17.48.49:4200"})
+@CrossOrigin(origins = {"*", "http://localhost:8080", "http://172.17.48.49", "http://172.17.48.49:4200"})
 public class SwaggerConfiguration {
 
-        @Bean
-        public Docket api() {
-            return new Docket(DocumentationType.SWAGGER_2)
-                    .select()
-                    .apis(RequestHandlerSelectors.any())
-                    .paths(PathSelectors.any())
-                    .build();
-        }
+    @Bean
+    public Docket api() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .select()
+                .apis(RequestHandlerSelectors.any())
+                .paths(PathSelectors.any())
+                .build();
+    }
 
 }

@@ -147,7 +147,7 @@ public class MarcaService {
             try {
                 this.iMarcaRepository.save(marca);
             } catch (Exception e) {
-                LOGGER.error("Erro: ", e.toString());
+                LOGGER.error("Erro: {}", e.toString());
             }
         }
     }
@@ -162,5 +162,9 @@ public class MarcaService {
             LOGGER.info("Erro ao deletar marcas");
             LOGGER.error(e.toString());
         }
+    }
+
+    public Marca findEntityById(Long id) throws CannotFindAnyMarcaWithId {
+        return this.iMarcaRepository.findById(id).orElseThrow(() -> new CannotFindAnyMarcaWithId("Não foi possivel encontrar nenhuma marca com esse id. [" + id + "]"));
     }
 }

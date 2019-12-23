@@ -44,5 +44,11 @@ public class VehicleModelImportTest {
         vehicleModelImport.readFile(mockMultipartFile);
     }
 
-
+    //file doesn't contains ";", should return ContentDispositionException
+    @Test(expected = ContentDispositionException.class)
+    public void fileSeparatorInvalid() throws Exception {
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("user-file", "fileName",
+                "text/plain", "header;header\n2 teste".getBytes());
+        vehicleModelImport.readFile(mockMultipartFile);
+    }
 }

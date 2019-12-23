@@ -51,5 +51,6 @@ public class VehicleModelImportTest {
         MockMultipartFile mockMultipartFile = new MockMultipartFile("user-file", "fileName",
                 "text/plain", "header;header\n2 teste".getBytes());
         vehicleModelImport.readFile(mockMultipartFile);
+
     }
 }

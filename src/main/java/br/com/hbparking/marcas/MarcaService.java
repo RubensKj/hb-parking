@@ -1,6 +1,7 @@
 package br.com.hbparking.marcas;
 
 import br.com.hbparking.util.Extension;
+import br.com.hbparking.vehicleException.ContentDispositionException;
 import com.opencsv.*;
 import net.bytebuddy.implementation.bytecode.Throw;
 import org.apache.commons.io.FilenameUtils;
@@ -142,7 +143,7 @@ public class MarcaService {
 
     }
 
-    private void readDataFromCsv(MultipartFile file, String tipo) throws IOException {
+    private void readDataFromCsv(MultipartFile file, String tipo) throws IOException, ContentDispositionException {
         InputStreamReader reader = new InputStreamReader(file.getInputStream(), StandardCharsets.ISO_8859_1);
         CSVParser parser = new CSVParserBuilder().build();
         CSVReader csvReader = new CSVReaderBuilder(reader)
@@ -186,7 +187,7 @@ public class MarcaService {
         return this.iMarcaRepository.findById(id).orElseThrow(() -> new CannotFindAnyMarcaWithId("Não foi possivel encontrar nenhuma marca com esse id. [" + id + "]"));
     }
 
-    public List<String[]> lerLinhasCsv(CSVReader csvReader) throws IOException {
+    public List<String[]> lerLinhasCsv(CSVReader csvReader) throws ContentDispositionException, IOException {
         List<String[]> linhas = new ArrayList<>();
         String[] linha;
         while ((linha = csvReader.readNext()) != null) {
@@ -196,7 +197,7 @@ public class MarcaService {
                     linhas.add(linha);
                 }
             } else {
-                throw new IllegalArgumentException(String.format("Formato de arquivo CSV Inválido."));
+                throw new ContentDispositionException("Separador do arquivo CSV Inválido, separador esperado:(;)");
             }
         }
         return linhas;

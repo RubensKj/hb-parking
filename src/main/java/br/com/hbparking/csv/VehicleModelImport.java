@@ -78,6 +78,7 @@ public class VehicleModelImport {
         bufferedReader.readLine();
 
         while ((line = bufferedReader.readLine()) != null) {
+
             if(!line.contains(";")){throw new ContentDispositionException("O separdaor do arquivo é invalido, verifique se o arquivo é separado por \";\"");}
             dataArray.add(line.split(";"));
         }

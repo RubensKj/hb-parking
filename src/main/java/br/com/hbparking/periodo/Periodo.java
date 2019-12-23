@@ -13,6 +13,7 @@ public class Periodo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "tipo_veiculo", nullable = false)
     public VehicleType tipoVeiculo;
 
@@ -21,6 +22,9 @@ public class Periodo {
 
     @Column(name = "data_final", nullable = false)
     public LocalDate dataFinal;
+
+    public Periodo() {
+    }
 
     public Periodo(VehicleType tipoVeiculo, LocalDate dataInicial, LocalDate dataFinal) {
         this.tipoVeiculo = tipoVeiculo;

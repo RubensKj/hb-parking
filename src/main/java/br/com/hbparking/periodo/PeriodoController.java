@@ -1,9 +1,9 @@
 package br.com.hbparking.periodo;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import br.com.hbparking.tipoveiculo.VehicleType;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -18,5 +18,10 @@ public class PeriodoController {
     @PostMapping("/periodo/criar")
     public PeriodoDTO save(@RequestBody PeriodoDTO periodoDTO) {
         return this.periodoService.create(periodoDTO);
+    }
+
+    @GetMapping("/periodo/buscar-tipo/{tipoVeiculo}")
+    public List<PeriodoDTO> findAllByVehicleType(@PathVariable VehicleType tipoVeiculo) {
+        return this.periodoService.findPeriodoByVehicleType(tipoVeiculo);
     }
 }

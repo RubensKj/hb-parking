@@ -16,7 +16,7 @@ public class ColaboradorController {
 
 
     @PostMapping("/cadastrar")
-    public void cadastrarColaborador(@RequestBody @Valid ColaboradorDTO colaboradorDTO){
+    public void cadastrarColaborador(@RequestBody @Valid ColaboradorDTO colaboradorDTO) throws Exception {
         this.colaboradorService.save(colaboradorDTO);
     }
 

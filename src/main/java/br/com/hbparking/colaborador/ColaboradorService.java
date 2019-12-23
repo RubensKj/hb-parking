@@ -8,12 +8,14 @@ import java.util.Optional;
 @Service
 public class ColaboradorService {
     private final ColaboradorRepository colaboradorRepository;
+    private final NotifyHBEmployee notifyHBEmployee;
 
-    public ColaboradorService(ColaboradorRepository colaboradorRepository) {
+    public ColaboradorService(ColaboradorRepository colaboradorRepository, NotifyHBEmployee notifyHBEmployee) {
         this.colaboradorRepository = colaboradorRepository;
+        this.notifyHBEmployee = notifyHBEmployee;
     }
 
-    public void save(ColaboradorDTO colaboradorDTO){
+    public void save(ColaboradorDTO colaboradorDTO) throws Exception {
         Colaborador colaborador = new Colaborador();
         colaborador.setDataNascimento(convertStringToCalendar(colaboradorDTO.getDataNascimento()));
         colaborador.setEmail(colaboradorDTO.getEmail());
@@ -22,6 +24,9 @@ public class ColaboradorService {
         colaborador.setTrabalhoNoturno(colaboradorDTO.isTrabalhoNoturno());
 
         colaborador = this.colaboradorRepository.save(colaborador);
+
+        //notify hbemployee
+        this.notifyHBEmployee.notify("http://localhost:8090/api/teste");
     }
 
     public Calendar convertStringToCalendar(String dataNascimento){
@@ -73,4 +78,5 @@ public class ColaboradorService {
         }
         throw new IllegalArgumentException(String.format("O colaborador informado(%s) não existe.", id));
     }
+
 }

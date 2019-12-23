@@ -1,6 +1,7 @@
 package br.com.hbparking.marcas;
 
 import javax.persistence.*;
+
 @Entity
 @Table(name = "marcas")
 public class Marca {
@@ -10,12 +11,12 @@ public class Marca {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "tipoVeiculo")
+    @Column(name = "tipoVeiculo", length = 15, nullable = false)
     @Enumerated(EnumType.STRING)
     private TipoVeiculoEnum tipoVeiculo;
 
-    @Column(name = "nome")
-    private  String nome;
+    @Column(name = "nome", length = 100, nullable = false)
+    private String nome;
 
     public Marca() {
     }

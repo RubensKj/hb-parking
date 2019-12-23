@@ -1,6 +1,8 @@
 package br.com.hbparking.marcas;
+
 import br.com.hbparking.util.Extension;
 import com.opencsv.*;
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.EnumUtils;
@@ -12,21 +14,27 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+
 @Service
 public class MarcaService {
     private static final Logger LOGGER = LoggerFactory.getLogger(MarcaService.class);
     private final IMarcaRepository iMarcaRepository;
+
     public MarcaService(IMarcaRepository iMarcaRepository) {
         this.iMarcaRepository = iMarcaRepository;
     }
+
     public MarcaDTO save(MarcaDTO marcaDTO) {
         this.validate(marcaDTO);
         LOGGER.info("Salvando Marca");
@@ -39,6 +47,7 @@ public class MarcaService {
         marcaSave = this.iMarcaRepository.save(marcaSave);
         return MarcaDTO.of(marcaSave);
     }
+
     private void validate(MarcaDTO marcaDTO) {
         LOGGER.info("Validando Marca");
         if (marcaDTO == null) {
@@ -48,6 +57,7 @@ public class MarcaService {
             throw new IllegalArgumentException("Nome não deve ser nulo/vazio");
         }
     }
+
     public MarcaDTO findById(Long id) {
         Optional<Marca> marca = this.iMarcaRepository.findById(id);
         if (marca.isPresent()) {
@@ -55,6 +65,7 @@ public class MarcaService {
         }
         throw new IllegalArgumentException(String.format("ID %s não existe", id));
     }
+
     @Transactional(readOnly = true)
     public void exportFromData(HttpServletResponse response, String tipo) throws IOException {
         if (EnumUtils.isValidEnum(TipoVeiculoEnum.class, tipo)) {
@@ -85,6 +96,7 @@ public class MarcaService {
         }
 
     }
+
     public Page<Marca> findAllByTipoPage(String tipo, Pageable pageable) {
         if (EnumUtils.isValidEnum(TipoVeiculoEnum.class, tipo)) {
             LOGGER.info("Retornando marcas em paginas");
@@ -109,10 +121,12 @@ public class MarcaService {
         }
         throw new IllegalArgumentException(String.format("ID %s não existe", id));
     }
+
     public void delete(Long id) {
         LOGGER.info("Executando delete para marca de ID: [{}]", id);
         this.iMarcaRepository.deleteById(id);
     }
+
     public void saveDataFromUploadFile(MultipartFile file, String tipo) throws Exception {
         if (EnumUtils.isValidEnum(TipoVeiculoEnum.class, tipo)) {
             String extension = FilenameUtils.getExtension(file.getOriginalFilename());
@@ -127,38 +141,42 @@ public class MarcaService {
         }
 
     }
+
     private void readDataFromCsv(MultipartFile file, String tipo) throws IOException {
-        InputStreamReader reader = new InputStreamReader(file.getInputStream());
-        CSVParser parser = new CSVParserBuilder().withSeparator(';').build();
+        InputStreamReader reader = new InputStreamReader(file.getInputStream(), StandardCharsets.ISO_8859_1);
+        CSVParser parser = new CSVParserBuilder().build();
         CSVReader csvReader = new CSVReaderBuilder(reader)
                 .withCSVParser(parser)
                 .withSkipLines(1)
                 .build();
-        List<String[]> linhas = csvReader.readAll();
+        List<String[]> linhas = lerLinhasCsv(csvReader);
         deleteAllByTipoIsNotIn(linhas, tipo);
         saveMarcasFromCsv(linhas, tipo);
+
     }
+
     public void saveMarcasFromCsv(List<String[]> linhas, String tipo) {
+        int qtdRegistros = 0;
         for (String[] linha : linhas) {
-            if(linha[1].length() < 1){
-                continue;
-            }
             Marca marca = new Marca(TipoVeiculoEnum.valueOf(tipo), linha[1]);
             try {
                 this.iMarcaRepository.save(marca);
+                qtdRegistros++;
             } catch (Exception e) {
                 LOGGER.error("Erro: {}", e.toString());
             }
         }
+        LOGGER.info("Quantidade de marcas novas cadastradas: {}", qtdRegistros);
     }
+
     public void deleteAllByTipoIsNotIn(List<String[]> nomeMarca, String tipo) {
         List<String> nomes = new ArrayList<>();
         for (String[] nome : nomeMarca) {
             nomes.add(nome[1]);
         }
-        try{
+        try {
             iMarcaRepository.deleteAllByNomeIsNotInByTipo(nomes, TipoVeiculoEnum.valueOf(tipo));
-        }catch (Exception e){
+        } catch (Exception e) {
             LOGGER.error("Erro ao deletar marcas");
             LOGGER.error(e.toString());
         }
@@ -166,5 +184,22 @@ public class MarcaService {
 
     public Marca findEntityById(Long id) throws CannotFindAnyMarcaWithId {
         return this.iMarcaRepository.findById(id).orElseThrow(() -> new CannotFindAnyMarcaWithId("Não foi possivel encontrar nenhuma marca com esse id. [" + id + "]"));
+    }
+
+    public List<String[]> lerLinhasCsv(CSVReader csvReader) throws IOException {
+        List<String[]> linhas = new ArrayList<>();
+        String[] linha;
+        while ((linha = csvReader.readNext()) != null) {
+            if (linha[0].contains(";")) {
+                linha = linha[0].split(";");
+                if (linha.length > 0) {
+                    linhas.add(linha);
+                }
+            } else {
+                throw new IllegalArgumentException(String.format("Formato de arquivo CSV Inválido."));
+            }
+        }
+        return linhas;
+
     }
 }

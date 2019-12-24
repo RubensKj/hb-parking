@@ -77,7 +77,7 @@ public class VehicleModelImport {
         List<String[]> dataArray = new ArrayList<>();
         bufferedReader.readLine();
 
-        while ((line = bufferedReader.readLine()) != null || !line.isEmpty()) {
+        while ((line = bufferedReader.readLine()) != null || line.isEmpty()) {
             if(!line.contains(";")){throw new ContentDispositionException("O separdaor do arquivo é invalido, verifique se o arquivo é separado por \";\"");}
             dataArray.add(line.split(";"));
         }

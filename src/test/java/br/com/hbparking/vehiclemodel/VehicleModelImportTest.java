@@ -1,12 +1,12 @@
 package br.com.hbparking.vehiclemodel;
 
-import br.com.hbparking.csv.VehicleModelImport;
+import br.com.hbparking.csvVehicleModel.VehicleModelImport;
 import br.com.hbparking.marcas.IMarcaRepository;
 import br.com.hbparking.marcas.MarcaService;
+import br.com.hbparking.util.ReadFileCSV;
 import br.com.hbparking.vehicleException.ContentDispositionException;
 import br.com.hbparking.vehicleModel.IVehicleModelRepository;
 import br.com.hbparking.vehicleModel.VehicleModelService;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -27,6 +27,8 @@ public class VehicleModelImportTest {
     private VehicleModelImport vehicleModelImport;
     @InjectMocks
     private MarcaService marcaService;
+    @Mock
+    private ReadFileCSV readFile;
 
     //testing that case the file uploaded is empty will return IllegalArgumentException
     @Test(expected = IllegalArgumentException.class)
@@ -34,7 +36,7 @@ public class VehicleModelImportTest {
 
         MockMultipartFile mockMultipartFile = new MockMultipartFile("user-file", "fileName",
                 "text/plain", new byte[0]);
-        vehicleModelImport.readFile(mockMultipartFile);
+        this.readFile.read(mockMultipartFile);
     }
 
     //testing that case the content doesn't make sense to the program it will return a ContentDispositionException
@@ -42,7 +44,7 @@ public class VehicleModelImportTest {
     public void fileContentDispositionNotExpected() throws Exception {
         MockMultipartFile mockMultipartFile = new MockMultipartFile("user-file", "fileName",
                 "text/plain", "teste".getBytes());
-        vehicleModelImport.readFile(mockMultipartFile);
+        this.readFile.read(mockMultipartFile);
     }
 
     //file doesn't contains ";", should return ContentDispositionException
@@ -50,7 +52,6 @@ public class VehicleModelImportTest {
     public void fileSeparatorInvalid() throws Exception {
         MockMultipartFile mockMultipartFile = new MockMultipartFile("user-file", "fileName",
                 "text/plain", "header;header\n2 teste".getBytes());
-        vehicleModelImport.readFile(mockMultipartFile);
-
+        this.readFile.read(mockMultipartFile);
     }
 }

@@ -1,6 +1,7 @@
 package br.com.hbparking.colaborador;
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
@@ -33,5 +34,10 @@ public class ColaboradorController {
     @DeleteMapping("/delete/{id}")
     public void delete(@PathVariable("id") int id){
         this.colaboradorService.delete(id);
+    }
+
+    @PostMapping("/cadastrar/csv")
+    public void cadastrarCsv(@RequestBody MultipartFile multipartFile) throws Exception {
+        this.colaboradorService.importColaborador(multipartFile);
     }
 }

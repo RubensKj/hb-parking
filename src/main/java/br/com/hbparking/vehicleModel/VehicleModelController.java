@@ -1,7 +1,7 @@
 package br.com.hbparking.vehicleModel;
 
-import br.com.hbparking.csv.VehicleModelExport;
-import br.com.hbparking.csv.VehicleModelImport;
+import br.com.hbparking.csvVehicleModel.VehicleModelExport;
+import br.com.hbparking.csvVehicleModel.VehicleModelImport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;

@@ -1,6 +1,6 @@
 package br.com.hbparking.vehicleModel;
 
-import br.com.hbparking.csv.VehicleGroupDTO;
+import br.com.hbparking.csvVehicleModel.VehicleGroupDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

@@ -2,19 +2,14 @@ package br.com.hbparking.termoLocacao;
 
 import lombok.*;
 
-@EqualsAndHashCode
-@ToString
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class RentalTermDTO {
 
-    @Getter @Setter
     private Long id;
-    @Getter @Setter
     private String title;
-    @Getter @Setter
     private String fileName;
-    @Getter @Setter
     private String rentalTermStatus;
 
     public RentalTermDTO(String title, String fileName, String rentalTermStatus) {

@@ -4,16 +4,12 @@ package br.com.hbparking.marcas;
 import lombok.*;
 
 @NoArgsConstructor
-@EqualsAndHashCode
-@ToString
+@Data
 @AllArgsConstructor
 public class MarcaDTO {
 
-    @Getter @Setter
     private Long id;
-    @Getter @Setter
     private TipoVeiculoEnum tipoVeiculo;
-    @Getter @Setter
     private String nome;
 
 

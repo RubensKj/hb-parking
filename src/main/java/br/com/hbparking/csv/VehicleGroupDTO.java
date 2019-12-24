@@ -2,9 +2,9 @@ package br.com.hbparking.csv;
 
 import lombok.*;
 
-@EqualsAndHashCode
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class VehicleGroupDTO {
 
     private Long codigoMarca;

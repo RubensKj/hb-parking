@@ -70,7 +70,7 @@ public class MarcaService {
     @Transactional(readOnly = true)
     public void exportFromData(HttpServletResponse response, String tipo) throws IOException {
         if (EnumUtils.isValidEnum(TipoVeiculoEnum.class, tipo)) {
-            String[] headerCSV = {"ID", "NOME_MARCA"};
+            final String[] headerCSV = {"ID", "NOME_MARCA"};
             String filename = "marcas.csv";
             response.setContentType("text/csv");
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION,

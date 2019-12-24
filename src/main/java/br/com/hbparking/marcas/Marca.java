@@ -1,9 +1,13 @@
 package br.com.hbparking.marcas;
 
+import lombok.*;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "marcas")
+@Data
+@NoArgsConstructor
 public class Marca {
 
     @Id
@@ -18,44 +22,11 @@ public class Marca {
     @Column(name = "nome", length = 100, nullable = false)
     private String nome;
 
-    public Marca() {
-    }
 
     public Marca(TipoVeiculoEnum tipoVeiculo, String nome) {
         this.tipoVeiculo = tipoVeiculo;
         this.nome = nome;
     }
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public TipoVeiculoEnum getTipoVeiculo() {
-        return tipoVeiculo;
-    }
-
-    public void setTipoVeiculo(TipoVeiculoEnum tipoVeiculo) {
-        this.tipoVeiculo = tipoVeiculo;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    @Override
-    public String toString() {
-        return "Marca{" +
-                "id=" + id +
-                ", Nome ='" + getNome() + '\'' +
-                ", Tipo veiculo ='" + getTipoVeiculo().getDescricao() + '\'' +
-                '}';
-    }
 }

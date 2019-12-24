@@ -31,6 +31,7 @@ public class VehicleModelImportTest {
     //testing that case the file uploaded is empty will return IllegalArgumentException
     @Test(expected = IllegalArgumentException.class)
     public void fileEmptyReturnException() throws Exception {
+
         MockMultipartFile mockMultipartFile = new MockMultipartFile("user-file", "fileName",
                 "text/plain", new byte[0]);
         vehicleModelImport.readFile(mockMultipartFile);

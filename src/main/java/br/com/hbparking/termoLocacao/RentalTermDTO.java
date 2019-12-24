@@ -1,23 +1,21 @@
 package br.com.hbparking.termoLocacao;
 
-import org.springframework.core.io.Resource;
+import lombok.*;
 
+@EqualsAndHashCode
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class RentalTermDTO {
 
+    @Getter @Setter
     private Long id;
+    @Getter @Setter
     private String title;
+    @Getter @Setter
     private String fileName;
+    @Getter @Setter
     private String rentalTermStatus;
-
-    public RentalTermDTO() {
-    }
-
-    public RentalTermDTO(Long id, String title, String fileName, String rentalTermStatus) {
-        this.id = id;
-        this.title = title;
-        this.fileName = fileName;
-        this.rentalTermStatus = rentalTermStatus;
-    }
 
     public RentalTermDTO(String title, String fileName, String rentalTermStatus) {
         this.title = title;
@@ -32,19 +30,5 @@ public class RentalTermDTO {
                 rentalTerm.getRentalTermStatus().name());
     }
 
-    public Long getId() {
-        return id;
-    }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public String getRentalTermStatus() {
-        return rentalTermStatus;
-    }
 }

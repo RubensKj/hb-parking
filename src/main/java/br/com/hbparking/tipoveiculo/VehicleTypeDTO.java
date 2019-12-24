@@ -1,20 +1,15 @@
 package br.com.hbparking.tipoveiculo;
 
+import lombok.*;
+
+@EqualsAndHashCode
+@ToString
+@AllArgsConstructor
 public class VehicleTypeDTO {
 
+    @Getter @Setter
     private int codigo;
+    @Getter @Setter
     private String descricao;
 
-    public VehicleTypeDTO(int codigo, String descricao) {
-        this.codigo = codigo;
-        this.descricao = descricao;
-    }
-
-    public int getCodigo() {
-        return codigo;
-    }
-
-    public String getDescricao() {
-        return descricao;
-    }
 }

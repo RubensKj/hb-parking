@@ -27,6 +27,7 @@ public class MarcaService {
     public MarcaService(IMarcaRepository iMarcaRepository) {
         this.iMarcaRepository = iMarcaRepository;
     }
+
     public MarcaDTO save(MarcaDTO marcaDTO) {
         this.validate(marcaDTO);
         LOGGER.info("Salvando Marca");

@@ -1,6 +1,5 @@
 package br.com.hbparking.periodo;
 
-import br.com.hbparking.marcas.TipoVeiculoEnum;
 import br.com.hbparking.tipoveiculo.VehicleType;
 
 import javax.persistence.*;

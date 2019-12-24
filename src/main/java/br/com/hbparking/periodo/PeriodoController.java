@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = {"http://localhost:4200", "http://192.168.33.216:4200", "https://192.168.33.216:4200", "*", "http://192.168.32.28:4200", "https://192.168.32.28:4200"})
 @RestController
 @RequestMapping("/api")
 public class PeriodoController {

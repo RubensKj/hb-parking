@@ -7,6 +7,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/colaborador")
+@CrossOrigin(origins = "192.168.32.25:4200")
 public class ColaboradorController {
 
     private final ColaboradorService colaboradorService;
@@ -37,7 +38,7 @@ public class ColaboradorController {
     }
 
     @PostMapping("/cadastrar/csv")
-    public void cadastrarCsv(@RequestBody MultipartFile multipartFile) throws Exception {
+    public void cadastrarCsv(@RequestParam("file") MultipartFile multipartFile) throws Exception {
         this.colaboradorService.importColaborador(multipartFile);
     }
 }

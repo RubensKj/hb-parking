@@ -7,7 +7,6 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/colaborador")
-@CrossOrigin(origins = "192.168.32.25:4200")
 public class ColaboradorController {
 
     private final ColaboradorService colaboradorService;

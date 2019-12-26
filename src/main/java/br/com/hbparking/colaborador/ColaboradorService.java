@@ -113,8 +113,12 @@ public class ColaboradorService {
 
                 colaborador.setDataNascimento(calendar);
 
-                colaborador.setPcd(Boolean.parseBoolean(data.get(i)[3]));
-                colaborador.setTrabalhoNoturno(Boolean.parseBoolean(data.get(i)[4]));
+                //convert strings "sim" or "não" to boolean true or false
+
+                boolean[] pcdTrabalhoNoturnoBoolean = this.convertStringBoolean(data.get(i)[3], data.get(i)[4]);
+
+                colaborador.setPcd(pcdTrabalhoNoturnoBoolean[0]);
+                colaborador.setTrabalhoNoturno(pcdTrabalhoNoturnoBoolean[1]);
 
                 colaboradorList.add(colaborador);
             }catch (Exception e){
@@ -131,6 +135,14 @@ public class ColaboradorService {
         }
     }
 
-    public void saveAllCsv(List<Colaborador> colaboradorList) { this.colaboradorRepository.saveAll(colaboradorList);
+    public void saveAllCsv(List<Colaborador> colaboradorList) { this.colaboradorRepository.saveAll(colaboradorList); }
+
+    public boolean[] convertStringBoolean(String pcd, String trabalhoNoturno){
+        boolean[] pcdTrabalhoNoturnoBoolean = new boolean[2];
+
+        pcdTrabalhoNoturnoBoolean[0] = (pcd.equalsIgnoreCase("sim")) ? true : false;
+        pcdTrabalhoNoturnoBoolean[1] = (trabalhoNoturno.equalsIgnoreCase("sim")) ? true : false;
+
+        return pcdTrabalhoNoturnoBoolean;
     }
 }

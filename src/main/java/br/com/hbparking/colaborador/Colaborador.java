@@ -9,17 +9,17 @@ public class Colaborador {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_colaborador")
-    Integer id;
+    private Integer id;
     @Column(name = "email", nullable = false)
-    String email;
+    private String email;
     @Column(name = "nome", nullable = false)
-    String nome;
+    private String nome;
     @Column(name = "data_nascimento", nullable = false)
-    Calendar dataNascimento;
+    private Calendar dataNascimento;
     @Column(name = "pcd", nullable = true)
-    Boolean pcd;
+    private Boolean pcd;
     @Column(name = "trabalho_noturno", nullable = true)
-    Boolean trabalhoNoturno;
+    private Boolean trabalhoNoturno;
 
     public Colaborador() {
     }

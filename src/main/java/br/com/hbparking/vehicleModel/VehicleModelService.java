@@ -1,6 +1,6 @@
 package br.com.hbparking.vehicleModel;
 
-import br.com.hbparking.csvVehicleModel.VehicleGroupDTO;
+import br.com.hbparking.csv.VehicleGroupDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

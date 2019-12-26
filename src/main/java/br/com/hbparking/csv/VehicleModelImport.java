@@ -1,4 +1,4 @@
-package br.com.hbparking.csvVehicleModel;
+package br.com.hbparking.csv;
 
 import br.com.hbparking.marcas.CannotFindAnyMarcaWithId;
 import br.com.hbparking.marcas.Marca;

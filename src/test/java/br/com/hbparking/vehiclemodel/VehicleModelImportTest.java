@@ -1,6 +1,6 @@
 package br.com.hbparking.vehiclemodel;
 
-import br.com.hbparking.csvVehicleModel.VehicleModelImport;
+import br.com.hbparking.csv.VehicleModelImport;
 import br.com.hbparking.marcas.IMarcaRepository;
 import br.com.hbparking.marcas.MarcaService;
 import br.com.hbparking.util.ReadFileCSV;

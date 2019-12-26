@@ -1,6 +1,7 @@
 package br.com.hbparking.marca;
 
 import br.com.hbparking.marcas.*;
+import br.com.hbparking.vehicleException.ContentDispositionException;
 import com.opencsv.CSVReader;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -168,7 +169,7 @@ public class MarcaServiceTest {
 
     }
     @Test
-    public void readValidCSV() throws IOException {
+    public void readValidCSV() throws IOException, ContentDispositionException {
 
         StringBuffer sb = new StringBuffer();
 

@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface IVehicleModelRepository extends JpaRepository<VehicleModel, Long> {
     //get the model by brand
-    @Query("select new br.com.hbparking.csvModelVehicle.VehicleGroupDTO(vm.fkMarca.id, vm.modelo) from VehicleModel vm order by fkMarca")
+    @Query("select new br.com.hbparking.csv.VehicleGroupDTO(vm.fkMarca.id, vm.modelo) from VehicleModel vm order by fkMarca")
     List<VehicleGroupDTO> findAllGroupByFkMarca();
 
     void deleteAllByModeloIsNotIn(List<String> modeloNome);

@@ -10,8 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 
-
-@CrossOrigin(origins = {"http://localhost:4200", "http://172.17.48.49", "http://172.17.48.49:4200", "http://192.168.32.95", "http://192.168.32.95:4200"})
 @RestController
 @RequestMapping("api/marcas")
 public class MarcaRest {

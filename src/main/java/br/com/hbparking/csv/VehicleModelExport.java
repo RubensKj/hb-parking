@@ -3,7 +3,7 @@ package br.com.hbparking.csv;
 import br.com.hbparking.vehicleModel.VehicleModelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@Service
+@Component
 public class VehicleModelExport {
 
     private static final String FILE_NAME = "Modelo de veiculos";

@@ -34,10 +34,7 @@ public class MarcaRest {
     public void uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("tipo") String tipo) throws Exception {
 
         marcaService.saveDataFromUploadFile(file, tipo);
-
-
-        LOGGER.info("{}",
-                "File Upload Successfully!");
+        LOGGER.info("Arquivo salvo com sucesso!");
     }
 
 

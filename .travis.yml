@@ -3,8 +3,6 @@ language: java
 jdk:
   openjdk8
 
-os: windows
-
 services:
   - docker
 

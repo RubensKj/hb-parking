@@ -1,9 +1,12 @@
 package br.com.hbparking.periodo;
 
 import br.com.hbparking.tipoveiculo.VehicleType;
+import br.com.hbparking.util.DateHelper;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDate;
+
+import static br.com.hbparking.util.DateHelper.formatDate;
 
 public class PeriodoDTO {
 
@@ -17,6 +20,8 @@ public class PeriodoDTO {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     public LocalDate dataFinal;
 
+    public String descricao;
+
     public PeriodoDTO() {
     }
 
@@ -26,9 +31,10 @@ public class PeriodoDTO {
         this.dataFinal = dataFinal;
     }
 
-    public PeriodoDTO(VehicleType tipoVeiculo, LocalDate dataFinal, LocalDate dataInicial, Long id) {
+    public PeriodoDTO(Long id, VehicleType vehicleType, String descricao, LocalDate dataFinal, LocalDate dataInicial) {
         this.id = id;
-        this.vehicleType = tipoVeiculo;
+        this.vehicleType = vehicleType;
+        this.descricao = descricao;
         this.dataFinal = dataFinal;
         this.dataInicial = dataInicial;
     }
@@ -65,12 +71,21 @@ public class PeriodoDTO {
         this.dataFinal = dataFinal;
     }
 
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
     public static PeriodoDTO of(Periodo periodo) {
         return new PeriodoDTO(
+                periodo.getId(),
                 periodo.getTipoVeiculo(),
+                "De " + formatDate(periodo.getDataInicial()) + " até " + formatDate(periodo.getDataFinal()),
                 periodo.getDataFinal(),
-                periodo.getDataInicial(),
-                periodo.getId()
+                periodo.getDataInicial()
         );
     }
 }

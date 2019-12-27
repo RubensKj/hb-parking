@@ -5,8 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PeriodoService {
@@ -32,7 +34,8 @@ public class PeriodoService {
 
     public List<PeriodoDTO> parsePeriodoListToPeriodoDTOList(List<Periodo> periodosList) {
         List<PeriodoDTO> periodoDTOList = new ArrayList<>();
-        periodosList.forEach(periodo -> periodoDTOList.add(PeriodoDTO.of(periodo)));
+        List<Periodo> periodosFiltrada = periodosList.stream().filter(periodo -> periodo.getDataFinal().isAfter(LocalDate.now())).collect(Collectors.toList());
+        periodosFiltrada.forEach(periodo -> periodoDTOList.add(PeriodoDTO.of(periodo)));
         return periodoDTOList;
     }
 

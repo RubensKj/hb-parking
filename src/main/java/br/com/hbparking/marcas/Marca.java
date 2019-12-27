@@ -22,10 +22,29 @@ public class Marca {
     @Column(name = "nome", length = 100, nullable = false)
     private String nome;
 
+
     public Marca(TipoVeiculoEnum tipoVeiculo, String nome) {
         this.tipoVeiculo = tipoVeiculo;
         this.nome = nome;
     }
 
+    public Long getId() {
+        return id;
+    }
 
+    public TipoVeiculoEnum getTipoVeiculo() {
+        return tipoVeiculo;
+    }
+
+    public void setTipoVeiculo(TipoVeiculoEnum tipoVeiculo) {
+        this.tipoVeiculo = tipoVeiculo;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
 }

@@ -1,31 +1,10 @@
-sudo: true
-dist: trusty
-
 language: java
 jdk:
   - openjdk8
-
-services:
-  - docker
-
 before_install:
+  - chmod +x mvnw
+
+before_script:
   - sudo docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=<Teste!@#>" \
-    -p 1433:1433 --name sql1 \
-    -d mcr.microsoft.com/mssql/server:2019-GA-ubuntu-16.04
-  - docker pull carlad/sinatra
-  - docker run -d -p 127.0.0.1:80:4567 carlad/sinatra /bin/sh -c "cd /root/sinatra; bundle exec foreman start;"
-  - docker ps -a
-  - docker run carlad/sinatra /bin/sh -c "cd /root/sinatra; bundle exec rake test"
-
-script:
-  - bundle exec rake test
-
-jobs:
-  include:
-    - stage: build docker image
-      script:        
-        - docker build -t travis-ci-build-stages-demo
-        - docker images
-        - docker tag travis-ci-build-stages-demo /travis-ci-build-stages-demo
-        - docker push /travis-ci-build-stages-demo
-    - stage: test
+  -p 1433:1433 --name sql1 \
+  -d microsoft/mssql-server-linux

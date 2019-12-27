@@ -3,6 +3,8 @@ package br.com.hbparking.periodo;
 import br.com.hbparking.tipoveiculo.VehicleType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -27,16 +29,8 @@ public class PeriodoService {
         return PeriodoDTO.of(this.iPeriodoRepository.save(new Periodo(periodoDTO.getVehicleType(), periodoDTO.getDataInicial(), periodoDTO.getDataFinal())));
     }
 
-    public List<PeriodoDTO> findPeriodoByVehicleType(VehicleType vehicleType) {
-        List<Periodo> periodoList = this.iPeriodoRepository.findAllByTipoVeiculo(vehicleType);
-        return this.parsePeriodoListToPeriodoDTOList(periodoList);
-    }
-
-    public List<PeriodoDTO> parsePeriodoListToPeriodoDTOList(List<Periodo> periodosList) {
-        List<PeriodoDTO> periodoDTOList = new ArrayList<>();
-        List<Periodo> periodosFiltrada = periodosList.stream().filter(periodo -> periodo.getDataFinal().isAfter(LocalDate.now())).collect(Collectors.toList());
-        periodosFiltrada.forEach(periodo -> periodoDTOList.add(PeriodoDTO.of(periodo)));
-        return periodoDTOList;
+    public Page<Periodo> findPeriodoByVehicleType(VehicleType vehicleType, Pageable pageable) {
+        return this.iPeriodoRepository.findAllByTipoVeiculo(vehicleType, pageable);
     }
 
     private void validarPeriodo(PeriodoDTO periodoDTO) {

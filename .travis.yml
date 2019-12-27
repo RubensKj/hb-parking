@@ -4,8 +4,6 @@ dist: trusty
 language: java
 jdk:
   - openjdk8
-before_install:
-  - chmod +x mvnw
 
 services:
   - docker
@@ -18,7 +16,6 @@ before_install:
 
 script:
   - bundle exec rake test
-
 
 jobs:
   include:

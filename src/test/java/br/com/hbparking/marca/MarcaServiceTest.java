@@ -149,7 +149,7 @@ public class MarcaServiceTest {
         sb.append("a\tc");
 
         CSVReader c = new CSVReader(new StringReader(sb.toString()));
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(ContentDispositionException.class, () -> {
              marcaService.lerLinhasCsv(c);
         });
 
@@ -163,7 +163,7 @@ public class MarcaServiceTest {
         sb.append("a,c/34/dr");
 
         CSVReader c = new CSVReader(new StringReader(sb.toString()));
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(ContentDispositionException.class, () -> {
             marcaService.lerLinhasCsv(c);
         });
 

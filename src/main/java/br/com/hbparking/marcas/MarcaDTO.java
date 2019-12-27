@@ -1,20 +1,17 @@
 package br.com.hbparking.marcas;
 
 
+import lombok.*;
+
+@NoArgsConstructor
+@Data
+@AllArgsConstructor
 public class MarcaDTO {
 
     private Long id;
     private TipoVeiculoEnum tipoVeiculo;
     private String nome;
 
-    public MarcaDTO() {
-    }
-
-    public MarcaDTO(Long id, TipoVeiculoEnum tipoVeiculo, String nome) {
-        this.id = id;
-        this.tipoVeiculo = tipoVeiculo;
-        this.nome = nome;
-    }
 
     public MarcaDTO(TipoVeiculoEnum tipoVeiculo, String nome) {
         this.tipoVeiculo = tipoVeiculo;
@@ -29,36 +26,5 @@ public class MarcaDTO {
                 );
     }
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public TipoVeiculoEnum getTipoVeiculo() {
-        return tipoVeiculo;
-    }
-
-    public void setTipoVeiculo(TipoVeiculoEnum tipoVeiculo) {
-        this.tipoVeiculo = tipoVeiculo;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    @Override
-    public String toString() {
-        return "MarcaDTO{" +
-                "id=" + id +
-                ", Nome ='" + getNome() + '\'' +
-                ", Tipo veiculo: ='" + getTipoVeiculo().getDescricao() + '\'' +
-                '}';
-    }
 }

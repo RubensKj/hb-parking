@@ -3,7 +3,7 @@ package br.com.hbparking.csv;
 import br.com.hbparking.marcas.CannotFindAnyMarcaWithId;
 import br.com.hbparking.marcas.Marca;
 import br.com.hbparking.marcas.MarcaService;
-import br.com.hbparking.vehicleException.ContentDispositionException;
+import br.com.hbparking.util.ReadFileCSV;
 import br.com.hbparking.vehicleModel.VehicleModel;
 import br.com.hbparking.vehicleModel.VehicleModelService;
 import org.springframework.stereotype.Component;
@@ -11,8 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,15 +19,17 @@ import java.util.stream.Collectors;
 public class VehicleModelImport {
     private final VehicleModelService vehicleModelService;
     private final MarcaService marcaService;
+    private final ReadFileCSV readFile;
 
-    public VehicleModelImport(VehicleModelService vehicleModelService, MarcaService marcaService) {
+    public VehicleModelImport(VehicleModelService vehicleModelService, MarcaService marcaService, ReadFileCSV readFile) {
         this.vehicleModelService = vehicleModelService;
         this.marcaService = marcaService;
+        this.readFile = readFile;
     }
 
     @Transactional
     public void importVehicle(MultipartFile multipartFile, HttpServletResponse response) throws Exception {
-        List<String[]> dataArray = this.readFile(multipartFile);
+        List<String[]> dataArray = this.readFile.read(multipartFile);
         List<VehicleModel> vehicleModelList = new ArrayList<>();
 
         dataArray.forEach(lineData -> {
@@ -66,27 +66,4 @@ public class VehicleModelImport {
         this.vehicleModelService.deleteAllByModeloIsNotIn(nomes);
     }
 
-    public List<String[]> readFile(MultipartFile multipartFile) throws Exception {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(multipartFile.getInputStream()));
-        String line;
-
-        if (multipartFile.isEmpty()) {
-            throw new IllegalArgumentException("O arquivo enviado está vazio");
-        }
-
-        List<String[]> dataArray = new ArrayList<>();
-        bufferedReader.readLine();
-
-        while ((line = bufferedReader.readLine()) != null) {
-            dataArray.add(line.split(";"));
-        }
-
-        bufferedReader.close();
-
-        if (dataArray.isEmpty()) {
-            throw new ContentDispositionException("O conteudo possuido pelo arquivo não atende o padrão esperado.");
-        }
-
-        return dataArray;
-    }
 }

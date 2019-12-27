@@ -22,7 +22,7 @@ public class ColaboradorController {
     }
 
     @GetMapping("/{id}")
-    public ColaboradorDTO getColaborador(@PathVariable("id") int id){
+    public ColaboradorDTO getColaborador(@PathVariable("id") Long id) {
         return this.colaboradorService.getColaborador(id);
     }
 
@@ -32,12 +32,17 @@ public class ColaboradorController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public void delete(@PathVariable("id") int id){
+    public void delete(@PathVariable("id") Long id) {
         this.colaboradorService.delete(id);
     }
 
     @PostMapping("/cadastrar/csv")
     public void cadastrarCsv(@RequestParam("file") MultipartFile multipartFile) throws Exception {
         this.colaboradorService.importColaborador(multipartFile);
+    }
+
+    @PostMapping("/configurar/parametros/locacao")
+    public ColaboradorDTO configurarParametrosLocacao(@RequestBody ColaboradorDTO colaboradorDTO) {
+        return this.colaboradorService.receberParametrosLocacao(colaboradorDTO);
     }
 }

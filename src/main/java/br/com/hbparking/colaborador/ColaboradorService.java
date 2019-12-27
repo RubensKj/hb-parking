@@ -5,6 +5,8 @@ import br.com.hbparking.vehicleException.ContentDispositionException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -16,6 +18,8 @@ public class ColaboradorService {
     private final NotifyHBEmployee notifyHBEmployee;
     private final ReadFileCSV readFileCSV;
 
+    private static SimpleDateFormat formatter = new SimpleDateFormat("dd/mm/yyyy");
+
     public ColaboradorService(ColaboradorRepository colaboradorRepository, NotifyHBEmployee notifyHBEmployee, ReadFileCSV readFileCSV) {
         this.colaboradorRepository = colaboradorRepository;
         this.notifyHBEmployee = notifyHBEmployee;
@@ -24,11 +28,16 @@ public class ColaboradorService {
 
     public void save(ColaboradorDTO colaboradorDTO) throws Exception {
         Colaborador colaborador = new Colaborador();
-        colaborador.setDataNascimento(convertStringToCalendar(colaboradorDTO.getDataNascimento()));
+
+        LocalDate localDate = LocalDate.parse(colaboradorDTO.getDataNascimento());
+        formatter.format(localDate);
+        colaborador.setDataNascimento(localDate);
         colaborador.setEmail(colaboradorDTO.getEmail());
         colaborador.setNome(colaboradorDTO.getNome());
         colaborador.setPcd(colaboradorDTO.isPcd());
         colaborador.setTrabalhoNoturno(colaboradorDTO.isTrabalhoNoturno());
+        colaborador.setResideForaBlumenau(colaboradorDTO.isResideForaBlumenau());
+        colaborador.setOfereceCarona(colaboradorDTO.isOfereceCarona());
 
         colaborador = this.colaboradorRepository.save(colaborador);
 
@@ -36,22 +45,7 @@ public class ColaboradorService {
         this.notifyHBEmployee.notify("http://localhost:8090/api/teste");
     }
 
-    public Calendar convertStringToCalendar(String dataNascimento) {
-        Calendar calendar = Calendar.getInstance();
-
-        //getting informador from string
-        String[] data = dataNascimento.split("-");
-
-        int year = Integer.parseInt(data[0]);
-        int month = Integer.parseInt(data[1]);
-        int day = Integer.parseInt(data[2]);
-
-        calendar.set(year, month, day);
-
-        return calendar;
-    }
-
-    public Colaborador getEntityById(int id) {
+    public Colaborador getEntityById(Long id) {
         Optional<Colaborador> colaboradorOptional = this.colaboradorRepository.findById(id);
 
         if (colaboradorOptional.isPresent()) {
@@ -60,13 +54,17 @@ public class ColaboradorService {
         throw new IllegalArgumentException(String.format("O colaborador informado(%s) não existe", id));
     }
 
-    public void delete(int id) {
+    public void delete(Long id) {
         this.colaboradorRepository.deleteById(id);
     }
 
     public ColaboradorDTO update(ColaboradorDTO colaboradorDTO, int id) {
         Colaborador colaborador = new Colaborador();
-        colaborador.setDataNascimento(convertStringToCalendar(colaboradorDTO.getDataNascimento()));
+
+        LocalDate localDate = LocalDate.parse(colaboradorDTO.getDataNascimento());
+        formatter.format(localDate);
+
+        colaborador.setDataNascimento(localDate);
         colaborador.setEmail(colaboradorDTO.getEmail());
         colaborador.setNome(colaboradorDTO.getNome());
         colaborador.setPcd(colaboradorDTO.isPcd());
@@ -77,7 +75,7 @@ public class ColaboradorService {
         return ColaboradorDTO.of(colaborador);
     }
 
-    public ColaboradorDTO getColaborador(int id) {
+    public ColaboradorDTO getColaborador(Long id) {
         Optional<Colaborador> colaboradorOptional = this.colaboradorRepository.findById(id);
 
         if (colaboradorOptional.isPresent()) {
@@ -108,10 +106,11 @@ public class ColaboradorService {
                 int month = Integer.parseInt(calendarSeparated[1]);
                 int day   = Integer.parseInt(calendarSeparated[2]);
 
-                Calendar calendar = Calendar.getInstance();
-                calendar.set(year,month,day);
+                LocalDate localDate = LocalDate.of(year, month, day);
+                SimpleDateFormat formatter = new SimpleDateFormat("dd/mm/yyyy");
+                formatter.format(localDate);
 
-                colaborador.setDataNascimento(calendar);
+                colaborador.setDataNascimento(localDate);
 
                 //convert strings "sim" or "não" to boolean true or false
 
@@ -140,9 +139,18 @@ public class ColaboradorService {
     public boolean[] convertStringBoolean(String pcd, String trabalhoNoturno){
         boolean[] pcdTrabalhoNoturnoBoolean = new boolean[2];
 
-        pcdTrabalhoNoturnoBoolean[0] = (pcd.equalsIgnoreCase("sim")) ? true : false;
-        pcdTrabalhoNoturnoBoolean[1] = (trabalhoNoturno.equalsIgnoreCase("sim")) ? true : false;
+        pcdTrabalhoNoturnoBoolean[0] = pcd.equalsIgnoreCase("sim");
+        pcdTrabalhoNoturnoBoolean[1] = trabalhoNoturno.equalsIgnoreCase("sim");
 
         return pcdTrabalhoNoturnoBoolean;
+    }
+
+    public ColaboradorDTO receberParametrosLocacao(ColaboradorDTO colaboradorDTO) {
+        Colaborador colaborador = this.getEntityById(colaboradorDTO.getId());
+
+        colaborador.setOfereceCarona(colaboradorDTO.isOfereceCarona());
+        colaborador.setResideForaBlumenau(colaboradorDTO.isResideForaBlumenau());
+
+        return ColaboradorDTO.of(this.colaboradorRepository.save(colaborador));
     }
 }

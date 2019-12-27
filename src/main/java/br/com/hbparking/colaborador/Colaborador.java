@@ -1,6 +1,7 @@
 package br.com.hbparking.colaborador;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Calendar;
 
 @Entity
@@ -9,26 +10,30 @@ public class Colaborador {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_colaborador")
-    private Integer id;
+    private Long id;
     @Column(name = "email", nullable = false)
     private String email;
     @Column(name = "nome", nullable = false)
     private String nome;
     @Column(name = "data_nascimento", nullable = false)
-    private Calendar dataNascimento;
+    private LocalDate dataNascimento;
     @Column(name = "pcd", nullable = true)
     private Boolean pcd;
     @Column(name = "trabalho_noturno", nullable = true)
     private Boolean trabalhoNoturno;
+    @Column(name = "reside_fora_blumenau", nullable = false)
+    private Boolean resideForaBlumenau;
+    @Column(name = "oferece_carona", nullable = false)
+    private Boolean ofereceCarona;
 
     public Colaborador() {
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -48,11 +53,11 @@ public class Colaborador {
         this.nome = nome;
     }
 
-    public Calendar getDataNascimento() {
+    public LocalDate getDataNascimento() {
         return dataNascimento;
     }
 
-    public void setDataNascimento(Calendar dataNascimento) {
+    public void setDataNascimento(LocalDate dataNascimento) {
         this.dataNascimento = dataNascimento;
     }
 
@@ -70,5 +75,21 @@ public class Colaborador {
 
     public void setTrabalhoNoturno(boolean trabalhoNoturno) {
         this.trabalhoNoturno = trabalhoNoturno;
+    }
+
+    public Boolean getResideForaBlumenau() {
+        return resideForaBlumenau;
+    }
+
+    public void setResideForaBlumenau(Boolean resideForaBlumenau) {
+        this.resideForaBlumenau = resideForaBlumenau;
+    }
+
+    public Boolean getOfereceCarona() {
+        return ofereceCarona;
+    }
+
+    public void setOfereceCarona(Boolean ofereceCarona) {
+        this.ofereceCarona = ofereceCarona;
     }
 }

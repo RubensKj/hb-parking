@@ -8,11 +8,9 @@ services:
 
 before_install:
   - chmod +x mvnw
-  - docker pull carlad/sinatra
-    - docker-compose build mssqlex
-    - docker run -d -p 127.0.0.1:80:1433
-    - docker ps -a
-    - docker run carlad/sinatra /bin/sh -c "cd /root/sinatra; bundle exec rake test"
+  - sudo docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Teste!@#" \
+    -p 1433:1433 --name sql1 \
+    -d mcr.microsoft.com/mssql/server:2019-GA-ubuntu-16.04
 
 
 

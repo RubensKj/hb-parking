@@ -9,9 +9,9 @@ services:
 before_install:
   - chmod +x mvnw
   - docker pull carlad/sinatra
-  - docker run -d -p 127.0.0.1:80:1433
+  - docker run -d -p 127.0.0.1:80:4567
   - docker ps -a
- 
+
 
 
 

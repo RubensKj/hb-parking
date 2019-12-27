@@ -59,12 +59,12 @@ public class MarcaService {
         }
     }
 
-    public MarcaDTO findById(Long id) {
+    public Marca findById(Long id) {
         Optional<Marca> marca = this.iMarcaRepository.findById(id);
         if (marca.isPresent()) {
-            return MarcaDTO.of(marca.get());
+            return marca.get();
         }
-        throw new IllegalArgumentException(String.format("ID %s não existe", id));
+        throw new IllegalArgumentException(String.format("ID %s de marca não existe", id));
     }
 
     @Transactional(readOnly = true)

@@ -34,9 +34,9 @@ public class PeriodoServiceTest {
 
     @Test
     public void createPeriodo_ShouldReturnPeriodo() {
-        PeriodoDTO periodoDTO = new PeriodoDTO(VehicleType.AUTOMOVEL, LocalDate.parse("2019-12-12"), LocalDate.parse("2019-12-15"));
+        PeriodoDTO periodoDTO = new PeriodoDTO(VehicleType.CARRO, LocalDate.parse("2019-12-12"), LocalDate.parse("2019-12-15"));
 
-        when(iPeriodoRepository.save(any(Periodo.class))).thenReturn(new Periodo(VehicleType.AUTOMOVEL, LocalDate.parse("2019-12-12"), LocalDate.parse("2019-12-15")));
+        when(iPeriodoRepository.save(any(Periodo.class))).thenReturn(new Periodo(VehicleType.CARRO, LocalDate.parse("2019-12-12"), LocalDate.parse("2019-12-15")));
 
         PeriodoDTO periodoCreated = this.periodoService.create(periodoDTO);
 
@@ -49,16 +49,16 @@ public class PeriodoServiceTest {
     @Test
     public void getAllPeriodosByVehicleType_ShouldReturnPeriodoList() {
         List<Periodo> periodoList = new ArrayList<>();
-        Periodo periodoUm = new Periodo(VehicleType.AUTOMOVEL, LocalDate.parse("2019-12-12"), LocalDate.parse("2019-12-15"));
+        Periodo periodoUm = new Periodo(VehicleType.CARRO, LocalDate.parse("2019-12-12"), LocalDate.parse("2019-12-15"));
         Periodo periodoDois = new Periodo(VehicleType.BICICLETA, LocalDate.parse("2022-10-05"), LocalDate.parse("2022-11-06"));
-        Periodo periodoTres = new Periodo(VehicleType.AUTOMOVEL, LocalDate.parse("2018-06-17"), LocalDate.parse("2018-09-23"));
+        Periodo periodoTres = new Periodo(VehicleType.CARRO, LocalDate.parse("2018-06-17"), LocalDate.parse("2018-09-23"));
 
         periodoList.add(periodoUm);
         periodoList.add(periodoDois);
         periodoList.add(periodoTres);
 
-        given(iPeriodoRepository.findAllByTipoVeiculo(VehicleType.AUTOMOVEL)).willReturn(periodoList.stream().filter(periodo -> periodo.getTipoVeiculo().equals(VehicleType.AUTOMOVEL)).collect(Collectors.toList()));
-        List<Periodo> periodoFilteredWithVehicleType = periodoList.stream().filter(periodo -> periodo.getTipoVeiculo().equals(VehicleType.AUTOMOVEL)).collect(Collectors.toList());
+        given(iPeriodoRepository.findAllByTipoVeiculo(VehicleType.CARRO)).willReturn(periodoList.stream().filter(periodo -> periodo.getTipoVeiculo().equals(VehicleType.CARRO)).collect(Collectors.toList()));
+        List<Periodo> periodoFilteredWithVehicleType = periodoList.stream().filter(periodo -> periodo.getTipoVeiculo().equals(VehicleType.CARRO)).collect(Collectors.toList());
 
         assertThat(periodoFilteredWithVehicleType).isNotEmpty();
         assertThat(periodoFilteredWithVehicleType).isNotNull();

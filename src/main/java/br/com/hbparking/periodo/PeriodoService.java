@@ -1,5 +1,6 @@
 package br.com.hbparking.periodo;
 
+import br.com.hbparking.marcas.Marca;
 import br.com.hbparking.tipoveiculo.VehicleType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PeriodoService {
@@ -28,6 +30,14 @@ public class PeriodoService {
     public List<PeriodoDTO> findPeriodoByVehicleType(VehicleType vehicleType) {
         List<Periodo> periodoList = this.iPeriodoRepository.findAllByTipoVeiculo(vehicleType);
         return this.parsePeriodoListToPeriodoDTOList(periodoList);
+    }
+
+    public Periodo findById(Long id) {
+        Optional<Periodo> periodo = this.iPeriodoRepository.findById(id);
+        if (periodo.isPresent()) {
+            return periodo.get();
+        }
+        throw new IllegalArgumentException(String.format("ID %s de periodo não existe", id));
     }
 
     public List<PeriodoDTO> parsePeriodoListToPeriodoDTOList(List<Periodo> periodosList) {

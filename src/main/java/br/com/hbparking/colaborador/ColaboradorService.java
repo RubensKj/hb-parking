@@ -137,7 +137,7 @@ public class ColaboradorService {
 
     public void saveAllCsv(List<Colaborador> colaboradorList) { this.colaboradorRepository.saveAll(colaboradorList); }
 
-    public boolean[] convertStringBoolean(String pcd, String trabalhoNoturno){
+    public boolean[] convertStringBoolean(String pcd, String trabalhoNoturno) {
         boolean[] pcdTrabalhoNoturnoBoolean = new boolean[2];
 
         pcdTrabalhoNoturnoBoolean[0] = (pcd.equalsIgnoreCase("sim")) ? true : false;

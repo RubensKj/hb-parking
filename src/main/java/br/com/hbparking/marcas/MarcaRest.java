@@ -45,7 +45,7 @@ public class MarcaRest {
     }
 
     @GetMapping("/{id}")
-    public MarcaDTO find(@PathVariable("id") Long id) {
+    public Marca find(@PathVariable("id") Long id) {
 
         LOGGER.info("Recebendo find by ID... id: [{}]", id);
 
@@ -54,7 +54,7 @@ public class MarcaRest {
 
     @RequestMapping("/allByTipo/{tipo}")
     public Page<Marca> findMarcasByTipo(@PathVariable("tipo") String tipo, Pageable pageable) {
-
+        LOGGER.info("Recebendo requisição para buscar todas marcas pelo tipo");
         return marcaService.findAllByTipoPage(tipo, pageable);
 
     }

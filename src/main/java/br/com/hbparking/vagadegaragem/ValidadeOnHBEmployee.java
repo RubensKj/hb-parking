@@ -1,6 +1,7 @@
 package br.com.hbparking.vagadegaragem;
 
-import org.jboss.logging.Logger;
+import br.com.hbparking.marcas.MarcaService;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
@@ -10,7 +11,7 @@ import java.util.Arrays;
 
 @Component
 public class ValidadeOnHBEmployee {
-    final Logger LOGGER = (Logger) LoggerFactory.getLogger(this.toString());
+    private static final Logger LOGGER = LoggerFactory.getLogger(ValidadeOnHBEmployee.class);
     public ResponseHBEmployeeDTO validate(String url) throws Exception {
         ResponseHBEmployeeDTO response = new ResponseHBEmployeeDTO();
         try {

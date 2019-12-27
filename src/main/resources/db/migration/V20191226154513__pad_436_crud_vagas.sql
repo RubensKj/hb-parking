@@ -17,9 +17,9 @@ create table vaga_garagem
     CONSTRAINT fk_periodo_vaga FOREIGN KEY (id_periodo)
     REFERENCES periodo_locacao (id),
     CONSTRAINT fk_usuario_vaga FOREIGN KEY (id_usuario)
-    REFERENCES user_auth (id);
+    REFERENCES user_auth (id)
+);
 
-    CREATE UNIQUE NONCLUSTERED INDEX idx_placa
-    ON vaga_garagem(placa)
-    WHERE placa IS NOT NULL;
-)
+ CREATE UNIQUE NONCLUSTERED INDEX idx_placa
+ ON vaga_garagem(placa)
+ WHERE placa IS NOT NULL;

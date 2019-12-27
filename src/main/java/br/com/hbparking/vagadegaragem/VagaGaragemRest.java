@@ -1,7 +1,5 @@
 package br.com.hbparking.vagadegaragem;
 
-import br.com.hbparking.marcas.Marca;
-import br.com.hbparking.marcas.MarcaDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,17 +11,16 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/vagas")
 public class VagaGaragemRest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Marca.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(VagaGaragemRest.class);
 
     private final VagaGaragemService vagaGaragemService;
 
-    @Autowired
-    public VagaGaragemRest(VagaGaragemService marcaService) {
-        this.vagaGaragemService = marcaService;
+    public VagaGaragemRest(VagaGaragemService vagaGaragemService) {
+        this.vagaGaragemService = vagaGaragemService;
     }
 
     @PostMapping
-    public VagaGaragemDTO save(@RequestBody VagaGaragemDTO vagaGaragemDTO) {
+    public VagaGaragemDTO save(@RequestBody VagaGaragemDTO vagaGaragemDTO) throws Exception {
         LOGGER.info("Recebendo solicitação de persistência de vaga de garagem...");
         LOGGER.debug("Payaload: {}", vagaGaragemDTO);
         return this.vagaGaragemService.save(vagaGaragemDTO);

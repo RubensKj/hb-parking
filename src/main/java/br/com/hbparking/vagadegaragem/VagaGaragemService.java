@@ -25,12 +25,13 @@ import java.util.regex.Pattern;
 @AllArgsConstructor
 public class VagaGaragemService {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(this.toString());
+    private static final Logger LOGGER = LoggerFactory.getLogger(VagaGaragemService.class);
+
     private final IVagaGaragemRepository iVagaGaragemRepository;
     private final MarcaService marcaService;
     private final VehicleModelService vehicleModelService;
     private final PeriodoService periodoService;
-    private final ValidadeOnHBEmployee validadeOnHBEmployee;
+    private  ValidadeOnHBEmployee validadeOnHBEmployee;
     private final UserService userService;
 
     public VagaGaragemDTO save(VagaGaragemDTO vagaGaragemDTO) throws Exception {
@@ -46,8 +47,8 @@ public class VagaGaragemService {
         if (response.getParkingValid()) {
             try {
                 vagaSave = this.iVagaGaragemRepository.save(vagaSave);
-            } catch (SQLIntegrityConstraintViolationException e) {
-                throw new SQLIntegrityConstraintViolationException("A placa informada já está cadastrada no sistema");
+            /*} catch (SQLIntegrityConstraintViolationException e) {
+                throw new SQLIntegrityConstraintViolationException("A placa informada já está cadastrada no sistema");*/
             } catch (Exception ex) {
                 throw new Exception("Erro ao salvar vaga de garagem {}", ex);
             }

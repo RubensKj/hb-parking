@@ -8,11 +8,10 @@ services:
 
 before_install:
   - chmod +x mvnw
-  - docker run -it -u travis quay.io/travisci/travis-jvm /bin/bash
   - docker pull carlad/sinatra
-  - docker run -d -p 127.0.0.1:80:1433 carlad/sinatra /bin/sh -c "cd /root/sinatra; bundle exec foreman start;"
+  - docker run -d -p 127.0.0.1:80:1433
   - docker ps -a
-  - docker run carlad/sinatra /bin/sh -c "cd /root/sinatra; bundle exec rake test"
+ 
 
 
 

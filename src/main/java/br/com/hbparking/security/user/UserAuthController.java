@@ -47,6 +47,7 @@ public class UserAuthController {
         return ResponseEntity.ok(new JwtResponse(jwtProvider.generateJWTTokenFromAuthentitation(authentication), userDetails.getAuthorities()));
     }
 
+
     @PostMapping("/logout")
     @PreAuthorize("hasRole('USER') or hasRole('GESTOR') or hasRole('SISTEMA')")
     public ResponseEntity<String> disAuthenticateUser(HttpServletRequest request) {

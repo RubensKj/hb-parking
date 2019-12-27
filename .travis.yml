@@ -1,11 +1,19 @@
 language: java
-install:
-  - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-script:
-  - mvn test
+
+jdk:
+  openjdk8
+
+os: windows
+
 services:
   - docker
+
 before_install:
-  - cd docker
-  - docker run -d -p 192.168.33.214:1433
+  - - chmod +x mvnw
+  - docker pull carlad/sinatra
+  - docker run -d -p 192.168.33.214:1433 carlad/sinatra /bin/sh -c "cd /root/sinatra; bundle exec foreman start;"
   - docker ps -a
+  - docker run carlad/sinatra /bin/sh -c "cd /root/sinatra; bundle exec rake test"
+
+
+

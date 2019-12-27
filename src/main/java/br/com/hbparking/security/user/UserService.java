@@ -1,5 +1,7 @@
 package br.com.hbparking.security.user;
 
+import br.com.hbparking.marcas.CannotFindAnyMarcaWithId;
+import br.com.hbparking.marcas.Marca;
 import br.com.hbparking.security.role.Role;
 import br.com.hbparking.security.role.RoleService;
 import org.apache.commons.lang3.StringUtils;
@@ -69,5 +71,9 @@ public class UserService {
         if (userDTO.getRolesString().isEmpty()) {
             throw new IllegalArgumentException("RolesStrings não deve ser nula/vázia.");
         }
+    }
+
+    public User findEntityById(Long id) throws UsernameNotFoundException {
+        return this.IUserRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("Não foi possivel encontrar nenhum usuario com esse id. [" + id + "]"));
     }
 }

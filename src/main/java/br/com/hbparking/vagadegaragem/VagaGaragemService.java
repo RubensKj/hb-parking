@@ -4,6 +4,8 @@ import br.com.hbparking.marcas.Marca;
 import br.com.hbparking.marcas.MarcaService;
 import br.com.hbparking.periodo.Periodo;
 import br.com.hbparking.periodo.PeriodoService;
+import br.com.hbparking.security.user.User;
+import br.com.hbparking.security.user.UserService;
 import br.com.hbparking.tipoveiculo.VehicleType;
 import br.com.hbparking.vehicleModel.VehicleModel;
 import br.com.hbparking.vehicleModel.VehicleModelService;
@@ -29,6 +31,7 @@ public class VagaGaragemService {
     private final VehicleModelService vehicleModelService;
     private final PeriodoService periodoService;
     private final ValidadeOnHBEmployee validadeOnHBEmployee;
+    private final UserService userService;
 
     public VagaGaragemDTO save(VagaGaragemDTO vagaGaragemDTO) throws Exception {
         this.validate(vagaGaragemDTO);
@@ -112,7 +115,7 @@ public class VagaGaragemService {
         Marca marca = marcaService.findById(vagaGaragemDTO.getMarca());
         VehicleModel modelo = vehicleModelService.findById(vagaGaragemDTO.getVehicleModel());
         Periodo periodo = periodoService.findById(vagaGaragemDTO.getPeriodo());
-        UsuarioTemporario usuario = new UsuarioTemporario();
+        User usuario = userService.findEntityById(vagaGaragemDTO.getUsuario());
         return new VagaGaragem(
                 vagaGaragemDTO.getTipoVeiculo(),
                 marca,

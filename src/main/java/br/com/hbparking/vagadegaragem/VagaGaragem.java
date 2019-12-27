@@ -3,6 +3,7 @@ package br.com.hbparking.vagadegaragem;
 import br.com.hbparking.cor.Color;
 import br.com.hbparking.marcas.Marca;
 import br.com.hbparking.periodo.Periodo;
+import br.com.hbparking.security.user.User;
 import br.com.hbparking.tipoveiculo.VehicleType;
 import br.com.hbparking.vehicleModel.VehicleModel;
 import lombok.AllArgsConstructor;
@@ -49,14 +50,14 @@ public class VagaGaragem {
 
     @ManyToOne
     @JoinColumn(name = "id_usuario", referencedColumnName = "id", nullable = false)
-    private UsuarioTemporario usuario;
+    private User usuario;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private StatusVaga statusVaga;
 
     public VagaGaragem(VehicleType tipoVeiculo, Marca marca, VehicleModel vehicleModel,
-                       Color color, String placa, Periodo periodo, UsuarioTemporario usuario, StatusVaga statusVaga) {
+                       Color color, String placa, Periodo periodo, User usuario, StatusVaga statusVaga) {
         this.tipoVeiculo = tipoVeiculo;
         this.marca = marca;
         this.vehicleModel = vehicleModel;

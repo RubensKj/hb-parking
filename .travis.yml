@@ -9,7 +9,8 @@ services:
 before_install:
   - chmod +x mvnw
   - docker pull carlad/sinatra
-    - docker run -d -p 127.0.0.1:80:1433 carlad/sinatra /bin/sh -c "cd /root/sinatra; bundle exec foreman start;"
+    - docker-compose build mssqlex
+    - docker run -d -p 127.0.0.1:80:1433
     - docker ps -a
     - docker run carlad/sinatra /bin/sh -c "cd /root/sinatra; bundle exec rake test"
 

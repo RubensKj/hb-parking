@@ -75,4 +75,12 @@ public class UserService {
             throw new IllegalArgumentException("RolesStrings não deve ser nula/vázia.");
         }
     }
+
+    public void updateSenha(String password, String email) {
+        User user = this.findByEmail(email);
+
+        user.setPassword(this.encryptUserDTOPassword(password));
+
+        this.IUserRepository.save(user);
+    }
 }

@@ -1,0 +1,1 @@
+ALTER TABLE colaboradores ALTER COLUMN data_nascimento DATE NOT NULL;

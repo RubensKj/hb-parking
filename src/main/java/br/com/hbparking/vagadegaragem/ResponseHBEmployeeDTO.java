@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 public class ResponseHBEmployeeDTO {
 
     private String employeeName;
-    private Boolean parkingValid;
+    private Boolean parkingValid = true;
     private String justification;
 }

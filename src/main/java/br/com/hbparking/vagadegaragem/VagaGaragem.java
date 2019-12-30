@@ -9,6 +9,7 @@ import br.com.hbparking.vehicleModel.VehicleModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.engine.internal.Cascade;
 
 import javax.persistence.*;
 
@@ -29,11 +30,11 @@ public class VagaGaragem {
     @Column(name = "tipo_veiculo" , nullable = false)
     private VehicleType tipoVeiculo;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "id_marca", referencedColumnName = "id")
     private Marca marca;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "id_modelo", referencedColumnName = "id_modelo")
     private VehicleModel vehicleModel;
 

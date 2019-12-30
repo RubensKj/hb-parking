@@ -22,7 +22,6 @@ public class VagaGaragemDTO {
     @NotBlank(message = "O tipo de veiculo não pode estar em branco.")
     private VehicleType tipoVeiculo;
 
-
     // ~~ parametros opcionais na API ~~
     private Long marca;
     private Long vehicleModel;
@@ -39,18 +38,27 @@ public class VagaGaragemDTO {
 
     private StatusVaga statusVaga;
 
-    public static VagaGaragemDTO of(VagaGaragem vagaGaragem){
-        return new VagaGaragemDTO(
-                vagaGaragem.getId(),
-                vagaGaragem.getTipoVeiculo(),
-                vagaGaragem.getMarca().getId(),
-                vagaGaragem.getVehicleModel().getId(),
-                vagaGaragem.getColor(),
-                vagaGaragem.getPlaca(),
-                vagaGaragem.getPeriodo().getId(),
-                vagaGaragem.getColaborador().getId(),
-                vagaGaragem.getStatusVaga()
-                );
+    public static VagaGaragemDTO of(VagaGaragem vagaGaragem) {
+        VagaGaragemDTO vagaGaragemDTO = new VagaGaragemDTO();
+        vagaGaragemDTO.setId(vagaGaragem.getId());
+        vagaGaragemDTO.setPeriodo(vagaGaragem.getPeriodo().getId());
+        vagaGaragemDTO.setColaborador(vagaGaragem.getColaborador().getId());
+        vagaGaragemDTO.setStatusVaga(vagaGaragem.getStatusVaga());
+        vagaGaragemDTO.setTipoVeiculo(vagaGaragem.getTipoVeiculo());
+
+        if (vagaGaragem.getTipoVeiculo() == VehicleType.CARRO ||
+                vagaGaragem.getTipoVeiculo() == VehicleType.MOTO) {
+            vagaGaragemDTO.setMarca(vagaGaragem.getMarca().getId());
+            vagaGaragemDTO.setVehicleModel(vagaGaragem.getVehicleModel().getId());
+            vagaGaragemDTO.setColor(vagaGaragem.getColor());
+            vagaGaragemDTO.setPlaca(vagaGaragem.getPlaca());
+        } else {
+            vagaGaragemDTO.setMarca(null);
+            vagaGaragemDTO.setVehicleModel(null);
+            vagaGaragemDTO.setColor(null);
+            vagaGaragemDTO.setPlaca(null);
+        }
+        return vagaGaragemDTO;
     }
 
     public VagaGaragemDTO(VehicleType tipoVeiculo, Long marca, Long vehicleModel, Color color, String placa, Long periodo, Long colaborador, StatusVaga statusVaga) {

@@ -2,6 +2,7 @@ package br.com.hbparking.vagadegaragem;
 
 import br.com.hbparking.colaborador.Colaborador;
 import br.com.hbparking.colaborador.ColaboradorService;
+import br.com.hbparking.colaborador.NoConnectionAPIException;
 import br.com.hbparking.cor.Color;
 import br.com.hbparking.marcas.Marca;
 import br.com.hbparking.marcas.MarcaService;
@@ -13,11 +14,15 @@ import br.com.hbparking.vehicleModel.VehicleModelService;
 import lombok.AllArgsConstructor;
 import net.bytebuddy.implementation.bytecode.Throw;
 import org.apache.commons.lang3.EnumUtils;
+import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.ConstraintViolationException;
 import java.sql.SQLIntegrityConstraintViolationException;
@@ -49,17 +54,22 @@ public class VagaGaragemService {
         } else {
             vagaSave.setMarca(null);
             vagaSave.setPlaca(null);
-            vagaSave.setMarca(null);
+            vagaSave.setVehicleModel(null);
+            vagaSave.setColor(null);
         }
         validateTipoPeriodo(vagaSave);
+
+
         ResponseHBEmployeeDTO response = validadeOnHBEmployee.validate("http://localhost:8090/api/teste");
+
+
         if (response.getParkingValid()) {
             try {
                 vagaSave = this.iVagaGaragemRepository.save(vagaSave);
-            } catch (ConstraintViolationException e) {
-                throw new SQLIntegrityConstraintViolationException("A placa informada já está cadastrada no sistema");
+            } catch (DataIntegrityViolationException e) {
+                throw new DataIntegrityViolationException("A placa informada já está cadastrada no sistema");
             } catch (Exception ex) {
-                throw new Exception("Erro ao salvar vaga de garagem {}", ex);
+                throw new Exception("Erro ao salvar vaga de garagem ", ex);
             }
         }
 
@@ -133,8 +143,12 @@ public class VagaGaragemService {
     }
 
     private VagaGaragem DtoToVaga(VagaGaragemDTO vagaGaragemDTO) {
-        Marca marca = marcaService.findById(vagaGaragemDTO.getMarca());
-        VehicleModel modelo = vehicleModelService.findById(vagaGaragemDTO.getVehicleModel());
+        Marca marca = new Marca();
+        VehicleModel modelo = new VehicleModel();
+        if (isCarroOrMoto(vagaGaragemDTO.getTipoVeiculo())) {
+            marca = marcaService.findById(vagaGaragemDTO.getMarca());
+            modelo = vehicleModelService.findById(vagaGaragemDTO.getVehicleModel());
+        }
         Periodo periodo = periodoService.findById(vagaGaragemDTO.getPeriodo());
         Colaborador colaborador = colaboradorService.findById(vagaGaragemDTO.getColaborador());
         return new VagaGaragem(
@@ -193,7 +207,7 @@ public class VagaGaragemService {
     }
 
     public void validateTipoPeriodo(VagaGaragem vagaGaragem) throws InvalidVehicleTipoFromPeriodo {
-        if(!(vagaGaragem.getPeriodo().getTipoVeiculo() == vagaGaragem.getTipoVeiculo())){
+        if (!(vagaGaragem.getPeriodo().getTipoVeiculo() == vagaGaragem.getTipoVeiculo())) {
             throw new InvalidVehicleTipoFromPeriodo("Periodo inválido para o tipo de veiculo desejado");
         }
     }

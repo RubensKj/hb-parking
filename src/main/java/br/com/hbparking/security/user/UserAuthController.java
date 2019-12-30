@@ -80,4 +80,9 @@ public class UserAuthController {
         }
         throw new TokenNotFoundException("Token de autorização não foi encontrado.");
     }
+
+    @PostMapping("/change-user/password")
+    public void changeUserPassword(@RequestBody UserDTO userDTO) {
+        this.userService.updateSenha(userDTO.getPassword(), userDTO.getEmail());
+    }
 }

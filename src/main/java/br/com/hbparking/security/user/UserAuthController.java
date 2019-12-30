@@ -2,6 +2,7 @@ package br.com.hbparking.security.user;
 
 import br.com.hbparking.security.jwt.JwtProvider;
 import br.com.hbparking.security.jwt.JwtResponse;
+import br.com.hbparking.security.jwt.TokenNotFoundException;
 import br.com.hbparking.security.role.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -68,5 +69,15 @@ public class UserAuthController {
         userDTO.setPassword(this.userService.encryptUserDTOPassword(userDTO.getPassword()));
         User user = this.userService.save(userDTO);
         return UserDTO.of(user);
+    }
+
+    @GetMapping("/user-from-token")
+    public UserDTO findUserByToken(HttpServletRequest request) throws TokenNotFoundException {
+        String token = this.jwtProvider.getJwt(request);
+        if (token != null && !token.isEmpty()) {
+            String emailFromUserAuthenticated = this.jwtProvider.getEmailFromUserAuthenticated(token);
+            return UserDTO.of(this.userService.findByEmail(emailFromUserAuthenticated));
+        }
+        throw new TokenNotFoundException("Token de autorização não foi encontrado.");
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -45,6 +46,10 @@ public class UserService {
         Set<Role> rolesFromDatabase = roleService.findAllByNamesIn(userDTO.getRolesString());
 
         return this.IUserRepository.save(new User(userDTO.getEmail(), userDTO.getNomeCompleto(), userDTO.getPassword(), rolesFromDatabase));
+    }
+
+    public void saveAllUsers(List<User> userList) {
+        this.IUserRepository.saveAll(userList);
     }
 
     private void validate(UserDTO userDTO) {

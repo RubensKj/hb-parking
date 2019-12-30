@@ -22,17 +22,17 @@ public class ColaboradorController {
     }
 
     @GetMapping("/{id}")
-    public ColaboradorDTO getColaborador(@PathVariable("id") int id){
+    public ColaboradorDTO getColaborador(@PathVariable("id") Long id) {
         return this.colaboradorService.getColaborador(id);
     }
 
     @PutMapping("/update/{id}")
-    public ColaboradorDTO updateColaborador(@RequestBody @Valid ColaboradorDTO colaboradorDTO, @PathVariable("id") int id){
+    public ColaboradorDTO updateColaborador(@RequestBody @Valid ColaboradorDTO colaboradorDTO, @PathVariable("id") Long id) {
         return this.colaboradorService.update(colaboradorDTO, id);
     }
 
     @DeleteMapping("/delete/{id}")
-    public void delete(@PathVariable("id") int id){
+    public void delete(@PathVariable("id") Long id) {
         this.colaboradorService.delete(id);
     }
 

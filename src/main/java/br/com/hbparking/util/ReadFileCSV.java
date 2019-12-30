@@ -1,6 +1,8 @@
 package br.com.hbparking.util;
 
+import br.com.hbparking.file.FileNotSupportedException;
 import br.com.hbparking.vehicleException.ContentDispositionException;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,6 +17,10 @@ public class ReadFileCSV {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(multipartFile.getInputStream()));
         String line;
 
+        if (!FilenameUtils.getExtension(multipartFile.getOriginalFilename()).equalsIgnoreCase("csv")) {
+            throw new FileNotSupportedException("O tipo de arquivo enviado não é suportado pela API, favor enviar um arquivo CSV.");
+        }
+
         if (multipartFile.isEmpty()) {
             throw new IllegalArgumentException("O arquivo enviado está vazio");
         }
@@ -24,7 +30,9 @@ public class ReadFileCSV {
 
         while ((line = bufferedReader.readLine()) != null) {
 
-            if(!line.contains(";")){throw new ContentDispositionException("O separdaor do arquivo é invalido, verifique se o arquivo é separado por \";\"");}
+            if (!line.contains(";")) {
+                throw new ContentDispositionException("O separdaor do arquivo é invalido, verifique se o arquivo é separado por \";\"");
+            }
             dataArray.add(line.split(";"));
         }
 

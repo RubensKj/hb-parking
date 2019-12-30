@@ -1,6 +1,8 @@
 package br.com.hbparking.colaborador;
 
 import br.com.hbparking.util.ReadFileCSV;
+import br.com.hbparking.vagadegaragem.VagaGaragem;
+import br.com.hbparking.vagadegaragem.VagaGaragemDTO;
 import br.com.hbparking.vehicleException.ContentDispositionException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,7 +53,7 @@ public class ColaboradorService {
         return calendar;
     }
 
-    public Colaborador getEntityById(int id) {
+    public Colaborador getEntityById(Long id) {
         Optional<Colaborador> colaboradorOptional = this.colaboradorRepository.findById(id);
 
         if (colaboradorOptional.isPresent()) {
@@ -60,11 +62,11 @@ public class ColaboradorService {
         throw new IllegalArgumentException(String.format("O colaborador informado(%s) não existe", id));
     }
 
-    public void delete(int id) {
+    public void delete(Long id) {
         this.colaboradorRepository.deleteById(id);
     }
 
-    public ColaboradorDTO update(ColaboradorDTO colaboradorDTO, int id) {
+    public ColaboradorDTO update(ColaboradorDTO colaboradorDTO, Long id) {
         Colaborador colaborador = new Colaborador();
         colaborador.setDataNascimento(convertStringToCalendar(colaboradorDTO.getDataNascimento()));
         colaborador.setEmail(colaboradorDTO.getEmail());
@@ -77,7 +79,7 @@ public class ColaboradorService {
         return ColaboradorDTO.of(colaborador);
     }
 
-    public ColaboradorDTO getColaborador(int id) {
+    public ColaboradorDTO getColaborador(Long id) {
         Optional<Colaborador> colaboradorOptional = this.colaboradorRepository.findById(id);
 
         if (colaboradorOptional.isPresent()) {
@@ -144,5 +146,13 @@ public class ColaboradorService {
         pcdTrabalhoNoturnoBoolean[1] = (trabalhoNoturno.equalsIgnoreCase("sim")) ? true : false;
 
         return pcdTrabalhoNoturnoBoolean;
+    }
+
+    public Colaborador  findById(Long id) {
+        Optional<Colaborador> colaborador = this.colaboradorRepository.findById(id);
+        if (colaborador.isPresent()) {
+            return colaborador.get();
+        }
+        throw new IllegalArgumentException(String.format("ID %s não existe", id));
     }
 }

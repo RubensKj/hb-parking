@@ -7,7 +7,7 @@ create table vaga_garagem
     cor                                     VARCHAR(15),
     placa                                    VARCHAR(7),
     id_periodo                                   BIGINT,
-    id_usuario                                   BIGINT,
+    id_colaborador                               integer,
     status                         VARCHAR(20) NOT NULL,
 
     CONSTRAINT fk_marca_vaga FOREIGN KEY (id_marca)
@@ -16,8 +16,8 @@ create table vaga_garagem
     REFERENCES vehicle_models (id_modelo),
     CONSTRAINT fk_periodo_vaga FOREIGN KEY (id_periodo)
     REFERENCES periodo_locacao (id),
-    CONSTRAINT fk_usuario_vaga FOREIGN KEY (id_usuario)
-    REFERENCES user_auth (id)
+    CONSTRAINT fk_colaborador_vaga FOREIGN KEY (id_colaborador)
+    REFERENCES colaboradores (id_colaborador)
 );
 
  CREATE UNIQUE NONCLUSTERED INDEX idx_placa

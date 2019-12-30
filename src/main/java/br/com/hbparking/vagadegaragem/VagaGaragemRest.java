@@ -2,7 +2,6 @@ package br.com.hbparking.vagadegaragem;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +35,7 @@ public class VagaGaragemRest {
 
         LOGGER.info("Recebendo find by ID... id: [{}]", id);
 
-        return this.vagaGaragemService.findById(id);
+        return VagaGaragemDTO.of(this.vagaGaragemService.findById(id));
     }
 
     @PutMapping("/{id}")
@@ -45,6 +44,13 @@ public class VagaGaragemRest {
         LOGGER.debug("Payload: {}", vagaGaragemDTO);
 
         return this.vagaGaragemService.update(vagaGaragemDTO, id);
+    }
+    @PutMapping("/{id}/{status}")
+    public VagaGaragemDTO changeStatus(@PathVariable("id") Long id, @PathVariable("status") StatusVaga status) {
+        LOGGER.info("Atualização de status para vaga de ID: {}", id);
+        LOGGER.info("Status: {}", status);
+
+        return this.vagaGaragemService.changeStatusVaga(id, status);
     }
 
     @DeleteMapping("/{id}")

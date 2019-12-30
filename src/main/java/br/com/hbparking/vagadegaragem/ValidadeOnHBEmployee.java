@@ -1,5 +1,6 @@
 package br.com.hbparking.vagadegaragem;
 
+import br.com.hbparking.colaborador.NoConnectionAPIException;
 import br.com.hbparking.marcas.MarcaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,7 @@ import java.util.Arrays;
 @Component
 public class ValidadeOnHBEmployee {
     private static final Logger LOGGER = LoggerFactory.getLogger(ValidadeOnHBEmployee.class);
+
     public ResponseHBEmployeeDTO validate(String url) throws Exception {
         ResponseHBEmployeeDTO response = new ResponseHBEmployeeDTO();
         try {
@@ -26,8 +28,9 @@ public class ValidadeOnHBEmployee {
             ResponseEntity<ResponseHBEmployeeDTO> result = restTemplate.postForEntity(url, entity, ResponseHBEmployeeDTO.class);
 
         }catch (Exception e){
-            //throw new NoConnectionAPIException("Não foi possivel estabelecer uma conexão com HBEmployee");
             LOGGER.info("Vaga cadastrada, porém não foi possivel realizar uma conexão com a pai HbEmployee");
+            //throw new NoConnectionAPIException("Não foi possivel estabelecer uma conexão com HBEmployee");
+
         }
         return  response;
     }

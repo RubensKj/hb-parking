@@ -35,7 +35,7 @@ public class VagaGaragemDTO {
 
     @NotNull(message = "O usuario não pode ser nulo.")
     @NotBlank(message = "O usuario não pode estar em branco.")
-    private Long usuario;
+    private Long colaborador;
 
     private StatusVaga statusVaga;
 
@@ -48,9 +48,19 @@ public class VagaGaragemDTO {
                 vagaGaragem.getColor(),
                 vagaGaragem.getPlaca(),
                 vagaGaragem.getPeriodo().getId(),
-                vagaGaragem.getUsuario().getId(),
+                vagaGaragem.getColaborador().getId(),
                 vagaGaragem.getStatusVaga()
                 );
     }
 
+    public VagaGaragemDTO(VehicleType tipoVeiculo, Long marca, Long vehicleModel, Color color, String placa, Long periodo, Long colaborador, StatusVaga statusVaga) {
+        this.tipoVeiculo = tipoVeiculo;
+        this.marca = marca;
+        this.vehicleModel = vehicleModel;
+        this.color = color;
+        this.placa = placa;
+        this.periodo = periodo;
+        this.colaborador = colaborador;
+        this.statusVaga = statusVaga;
+    }
 }

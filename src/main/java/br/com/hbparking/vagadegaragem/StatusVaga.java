@@ -1,9 +1,9 @@
 package br.com.hbparking.vagadegaragem;
 
 public enum StatusVaga {
-    APROVADO("APROVADO"),
+    VIGENTE("VIGENTE"),
     EMAPROVACAO("EM APROVACAO"),
-    NEGADO("NEGADO");
+    FILADEESPERA("FILA DE ESPERA");
 
     private final String descricao;
 

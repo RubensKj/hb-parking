@@ -6,10 +6,11 @@ import java.util.Calendar;
 @Entity
 @Table(name = "colaboradores")
 public class Colaborador {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_colaborador")
-    private Integer id;
+    private Long id;
     @Column(name = "email", nullable = false)
     private String email;
     @Column(name = "nome", nullable = false)
@@ -24,11 +25,11 @@ public class Colaborador {
     public Colaborador() {
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

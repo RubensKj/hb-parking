@@ -21,6 +21,8 @@ public class Marca {
     @Column(name = "nome", length = 100, nullable = false)
     private String nome;
 
+    public Marca() {
+    }
 
     public Marca(TipoVeiculoEnum tipoVeiculo, String nome) {
         this.tipoVeiculo = tipoVeiculo;

@@ -19,7 +19,7 @@ public class NotifyHBEmployee {
             HttpEntity<String> entity = new HttpEntity<String>("teste", headers);
 
             ResponseEntity<String> result = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new NoConnectionAPIException("Colaborador cadastrado, proém não foi possivel realizar uma conexão com a pai HbEmployee.");
         }
     }

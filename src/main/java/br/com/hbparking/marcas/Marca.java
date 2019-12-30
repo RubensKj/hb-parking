@@ -7,7 +7,6 @@ import javax.persistence.*;
 @Entity
 @Table(name = "marcas")
 @Data
-@NoArgsConstructor
 public class Marca {
 
     @Id

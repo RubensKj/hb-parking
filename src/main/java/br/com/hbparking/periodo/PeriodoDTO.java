@@ -12,7 +12,7 @@ public class PeriodoDTO {
 
     public Long id;
 
-    public VehicleType vehicleType;
+    public VehicleType vehiclvehieType;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     public LocalDate dataInicial;

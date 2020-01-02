@@ -22,6 +22,7 @@ public class VagaGaragemRest {
         this.vagaGaragemService = vagaGaragemService;
     }
 
+
     @PostMapping
     public VagaGaragemDTO save(@RequestBody VagaGaragemDTO vagaGaragemDTO, HttpServletRequest request ) throws Exception {
         LOGGER.info("Recebendo solicitação de persistência de vaga de garagem...");
@@ -43,7 +44,7 @@ public class VagaGaragemRest {
     }
 
     @PutMapping("/{id}")
-    public VagaGaragemDTO udpate(@PathVariable("id") Long id, @RequestBody VagaGaragemDTO vagaGaragemDTO, HttpServletRequest request) throws TokenNotFoundException, CannotFindColaborador {
+    public VagaGaragemDTO udpate(@PathVariable("id") Long id, @RequestBody VagaGaragemDTO vagaGaragemDTO, HttpServletRequest request) throws TokenNotFoundException, CannotFindColaborador, CannotFindVaga {
         LOGGER.info("Recebendo Update para vaga de ID: {}", id);
         LOGGER.debug("Payload: {}", vagaGaragemDTO);
 

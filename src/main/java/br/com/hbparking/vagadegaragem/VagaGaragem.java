@@ -9,7 +9,6 @@ import br.com.hbparking.vehicleModel.VehicleModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.engine.internal.Cascade;
 
 import javax.persistence.*;
 

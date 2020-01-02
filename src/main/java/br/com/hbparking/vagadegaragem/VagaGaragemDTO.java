@@ -61,7 +61,8 @@ public class VagaGaragemDTO {
         return vagaGaragemDTO;
     }
 
-    public VagaGaragemDTO(VehicleType tipoVeiculo, Long marca, Long vehicleModel, Color color, String placa, Long periodo, Long colaborador, StatusVaga statusVaga) {
+    public VagaGaragemDTO(VehicleType tipoVeiculo, Long marca, Long vehicleModel, Color color,
+                          String placa, Long periodo, Long colaborador, StatusVaga statusVaga) {
         this.tipoVeiculo = tipoVeiculo;
         this.marca = marca;
         this.vehicleModel = vehicleModel;

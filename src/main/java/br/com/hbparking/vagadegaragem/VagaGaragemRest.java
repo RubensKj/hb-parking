@@ -25,7 +25,7 @@ public class VagaGaragemRest {
         return this.vagaGaragemService.save(vagaGaragemDTO);
     }
 
-    @RequestMapping("/allVagasByPage")
+    @GetMapping(value = "/allVagasByPage")
     public Page<VagaGaragem> findAllVagas(Pageable pageable) {
         LOGGER.info("Recebendo requisição para buscar todas as vagas em paginas");
         return vagaGaragemService.findAllByTipoPage(pageable);

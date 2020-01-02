@@ -22,7 +22,7 @@ public class VehicleModelController {
     private final VehicleModelService vehicleModelService;
 
     @Autowired
-    public VehicleModelController(VehicleModelExport vehicleModelExport, VehicleModelImport vehicleModelImport, MarcaService marcaService, VehicleModelService vehicleModelService) {
+    public VehicleModelController(VehicleModelExport vehicleModelExport, VehicleModelImport vehicleModelImport, MarcaService marcaService,VehicleModelService vehicleModelService) {
         this.vehicleModelExport = vehicleModelExport;
         this.vehicleModelImport = vehicleModelImport;
         this.marcaService = marcaService;
@@ -46,9 +46,5 @@ public class VehicleModelController {
         Marca marca = this.marcaService.findEntityById(idMarca);
         return vehicleModelService.findByMarcaAndModelo(marca, modelo);
     }
-
-
-
-
 
 }

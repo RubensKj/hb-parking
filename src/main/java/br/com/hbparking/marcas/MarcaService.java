@@ -201,4 +201,10 @@ public class MarcaService {
         return linhas;
 
     }
+
+    public List<Marca> findAllByTipoVeiculo(String tipo){
+        return iMarcaRepository.findAllByTipoVeiculo(TipoVeiculoEnum.valueOf(tipo));
+    }
+
+
 }

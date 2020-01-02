@@ -45,11 +45,11 @@ public class MarcaRest {
     }
 
     @GetMapping("/{id}")
-    public Marca find(@PathVariable("id") Long id) {
+    public MarcaDTO find(@PathVariable("id") Long id) {
 
         LOGGER.info("Recebendo find by ID... id: [{}]", id);
 
-        return this.marcaService.findById(id);
+        return MarcaDTO.of(this.marcaService.findById(id));
     }
 
     @RequestMapping("/allByTipo/{tipo}")

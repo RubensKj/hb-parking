@@ -49,7 +49,7 @@ public class MarcaRest {
 
         LOGGER.info("Recebendo find by ID... id: [{}]", id);
 
-        return this.marcaService.findById(id);
+        return MarcaDTO.of(this.marcaService.findById(id));
     }
 
     @RequestMapping("/allByTipo/{tipo}/{page}/{size}")

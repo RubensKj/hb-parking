@@ -2,6 +2,7 @@ package br.com.hbparking.security.user;
 
 import br.com.hbparking.security.jwt.JwtProvider;
 import br.com.hbparking.security.jwt.JwtResponse;
+import br.com.hbparking.security.jwt.TokenNotFoundException;
 import br.com.hbparking.security.role.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletException;
@@ -41,9 +43,11 @@ public class UserAuthController {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDTO.getEmail(), userDTO.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        return ResponseEntity.ok(new JwtResponse(jwtProvider.generateJWTTokenFromAuthentitation(authentication)));
+        return ResponseEntity.ok(new JwtResponse(jwtProvider.generateJWTTokenFromAuthentitation(authentication), userDetails.getAuthorities()));
     }
+
 
     @PostMapping("/logout")
     @PreAuthorize("hasRole('USER') or hasRole('GESTOR') or hasRole('SISTEMA')")
@@ -65,5 +69,20 @@ public class UserAuthController {
         userDTO.setPassword(this.userService.encryptUserDTOPassword(userDTO.getPassword()));
         User user = this.userService.save(userDTO);
         return UserDTO.of(user);
+    }
+
+    @GetMapping("/user-from-token")
+    public UserDTO findUserByToken(HttpServletRequest request) throws TokenNotFoundException {
+        String token = this.jwtProvider.getJwt(request);
+        if (token != null && !token.isEmpty()) {
+            String emailFromUserAuthenticated = this.jwtProvider.getEmailFromUserAuthenticated(token);
+            return UserDTO.of(this.userService.findByEmail(emailFromUserAuthenticated));
+        }
+        throw new TokenNotFoundException("Token de autorização não foi encontrado.");
+    }
+
+    @PostMapping("/change-user/password")
+    public void changeUserPassword(@RequestBody UserDTO userDTO) {
+        this.userService.updateSenha(userDTO.getPassword(), userDTO.getEmail());
     }
 }

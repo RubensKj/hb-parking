@@ -7,6 +7,7 @@ import javax.validation.constraints.Size;
 import java.util.Calendar;
 
 public class ColaboradorDTO {
+    public Long id;
     @Size(max = 150, message = "O email precisa ser informado.")
     @NotNull(message = "O email não pode ser nulo.")
     @NotBlank(message = "O email não pode estar em branco.")
@@ -19,27 +20,48 @@ public class ColaboradorDTO {
     public String dataNascimento;
     public boolean pcd;
     public boolean trabalhoNoturno;
+    public boolean resideForaBlumenau;
+    public boolean ofereceCarona;
 
     public ColaboradorDTO() {
     }
 
-    public ColaboradorDTO(String email, String nome, String dataNascimento, boolean pcd, boolean trabalhoNoturno) {
+    public ColaboradorDTO(String email, String nome, String dataNascimento, boolean pcd, boolean trabalhoNoturno, boolean resideForaBlumenau, boolean ofereceCarona) {
         this.email = email;
         this.nome = nome;
         this.dataNascimento = dataNascimento;
         this.pcd = pcd;
         this.trabalhoNoturno = trabalhoNoturno;
+        this.resideForaBlumenau = resideForaBlumenau;
+        this.ofereceCarona = ofereceCarona;
+    }
+
+    public ColaboradorDTO(Long id, boolean resideForaBlumenau, boolean ofereceCarona) {
+        this.id = id;
+        this.resideForaBlumenau = resideForaBlumenau;
+        this.ofereceCarona = ofereceCarona;
     }
 
     public static ColaboradorDTO of(Colaborador colaborador){
         ColaboradorDTO colaboradorDTO = new ColaboradorDTO();
+        colaboradorDTO.setId(colaborador.getId());
         colaboradorDTO.setDataNascimento(colaborador.getDataNascimento().toString());
         colaboradorDTO.setEmail(colaborador.getEmail());
         colaboradorDTO.setNome(colaborador.getNome());
         colaboradorDTO.setPcd(colaborador.isPcd());
         colaboradorDTO.setTrabalhoNoturno(colaborador.isTrabalhoNoturno());
+        colaboradorDTO.setResideForaBlumenau(colaborador.isResideForaBlumenau());
+        colaboradorDTO.setOfereceCarona(colaborador.isOfereceCarona());
 
         return colaboradorDTO;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getEmail() {
@@ -80,5 +102,21 @@ public class ColaboradorDTO {
 
     public void setTrabalhoNoturno(boolean trabalhoNoturno) {
         this.trabalhoNoturno = trabalhoNoturno;
+    }
+
+    public boolean isResideForaBlumenau() {
+        return resideForaBlumenau;
+    }
+
+    public void setResideForaBlumenau(boolean resideForaBlumenau) {
+        this.resideForaBlumenau = resideForaBlumenau;
+    }
+
+    public boolean isOfereceCarona() {
+        return ofereceCarona;
+    }
+
+    public void setOfereceCarona(boolean ofereceCarona) {
+        this.ofereceCarona = ofereceCarona;
     }
 }

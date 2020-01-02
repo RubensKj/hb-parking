@@ -18,8 +18,8 @@ public class Marca {
     @Column(name = "nome", length = 100, nullable = false)
     private String nome;
 
-    public Marca() {
-    }
+
+    public Marca() {}
 
     public Marca(TipoVeiculoEnum tipoVeiculo, String nome) {
         this.tipoVeiculo = tipoVeiculo;
@@ -28,6 +28,10 @@ public class Marca {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public TipoVeiculoEnum getTipoVeiculo() {

@@ -1,0 +1,1 @@
+ALTER TABLE colaboradores ADD CONSTRAINT email_index UNIQUE(email)

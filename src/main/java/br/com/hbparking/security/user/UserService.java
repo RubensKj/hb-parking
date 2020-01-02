@@ -81,4 +81,13 @@ public class UserService {
     public User findEntityById(Long id) throws UsernameNotFoundException {
         return this.IUserRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("Não foi possivel encontrar nenhum usuario com esse id. [" + id + "]"));
     }
+  
+    public void updateSenha(String password, String email) {
+        User user = this.findByEmail(email);
+
+        user.setPassword(this.encryptUserDTOPassword(password));
+
+        this.IUserRepository.save(user);
+
+    }
 }

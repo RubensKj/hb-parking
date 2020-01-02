@@ -22,7 +22,7 @@ public class PeriodoController {
     }
 
     @GetMapping("/periodo/buscar-tipo/{tipo}")
-    public List<PeriodoDTO> findAllByVehicleType(@PathVariable("tipo") String tipo) {
-        return this.periodoService.findPeriodoByVehicleType(VehicleType.valueOf(tipo));
+    public List<PeriodoDTO> findAllByVehicleType(@PathVariable("tipo") VehicleType vehicleType) {
+        return this.periodoService.findPeriodoByVehicleType(vehicleType);
     }
 }

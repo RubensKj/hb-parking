@@ -4,7 +4,6 @@ import br.com.hbparking.security.jwt.JwtAuthEntryPoint;
 import br.com.hbparking.security.jwt.JwtAuthTokenFilter;
 import br.com.hbparking.security.jwt.JwtProvider;
 import br.com.hbparking.security.user.UserAuthServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

@@ -48,4 +48,9 @@ public class VehicleModelService {
     public void deleteAllByModeloIsNotIn(List<String> nomes) {
         this.vehicleModelRepository.deleteAllByModeloIsNotIn(nomes);
     }
+
+    public List<VehicleModel> findByMarcaAndModelo(Marca fkMarca, String modelo){
+        return this.vehicleModelRepository.findByFkMarcaAndModeloContains(fkMarca, modelo);
+    }
+
 }

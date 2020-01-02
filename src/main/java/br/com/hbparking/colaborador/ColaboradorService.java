@@ -79,8 +79,8 @@ public class ColaboradorService {
         this.colaboradorRepository.deleteById(id);
     }
 
-    public ColaboradorDTO update(ColaboradorDTO colaboradorDTO) {
-        Colaborador colaborador = new Colaborador();
+    public ColaboradorDTO update(ColaboradorDTO colaboradorDTO, Long id) {
+        Colaborador colaborador = this.getEntityById(id);
         LocalDate localDate = LocalDate.parse(colaboradorDTO.getDataNascimento());
         formatter.format(localDate);
         colaborador.setDataNascimento(localDate);

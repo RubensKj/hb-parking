@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 
-@CrossOrigin(origins = {"http://localhost:4200", "http://192.168.33.216:4200", "https://192.168.33.216:4200"})
+@CrossOrigin(origins = {"*"})
 @RestController
 @RequestMapping("/api/auth")
 public class UserAuthController {

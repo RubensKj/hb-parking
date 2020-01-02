@@ -6,16 +6,10 @@ import br.com.hbparking.marcas.Marca;
 import br.com.hbparking.periodo.Periodo;
 import br.com.hbparking.tipoveiculo.VehicleType;
 import br.com.hbparking.vehicleModel.VehicleModel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "vaga_garagem")
 public class VagaGaragem {
@@ -56,6 +50,11 @@ public class VagaGaragem {
     @Column(name = "status")
     private StatusVaga statusVaga;
 
+    public VagaGaragem() {
+    }
+
+
+
     public VagaGaragem(VehicleType tipoVeiculo, Marca marca, VehicleModel vehicleModel,
                        Color color, String placa, Periodo periodo, Colaborador colaborador, StatusVaga statusVaga) {
         this.tipoVeiculo = tipoVeiculo;
@@ -68,6 +67,75 @@ public class VagaGaragem {
         this.statusVaga = statusVaga;
     }
 
+    public Long getId() {
+        return id;
+    }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
 
+    public VehicleType getTipoVeiculo() {
+        return tipoVeiculo;
+    }
+
+    public void setTipoVeiculo(VehicleType tipoVeiculo) {
+        this.tipoVeiculo = tipoVeiculo;
+    }
+
+    public Marca getMarca() {
+        return marca;
+    }
+
+    public void setMarca(Marca marca) {
+        this.marca = marca;
+    }
+
+    public VehicleModel getVehicleModel() {
+        return vehicleModel;
+    }
+
+    public void setVehicleModel(VehicleModel vehicleModel) {
+        this.vehicleModel = vehicleModel;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    public String getPlaca() {
+        return placa;
+    }
+
+    public void setPlaca(String placa) {
+        this.placa = placa;
+    }
+
+    public Periodo getPeriodo() {
+        return periodo;
+    }
+
+    public void setPeriodo(Periodo periodo) {
+        this.periodo = periodo;
+    }
+
+    public Colaborador getColaborador() {
+        return colaborador;
+    }
+
+    public void setColaborador(Colaborador colaborador) {
+        this.colaborador = colaborador;
+    }
+
+    public StatusVaga getStatusVaga() {
+        return statusVaga;
+    }
+
+    public void setStatusVaga(StatusVaga statusVaga) {
+        this.statusVaga = statusVaga;
+    }
 }

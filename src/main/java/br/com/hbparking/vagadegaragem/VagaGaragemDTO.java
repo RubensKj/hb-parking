@@ -2,18 +2,12 @@ package br.com.hbparking.vagadegaragem;
 
 import br.com.hbparking.cor.Color;
 import br.com.hbparking.tipoveiculo.VehicleType;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 
-@NoArgsConstructor
-@Data
-@AllArgsConstructor
 public class VagaGaragemDTO {
 
     private Long id;
@@ -70,6 +64,82 @@ public class VagaGaragemDTO {
         this.placa = placa;
         this.periodo = periodo;
         this.colaborador = colaborador;
+        this.statusVaga = statusVaga;
+    }
+
+    public VagaGaragemDTO() {
+    }
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public VehicleType getTipoVeiculo() {
+        return tipoVeiculo;
+    }
+
+    public void setTipoVeiculo(VehicleType tipoVeiculo) {
+        this.tipoVeiculo = tipoVeiculo;
+    }
+
+    public Long getMarca() {
+        return marca;
+    }
+
+    public void setMarca(Long marca) {
+        this.marca = marca;
+    }
+
+    public Long getVehicleModel() {
+        return vehicleModel;
+    }
+
+    public void setVehicleModel(Long vehicleModel) {
+        this.vehicleModel = vehicleModel;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    public String getPlaca() {
+        return placa;
+    }
+
+    public void setPlaca(String placa) {
+        this.placa = placa;
+    }
+
+    public Long getPeriodo() {
+        return periodo;
+    }
+
+    public void setPeriodo(Long periodo) {
+        this.periodo = periodo;
+    }
+
+    public Long getColaborador() {
+        return colaborador;
+    }
+
+    public void setColaborador(Long colaborador) {
+        this.colaborador = colaborador;
+    }
+
+    public StatusVaga getStatusVaga() {
+        return statusVaga;
+    }
+
+    public void setStatusVaga(StatusVaga statusVaga) {
         this.statusVaga = statusVaga;
     }
 }

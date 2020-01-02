@@ -37,6 +37,14 @@ public class VagaGaragemService {
     private final ColaboradorService colaboradorService;
     private static final String ID_INEXISTENTE = "ID %s não existe";
 
+    public VagaGaragemService(IVagaGaragemRepository iVagaGaragemRepository, MarcaService marcaService, VehicleModelService vehicleModelService, PeriodoService periodoService, ColaboradorService colaboradorService) {
+        this.iVagaGaragemRepository = iVagaGaragemRepository;
+        this.marcaService = marcaService;
+        this.vehicleModelService = vehicleModelService;
+        this.periodoService = periodoService;
+        this.colaboradorService = colaboradorService;
+    }
+
     public VagaGaragemDTO save(VagaGaragemDTO vagaGaragemDTO) throws Exception {
         this.validate(vagaGaragemDTO);
         LOGGER.info("Salvando Vaga");

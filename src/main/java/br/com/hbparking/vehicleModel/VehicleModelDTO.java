@@ -1,10 +1,5 @@
 package br.com.hbparking.vehicleModel;
 
-import lombok.*;
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class VehicleModelDTO {
 
     private Long id;
@@ -19,4 +14,36 @@ public class VehicleModelDTO {
         );
     }
 
+    public VehicleModelDTO() {
+    }
+
+    public VehicleModelDTO(Long id, Long idMarca, String modelo) {
+        this.id = id;
+        this.idMarca = idMarca;
+        this.modelo = modelo;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getIdMarca() {
+        return idMarca;
+    }
+
+    public void setIdMarca(Long idMarca) {
+        this.idMarca = idMarca;
+    }
+
+    public String getModelo() {
+        return modelo;
+    }
+
+    public void setModelo(String modelo) {
+        this.modelo = modelo;
+    }
 }

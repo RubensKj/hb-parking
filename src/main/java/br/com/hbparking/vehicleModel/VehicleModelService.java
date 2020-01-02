@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class VehicleModelService {
@@ -48,4 +49,9 @@ public class VehicleModelService {
     public void deleteAllByModeloIsNotIn(List<String> nomes) {
         this.vehicleModelRepository.deleteAllByModeloIsNotIn(nomes);
     }
+
+    public List<VehicleModel> findByMarcaAndModelo(Marca fkMarca, String modelo){
+        return this.vehicleModelRepository.findByFkMarcaAndModeloContains(fkMarca, modelo);
+    }
+
 }

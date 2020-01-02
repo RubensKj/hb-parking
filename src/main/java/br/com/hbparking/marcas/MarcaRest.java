@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("api/marcas")
 public class MarcaRest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Marca.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MarcaRest.class);
 
     private final MarcaService marcaService;
 
@@ -52,7 +52,7 @@ public class MarcaRest {
         return MarcaDTO.of(this.marcaService.findById(id));
     }
 
-    @RequestMapping("/allByTipo/{tipo}")
+    @GetMapping("/allByTipo/{tipo}")
     public Page<Marca> findMarcasByTipo(@PathVariable("tipo") String tipo, Pageable pageable) {
         LOGGER.info("Recebendo requisição para buscar todas marcas pelo tipo");
         return marcaService.findAllByTipoPage(tipo, pageable);

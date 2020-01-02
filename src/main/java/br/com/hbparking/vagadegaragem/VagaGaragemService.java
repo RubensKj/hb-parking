@@ -7,6 +7,8 @@ import br.com.hbparking.marcas.Marca;
 import br.com.hbparking.marcas.MarcaService;
 import br.com.hbparking.periodo.Periodo;
 import br.com.hbparking.periodo.PeriodoService;
+import br.com.hbparking.security.jwt.JwtProvider;
+import br.com.hbparking.security.jwt.TokenNotFoundException;
 import br.com.hbparking.tipoveiculo.VehicleType;
 import br.com.hbparking.vehicleModel.VehicleModel;
 import br.com.hbparking.vehicleModel.VehicleModelService;
@@ -19,12 +21,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-@AllArgsConstructor
 public class VagaGaragemService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VagaGaragemService.class);
@@ -35,21 +37,27 @@ public class VagaGaragemService {
     private final PeriodoService periodoService;
     private ValidadeOnHBEmployee validadeOnHBEmployee;
     private final ColaboradorService colaboradorService;
+    private final JwtProvider jwtProvider;
     private static final String ID_INEXISTENTE = "ID %s não existe";
 
-    public VagaGaragemService(IVagaGaragemRepository iVagaGaragemRepository, MarcaService marcaService, VehicleModelService vehicleModelService, PeriodoService periodoService, ColaboradorService colaboradorService) {
+    public VagaGaragemService(IVagaGaragemRepository iVagaGaragemRepository, MarcaService marcaService,
+                              VehicleModelService vehicleModelService, PeriodoService periodoService,
+                              ValidadeOnHBEmployee validadeOnHBEmployee, ColaboradorService colaboradorService,
+                              JwtProvider jwtProvider) {
         this.iVagaGaragemRepository = iVagaGaragemRepository;
         this.marcaService = marcaService;
         this.vehicleModelService = vehicleModelService;
         this.periodoService = periodoService;
+        this.validadeOnHBEmployee = validadeOnHBEmployee;
         this.colaboradorService = colaboradorService;
+        this.jwtProvider = jwtProvider;
     }
 
-    public VagaGaragemDTO save(VagaGaragemDTO vagaGaragemDTO) throws Exception {
+    public VagaGaragemDTO save(VagaGaragemDTO vagaGaragemDTO, HttpServletRequest request) throws Exception {
         this.validate(vagaGaragemDTO);
         LOGGER.info("Salvando Vaga");
         LOGGER.debug("Vaga: {}", vagaGaragemDTO);
-        VagaGaragem vagaSave = this.dtoToVaga(vagaGaragemDTO);
+        VagaGaragem vagaSave = this.dtoToVaga(vagaGaragemDTO, request);
         vagaSave.setStatusVaga(StatusVaga.EMAPROVACAO);
         if (isCarroOrMoto(vagaSave.getTipoVeiculo())) {
             vagaSave.setPlaca(placaValidator(vagaGaragemDTO.getPlaca()));
@@ -92,7 +100,7 @@ public class VagaGaragemService {
         throw new IllegalArgumentException(String.format(ID_INEXISTENTE, id));
     }
 
-    public VagaGaragemDTO update(VagaGaragemDTO vagaGaragemDTO, Long id) {
+    public VagaGaragemDTO update(VagaGaragemDTO vagaGaragemDTO, Long id, HttpServletRequest request) throws TokenNotFoundException {
         Optional<VagaGaragem> vagaGaragemOptional = this.iVagaGaragemRepository.findById(id);
         if (vagaGaragemOptional.isPresent()) {
             VagaGaragem vagaExsitente = vagaGaragemOptional.get();
@@ -108,7 +116,7 @@ public class VagaGaragemService {
                 vagaExsitente.setVehicleModel(null);
             }
             this.iVagaGaragemRepository.save(vagaExsitente);
-            vagaExsitente = this.dtoToVaga(vagaGaragemDTO);
+            vagaExsitente = this.dtoToVaga(vagaGaragemDTO, request);
             return VagaGaragemDTO.of(vagaExsitente);
         }
         throw new IllegalArgumentException(String.format(ID_INEXISTENTE, id));
@@ -121,9 +129,6 @@ public class VagaGaragemService {
         }
         if (vagaGaragemDTO.getPeriodo() == null) {
             throw new IllegalArgumentException("Periodo não deve ser nulo/vazio");
-        }
-        if (vagaGaragemDTO.getColaborador() == null) {
-            throw new IllegalArgumentException("Usuario não deve ser nulo/vazio");
         }
         if (isCarroOrMoto(vagaGaragemDTO.getTipoVeiculo())) {
             if (vagaGaragemDTO.getMarca() == null) {
@@ -144,7 +149,7 @@ public class VagaGaragemService {
         }
     }
 
-    private VagaGaragem dtoToVaga(VagaGaragemDTO vagaGaragemDTO) {
+    private VagaGaragem dtoToVaga(VagaGaragemDTO vagaGaragemDTO, HttpServletRequest request) throws TokenNotFoundException {
         Marca marca = new Marca();
         VehicleModel modelo = new VehicleModel();
         Color cor = null;
@@ -154,7 +159,7 @@ public class VagaGaragemService {
             cor = vagaGaragemDTO.getColor();
         }
         Periodo periodo = periodoService.findById(vagaGaragemDTO.getPeriodo());
-        Colaborador colaborador = colaboradorService.findById(vagaGaragemDTO.getColaborador());
+        Colaborador colaborador = getColaboradorLogado(request);
         return new VagaGaragem(
                 vagaGaragemDTO.getTipoVeiculo(),
                 marca,
@@ -212,6 +217,15 @@ public class VagaGaragemService {
         if (vagaGaragem.getPeriodo().getTipoVeiculo() != vagaGaragem.getTipoVeiculo()) {
             throw new InvalidVehicleTipoFromPeriodo("Periodo inválido para o tipo de veiculo desejado");
         }
+    }
+
+    public Colaborador getColaboradorLogado(HttpServletRequest request) throws TokenNotFoundException {
+        String token = this.jwtProvider.getJwt(request);
+        if (token != null && !token.isEmpty()) {
+            String emailFromUserAuthenticated = this.jwtProvider.getEmailFromUserAuthenticated(token);
+            return this.colaboradorService.findByEmail(emailFromUserAuthenticated);
+        }
+        throw new TokenNotFoundException("Colaborador não foi encontrado.");
     }
 
 }

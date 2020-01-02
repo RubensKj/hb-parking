@@ -16,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.time.LocalDate;
 
 @Service
 public class ColaboradorService {
@@ -180,7 +179,7 @@ public class ColaboradorService {
     }
 
 
-    public Colaborador  findById(Long id) {
+    public Colaborador findById(Long id) {
         Optional<Colaborador> colaborador = this.colaboradorRepository.findById(id);
         if (colaborador.isPresent()) {
             return colaborador.get();
@@ -199,5 +198,13 @@ public class ColaboradorService {
         colaborador.setResideForaBlumenau(colaboradorDTO.isResideForaBlumenau());
 
         return ColaboradorDTO.of(this.colaboradorRepository.save(colaborador));
+    }
+
+    public Colaborador findByEmail(String email) {
+        Optional<Colaborador> colaboradorOptional = this.colaboradorRepository.findByEmail(email);
+        if (colaboradorOptional.isPresent()) {
+            return colaboradorOptional.get();
+        }
+        throw new IllegalArgumentException(String.format("O colaborador do email: (%s) não existe", email));
     }
 }

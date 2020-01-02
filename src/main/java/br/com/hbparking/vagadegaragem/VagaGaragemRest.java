@@ -1,10 +1,13 @@
 package br.com.hbparking.vagadegaragem;
 
+import br.com.hbparking.security.jwt.TokenNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("api/vagas")
@@ -19,10 +22,10 @@ public class VagaGaragemRest {
     }
 
     @PostMapping
-    public VagaGaragemDTO save(@RequestBody VagaGaragemDTO vagaGaragemDTO) throws Exception {
+    public VagaGaragemDTO save(@RequestBody VagaGaragemDTO vagaGaragemDTO, HttpServletRequest request ) throws Exception {
         LOGGER.info("Recebendo solicitação de persistência de vaga de garagem...");
         LOGGER.debug("Payaload: {}", vagaGaragemDTO);
-        return this.vagaGaragemService.save(vagaGaragemDTO);
+        return this.vagaGaragemService.save(vagaGaragemDTO, request);
     }
 
     @GetMapping(value = "/allVagasByPage")
@@ -39,11 +42,11 @@ public class VagaGaragemRest {
     }
 
     @PutMapping("/{id}")
-    public VagaGaragemDTO udpate(@PathVariable("id") Long id, @RequestBody VagaGaragemDTO vagaGaragemDTO) {
+    public VagaGaragemDTO udpate(@PathVariable("id") Long id, @RequestBody VagaGaragemDTO vagaGaragemDTO, HttpServletRequest request) throws TokenNotFoundException {
         LOGGER.info("Recebendo Update para vaga de ID: {}", id);
         LOGGER.debug("Payload: {}", vagaGaragemDTO);
 
-        return this.vagaGaragemService.update(vagaGaragemDTO, id);
+        return this.vagaGaragemService.update(vagaGaragemDTO, id, request);
     }
     @PutMapping("/{id}/{status}")
     public VagaGaragemDTO changeStatus(@PathVariable("id") Long id, @PathVariable("status") StatusVaga status) {

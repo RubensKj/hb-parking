@@ -85,4 +85,5 @@ public class UserAuthController {
     public void changeUserPassword(@RequestBody UserDTO userDTO) {
         this.userService.updateSenha(userDTO.getPassword(), userDTO.getEmail());
     }
+
 }

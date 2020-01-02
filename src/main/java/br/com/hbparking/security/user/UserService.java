@@ -1,5 +1,7 @@
 package br.com.hbparking.security.user;
 
+import br.com.hbparking.marcas.CannotFindAnyMarcaWithId;
+import br.com.hbparking.marcas.Marca;
 import br.com.hbparking.security.role.Role;
 import br.com.hbparking.security.role.RoleService;
 import org.apache.commons.lang3.StringUtils;
@@ -76,11 +78,16 @@ public class UserService {
         }
     }
 
+    public User findEntityById(Long id) throws UsernameNotFoundException {
+        return this.IUserRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("Não foi possivel encontrar nenhum usuario com esse id. [" + id + "]"));
+    }
+  
     public void updateSenha(String password, String email) {
         User user = this.findByEmail(email);
 
         user.setPassword(this.encryptUserDTOPassword(password));
 
         this.IUserRepository.save(user);
+
     }
 }

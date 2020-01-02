@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,6 +23,14 @@ public class VehicleModelService {
     //save the vehicle model
     public void saveVehicle(VehicleModel model) {
         this.vehicleModelRepository.save(model);
+    }
+
+    public VehicleModel findById(Long id) {
+        Optional<VehicleModel> vehicleModel = this.vehicleModelRepository.findById(id);
+        if (vehicleModel.isPresent()) {
+            return vehicleModel.get();
+        }
+        throw new IllegalArgumentException(String.format("ID %s do modelo não existe", id));
     }
 
     //return all models grouped by brand

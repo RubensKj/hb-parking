@@ -49,12 +49,12 @@ public class MarcaRest {
 
         LOGGER.info("Recebendo find by ID... id: [{}]", id);
 
-        return this.marcaService.findById(id);
+        return MarcaDTO.of(this.marcaService.findById(id));
     }
 
     @RequestMapping("/allByTipo/{tipo}")
     public Page<Marca> findMarcasByTipo(@PathVariable("tipo") String tipo, Pageable pageable) {
-
+        LOGGER.info("Recebendo requisição para buscar todas marcas pelo tipo");
         return marcaService.findAllByTipoPage(tipo, pageable);
 
     }

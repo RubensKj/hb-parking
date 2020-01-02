@@ -3,7 +3,6 @@ package br.com.hbparking.marcas;
 import br.com.hbparking.util.Extension;
 import br.com.hbparking.vehicleException.ContentDispositionException;
 import com.opencsv.*;
-import net.bytebuddy.implementation.bytecode.Throw;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.EnumUtils;
@@ -22,7 +21,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -59,12 +57,12 @@ public class MarcaService {
         }
     }
 
-    public MarcaDTO findById(Long id) {
+    public Marca findById(Long id) {
         Optional<Marca> marca = this.iMarcaRepository.findById(id);
         if (marca.isPresent()) {
-            return MarcaDTO.of(marca.get());
+            return marca.get();
         }
-        throw new IllegalArgumentException(String.format("ID %s não existe", id));
+        throw new IllegalArgumentException(String.format("ID %s de marca não existe", id));
     }
 
     @Transactional(readOnly = true)

@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.time.LocalDate;
@@ -176,6 +177,15 @@ public class ColaboradorService {
         pcdTrabalhoNoturnoBoolean[1] = trabalhoNoturno.equalsIgnoreCase("sim");
 
         return pcdTrabalhoNoturnoBoolean;
+    }
+
+
+    public Colaborador  findById(Long id) {
+        Optional<Colaborador> colaborador = this.colaboradorRepository.findById(id);
+        if (colaborador.isPresent()) {
+            return colaborador.get();
+        }
+        throw new IllegalArgumentException(String.format("ID %s não existe", id));
     }
 
     public boolean convertStringToBoolean(String afirmacao) {

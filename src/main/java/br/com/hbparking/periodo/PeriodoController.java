@@ -21,8 +21,8 @@ public class PeriodoController {
         return this.periodoService.create(periodoDTO);
     }
 
-    @GetMapping("/periodo/buscar-tipo/{tipoVeiculo}")
-    public List<PeriodoDTO> findAllByVehicleType(@PathVariable VehicleType tipoVeiculo) {
-        return this.periodoService.findPeriodoByVehicleType(tipoVeiculo);
+    @GetMapping("/periodo/buscar-tipo/{tipo}")
+    public List<PeriodoDTO> findAllByVehicleType(@PathVariable("tipo") VehicleType vehicleType) {
+        return this.periodoService.findPeriodoByVehicleType(vehicleType);
     }
 }

@@ -1,7 +1,6 @@
 package br.com.hbparking.vehicleModel;
 
 import br.com.hbparking.marcas.Marca;
-import lombok.*;
 
 import javax.persistence.*;
 

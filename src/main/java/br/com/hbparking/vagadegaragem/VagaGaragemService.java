@@ -1,7 +1,9 @@
 package br.com.hbparking.vagadegaragem;
 
+import br.com.hbparking.colaborador.CannotFindColaborador;
 import br.com.hbparking.colaborador.Colaborador;
 import br.com.hbparking.colaborador.ColaboradorService;
+import br.com.hbparking.colaborador.NoConnectionAPIException;
 import br.com.hbparking.cor.Color;
 import br.com.hbparking.marcas.Marca;
 import br.com.hbparking.marcas.MarcaService;
@@ -38,7 +40,7 @@ public class VagaGaragemService {
     private ValidadeOnHBEmployee validadeOnHBEmployee;
     private final ColaboradorService colaboradorService;
     private final JwtProvider jwtProvider;
-    private static final String ID_INEXISTENTE = "ID %s não existe";
+    private static final String ID_INEXISTENTE = "ID não existe: ";
 
     public VagaGaragemService(IVagaGaragemRepository iVagaGaragemRepository, MarcaService marcaService,
                               VehicleModelService vehicleModelService, PeriodoService periodoService,
@@ -53,7 +55,7 @@ public class VagaGaragemService {
         this.jwtProvider = jwtProvider;
     }
 
-    public VagaGaragemDTO save(VagaGaragemDTO vagaGaragemDTO, HttpServletRequest request) throws Exception {
+    public VagaGaragemDTO save(VagaGaragemDTO vagaGaragemDTO, HttpServletRequest request) throws CannotFindColaborador, TokenNotFoundException, InvalidVehicleTipoFromPeriodo, NoConnectionAPIException, InvalidVagaViolation {
         this.validate(vagaGaragemDTO);
         LOGGER.info("Salvando Vaga");
         LOGGER.debug("Vaga: {}", vagaGaragemDTO);
@@ -100,26 +102,22 @@ public class VagaGaragemService {
         throw new IllegalArgumentException(String.format(ID_INEXISTENTE, id));
     }
 
-    public VagaGaragemDTO update(VagaGaragemDTO vagaGaragemDTO, Long id, HttpServletRequest request) throws TokenNotFoundException {
-        Optional<VagaGaragem> vagaGaragemOptional = this.iVagaGaragemRepository.findById(id);
-        if (vagaGaragemOptional.isPresent()) {
-            VagaGaragem vagaExsitente = vagaGaragemOptional.get();
-            validate(vagaGaragemDTO);
-            LOGGER.info("Atualizando vaga... id: [{}]", vagaExsitente.getId());
-            LOGGER.debug("Payload: {}", vagaGaragemDTO);
-            LOGGER.debug("Vaga Existente: {}", vagaExsitente);
-            if (isCarroOrMoto(vagaExsitente.getTipoVeiculo())) {
-                vagaExsitente.setPlaca(placaValidator(vagaGaragemDTO.getPlaca()));
-            } else {
-                vagaExsitente.setMarca(null);
-                vagaExsitente.setPlaca(null);
-                vagaExsitente.setVehicleModel(null);
-            }
-            this.iVagaGaragemRepository.save(vagaExsitente);
-            vagaExsitente = this.dtoToVaga(vagaGaragemDTO, request);
-            return VagaGaragemDTO.of(vagaExsitente);
+    public VagaGaragemDTO update(VagaGaragemDTO vagaGaragemDTO, Long id, HttpServletRequest request) throws TokenNotFoundException, CannotFindColaborador, CannotFindVaga {
+        VagaGaragem vagaExsitente = this.iVagaGaragemRepository.findById(id).orElseThrow(() -> new CannotFindVaga(ID_INEXISTENTE + id));
+        validate(vagaGaragemDTO);
+        LOGGER.info("Atualizando vaga... id: [{}]", vagaExsitente.getId());
+        LOGGER.debug("Payload: {}", vagaGaragemDTO);
+        LOGGER.debug("Vaga Existente: {}", vagaExsitente);
+        if (isCarroOrMoto(vagaExsitente.getTipoVeiculo())) {
+            vagaExsitente.setPlaca(placaValidator(vagaGaragemDTO.getPlaca()));
+        } else {
+            vagaExsitente.setMarca(null);
+            vagaExsitente.setPlaca(null);
+            vagaExsitente.setVehicleModel(null);
         }
-        throw new IllegalArgumentException(String.format(ID_INEXISTENTE, id));
+        this.iVagaGaragemRepository.save(vagaExsitente);
+        vagaExsitente = this.dtoToVaga(vagaGaragemDTO, request);
+        return VagaGaragemDTO.of(vagaExsitente);
     }
 
     public void validate(VagaGaragemDTO vagaGaragemDTO) {
@@ -149,7 +147,7 @@ public class VagaGaragemService {
         }
     }
 
-    private VagaGaragem dtoToVaga(VagaGaragemDTO vagaGaragemDTO, HttpServletRequest request) throws TokenNotFoundException {
+    private VagaGaragem dtoToVaga(VagaGaragemDTO vagaGaragemDTO, HttpServletRequest request) throws TokenNotFoundException, CannotFindColaborador {
         Marca marca = new Marca();
         VehicleModel modelo = new VehicleModel();
         Color cor = null;
@@ -219,7 +217,7 @@ public class VagaGaragemService {
         }
     }
 
-    public Colaborador getColaboradorLogado(HttpServletRequest request) throws TokenNotFoundException {
+    public Colaborador getColaboradorLogado(HttpServletRequest request) throws TokenNotFoundException, CannotFindColaborador {
         String token = this.jwtProvider.getJwt(request);
         if (token != null && !token.isEmpty()) {
             String emailFromUserAuthenticated = this.jwtProvider.getEmailFromUserAuthenticated(token);

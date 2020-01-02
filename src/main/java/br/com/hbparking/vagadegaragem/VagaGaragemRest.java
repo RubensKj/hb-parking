@@ -1,5 +1,6 @@
 package br.com.hbparking.vagadegaragem;
 
+import br.com.hbparking.colaborador.CannotFindColaborador;
 import br.com.hbparking.security.jwt.TokenNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +43,7 @@ public class VagaGaragemRest {
     }
 
     @PutMapping("/{id}")
-    public VagaGaragemDTO udpate(@PathVariable("id") Long id, @RequestBody VagaGaragemDTO vagaGaragemDTO, HttpServletRequest request) throws TokenNotFoundException {
+    public VagaGaragemDTO udpate(@PathVariable("id") Long id, @RequestBody VagaGaragemDTO vagaGaragemDTO, HttpServletRequest request) throws TokenNotFoundException, CannotFindColaborador {
         LOGGER.info("Recebendo Update para vaga de ID: {}", id);
         LOGGER.debug("Payload: {}", vagaGaragemDTO);
 

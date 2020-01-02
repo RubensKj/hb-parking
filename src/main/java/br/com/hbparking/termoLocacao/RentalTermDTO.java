@@ -2,9 +2,6 @@ package br.com.hbparking.termoLocacao;
 
 import lombok.*;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class RentalTermDTO {
 
     private Long id;
@@ -25,5 +22,45 @@ public class RentalTermDTO {
                 rentalTerm.getRentalTermStatus().name());
     }
 
+    public RentalTermDTO() {
+    }
 
+    public RentalTermDTO(Long id, String title, String fileName, String rentalTermStatus) {
+        this.id = id;
+        this.title = title;
+        this.fileName = fileName;
+        this.rentalTermStatus = rentalTermStatus;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getRentalTermStatus() {
+        return rentalTermStatus;
+    }
+
+    public void setRentalTermStatus(String rentalTermStatus) {
+        this.rentalTermStatus = rentalTermStatus;
+    }
 }

@@ -6,9 +6,6 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "rental_term")
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
 public class RentalTerm {
 
     @Id
@@ -31,5 +28,45 @@ public class RentalTerm {
         this.rentalTermStatus = status;
     }
 
+    public RentalTerm() {
+    }
 
+    public RentalTerm(Long id, String title, String fileName, RentalTermStatus rentalTermStatus) {
+        this.id = id;
+        this.title = title;
+        this.fileName = fileName;
+        this.rentalTermStatus = rentalTermStatus;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public RentalTermStatus getRentalTermStatus() {
+        return rentalTermStatus;
+    }
+
+    public void setRentalTermStatus(RentalTermStatus rentalTermStatus) {
+        this.rentalTermStatus = rentalTermStatus;
+    }
 }

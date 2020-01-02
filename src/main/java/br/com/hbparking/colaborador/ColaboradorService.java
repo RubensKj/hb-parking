@@ -200,11 +200,10 @@ public class ColaboradorService {
         return ColaboradorDTO.of(this.colaboradorRepository.save(colaborador));
     }
 
-    public Colaborador findByEmail(String email) {
-        Optional<Colaborador> colaboradorOptional = this.colaboradorRepository.findByEmail(email);
-        if (colaboradorOptional.isPresent()) {
-            return colaboradorOptional.get();
-        }
-        throw new IllegalArgumentException(String.format("O colaborador do email: (%s) não existe", email));
+    public Colaborador findByEmail(String email) throws CannotFindColaborador {
+        return this.colaboradorRepository.findByEmail(email).orElseThrow(() ->
+                new CannotFindColaborador("O colaborador do email: "+ email +" não existe"));
     }
+
+
 }

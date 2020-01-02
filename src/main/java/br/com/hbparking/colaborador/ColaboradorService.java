@@ -52,6 +52,8 @@ public class ColaboradorService {
         colaborador.setResideForaBlumenau(colaboradorDTO.isResideForaBlumenau());
         colaborador.setOfereceCarona(colaboradorDTO.isOfereceCarona());
 
+        this.colaboradorRepository.save(colaborador);
+
         List<RoleName> roleNameList = new ArrayList<>();
         roleNameList.add(RoleName.ROLE_USER);
 

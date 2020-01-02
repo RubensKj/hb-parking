@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/marcas")
@@ -77,5 +78,12 @@ public class MarcaRest {
 
         this.marcaService.delete(id);
     }
+
+    @GetMapping("/allByTipo/{tipo}")
+    public List<Marca> findMarcasByTipo(@PathVariable("tipo") String tipo){
+        return marcaService.findAllByTipoVeiculo(tipo);
+
+    }
+
 
 }

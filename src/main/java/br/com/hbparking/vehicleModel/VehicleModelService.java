@@ -1,12 +1,14 @@
 package br.com.hbparking.vehicleModel;
 
 import br.com.hbparking.csv.VehicleGroupDTO;
+import br.com.hbparking.marcas.Marca;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class VehicleModelService {
@@ -38,4 +40,9 @@ public class VehicleModelService {
     public void deleteAllByModeloIsNotIn(List<String> nomes) {
         this.vehicleModelRepository.deleteAllByModeloIsNotIn(nomes);
     }
+
+    public List<VehicleModel> findByMarcaAndModelo(Marca fkMarca, String modelo){
+        return this.vehicleModelRepository.findByFkMarcaAndModeloContains(fkMarca, modelo);
+    }
+
 }

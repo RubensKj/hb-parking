@@ -17,8 +17,8 @@ public class ColaboradorController {
 
 
     @PostMapping("/cadastrar")
-    public void cadastrarColaborador(@RequestBody @Valid ColaboradorDTO colaboradorDTO) throws Exception {
-        this.colaboradorService.save(colaboradorDTO);
+    public ColaboradorDTO cadastrarColaborador(@RequestBody @Valid ColaboradorDTO colaboradorDTO) throws EmailAlreadyExistsException {
+        return this.colaboradorService.save(colaboradorDTO);
     }
 
     @GetMapping("/{id}")

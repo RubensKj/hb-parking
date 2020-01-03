@@ -9,4 +9,14 @@ public class DateHelper {
         return DateTimeFormatter.ofPattern("dd/MM/yyyy").format(date);
     }
 
+    public static String formatDateToPassword(LocalDate birthDate) {
+        return DateTimeFormatter.ofPattern("dd/MM/yyyy").format(birthDate).replace("/", "");
+    }
+
+    public static LocalDate formatDateFromCSVToLocalDate(String[] dateSplitted) {
+        int day = Integer.parseInt(dateSplitted[0]);
+        int month = Integer.parseInt(dateSplitted[1]);
+        int year = Integer.parseInt(dateSplitted[2]);
+        return LocalDate.of(year, month, day);
+    }
 }

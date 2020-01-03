@@ -7,13 +7,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class ReadFileCSV {
-    public List<String[]> read(MultipartFile multipartFile) throws Exception {
+    public List<String[]> read(MultipartFile multipartFile) throws IOException, FileNotSupportedException, ContentDispositionException {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(multipartFile.getInputStream()));
         String line;
 

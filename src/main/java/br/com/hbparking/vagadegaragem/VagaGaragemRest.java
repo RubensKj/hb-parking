@@ -6,6 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/vagas")
 public class VagaGaragemRest {
@@ -13,9 +15,11 @@ public class VagaGaragemRest {
     private static final Logger LOGGER = LoggerFactory.getLogger(VagaGaragemRest.class);
 
     private final VagaGaragemService vagaGaragemService;
+    private final SortingVaga sortingVaga;
 
-    public VagaGaragemRest(VagaGaragemService vagaGaragemService) {
+    public VagaGaragemRest(VagaGaragemService vagaGaragemService, SortingVaga sortingVaga) {
         this.vagaGaragemService = vagaGaragemService;
+        this.sortingVaga = sortingVaga;
     }
 
     @PostMapping
@@ -30,6 +34,7 @@ public class VagaGaragemRest {
         LOGGER.info("Recebendo requisição para buscar todas as vagas em paginas");
         return vagaGaragemService.findAllByTipoPage(pageable);
     }
+
     @GetMapping("/{id}")
     public VagaGaragemDTO find(@PathVariable("id") Long id) {
 
@@ -45,6 +50,7 @@ public class VagaGaragemRest {
 
         return this.vagaGaragemService.update(vagaGaragemDTO, id);
     }
+
     @PutMapping("/{id}/{status}")
     public VagaGaragemDTO changeStatus(@PathVariable("id") Long id, @PathVariable("status") StatusVaga status) {
         LOGGER.info("Atualização de status para vaga de ID: {}", id);
@@ -60,4 +66,8 @@ public class VagaGaragemRest {
         this.vagaGaragemService.delete(id);
     }
 
+    @GetMapping("/sort/{qtd}")
+    public List<VagaGaragem> sort(@PathVariable("qtd") int qtd){
+        return this.sortingVaga.sortingVagas(qtd);
+    }
 }

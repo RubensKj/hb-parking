@@ -120,6 +120,7 @@ public class ColaboradorService {
         Colaborador colaborador = this.getEntityById(id);
         LocalDate localDate = colaboradorDTO.getDataNascimento();
         formatter.format(localDate);
+
         colaborador.setDataNascimento(localDate);
         colaborador.setEmail(colaboradorDTO.getEmail());
         colaborador.setNome(colaboradorDTO.getNome());

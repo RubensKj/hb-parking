@@ -1,12 +1,31 @@
 package br.com.hbparking.tipoveiculo;
 
-import lombok.*;
-
-@Data
-@AllArgsConstructor
 public class VehicleTypeDTO {
 
     private int codigo;
     private String descricao;
 
+    public VehicleTypeDTO(int codigo, String descricao) {
+        this.codigo = codigo;
+        this.descricao = descricao;
+    }
+
+    public VehicleTypeDTO() {
+    }
+
+    public int getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(int codigo) {
+        this.codigo = codigo;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
 }

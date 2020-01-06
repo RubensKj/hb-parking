@@ -31,6 +31,7 @@ public class SortingVaga {
         List<VagaGaragem> vagasSorteadas = new ArrayList<>();
         for (int i = 0; i < vagasFiltradas.length; i++) {
             vagasSorteadas = this.sortList(vagasFiltradas[i], qtdVagas, vagasSorteadas);
+
         }
         return vagasSorteadas.stream().distinct().sorted(Comparator.comparing(vagaGaragem -> vagaGaragem.getColaborador().getEmail())).collect(Collectors.toList());
     }

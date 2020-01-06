@@ -1,5 +1,6 @@
 package br.com.hbparking.vagadegaragem;
 
+import br.com.hbparking.email.MailSenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -16,10 +17,12 @@ public class VagaGaragemRest {
 
     private final VagaGaragemService vagaGaragemService;
     private final SortingVaga sortingVaga;
+    private final MailSenderService mailSender;
 
-    public VagaGaragemRest(VagaGaragemService vagaGaragemService, SortingVaga sortingVaga) {
+    public VagaGaragemRest(VagaGaragemService vagaGaragemService, SortingVaga sortingVaga, MailSenderService mailSender) {
         this.vagaGaragemService = vagaGaragemService;
         this.sortingVaga = sortingVaga;
+        this.mailSender = mailSender;
     }
 
     @PostMapping
@@ -66,8 +69,14 @@ public class VagaGaragemRest {
         this.vagaGaragemService.delete(id);
     }
 
-    @GetMapping("/sort/{qtd}")
-    public List<VagaGaragem> sort(@PathVariable("qtd") int qtd){
-        return this.sortingVaga.sortingVagas(qtd);
+    @GetMapping("/sort/{qtd}/{id}")
+    public List<VagaGaragem> sort(@PathVariable("qtd") int qtd,@PathVariable("id") Long id){
+
+        List<VagaGaragem> vagasSorteadas = this.sortingVaga.sortingVagas(qtd);
+
+        this.mailSender.sendEmails(vagasSorteadas);
+
+        return vagasSorteadas;
     }
+
 }

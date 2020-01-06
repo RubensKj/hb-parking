@@ -4,7 +4,8 @@ public enum VehicleType {
     CARRO("CARRO"),
     BICICLETA("BICICLETA"),
     MOTO("MOTO"),
-    PATINETE("PATINETE");
+    PATINETE("PATINETE"),
+    PATINETE_E_BICICLETA("PATINETE E BICICLETA");
 
     private final String descricao;
 

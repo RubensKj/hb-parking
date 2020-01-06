@@ -1,0 +1,1 @@
+ALTER TABLE vaga_info ALTER COLUMN tipo_veiculo VARCHAR(30) NOT NULL

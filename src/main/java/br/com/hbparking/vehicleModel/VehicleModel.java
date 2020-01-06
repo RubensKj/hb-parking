@@ -8,9 +8,6 @@ import javax.persistence.*;
 @Table(name = "vehicle_models")
 public class VehicleModel {
 
-    public VehicleModel() {
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_modelo")
@@ -23,6 +20,9 @@ public class VehicleModel {
 
     @Column(name = "model", nullable = false)
     private String modelo;
+
+    public VehicleModel() {
+    }
 
     public Long getId() {
         return id;

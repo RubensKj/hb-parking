@@ -1,12 +1,16 @@
 package br.com.hbparking.marca;
 
 import br.com.hbparking.marcas.*;
+import br.com.hbparking.vehicleException.ContentDispositionException;
+import com.opencsv.CSVReader;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +21,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = MarcaServiceTest.class)
 public class MarcaServiceTest {
 
+
     @Mock
     private IMarcaRepository iMarcaRepository;
 
@@ -25,6 +30,7 @@ public class MarcaServiceTest {
 
     @InjectMocks
     private MarcaService marcaService;
+
 
     @Test
     public void save() {
@@ -131,6 +137,47 @@ public class MarcaServiceTest {
         assertTrue(StringUtils.isNoneEmpty(createdMarca.getNome()), "Nome não deve ser nulo");
         assertTrue(StringUtils.isNoneEmpty(createdMarca.getTipoVeiculo().getDescricao()), "Tipo não deve ser nulo");
         assertTrue(EnumUtils.isValidEnum(TipoVeiculoEnum.class, createdMarca.getTipoVeiculo().getDescricao()), "Enum Inválido");
+    }
+
+
+
+    @Test
+    public void readInvalidCSV1() {
+
+        StringBuffer sb = new StringBuffer();
+
+        sb.append("a\tc");
+
+        CSVReader c = new CSVReader(new StringReader(sb.toString()));
+        assertThrows(ContentDispositionException.class, () -> {
+             marcaService.lerLinhasCsv(c);
+        });
+
+        }
+
+    @Test
+    public void readInvalidCSV2() {
+
+        StringBuffer sb = new StringBuffer();
+
+        sb.append("a,c/34/dr");
+
+        CSVReader c = new CSVReader(new StringReader(sb.toString()));
+        assertThrows(ContentDispositionException.class, () -> {
+            marcaService.lerLinhasCsv(c);
+        });
+
+    }
+    @Test
+    public void readValidCSV() throws IOException, ContentDispositionException {
+
+        StringBuffer sb = new StringBuffer();
+
+        sb.append("1;Ford");
+
+        CSVReader c = new CSVReader(new StringReader(sb.toString()));
+           assertTrue( !marcaService.lerLinhasCsv(c).isEmpty());
+
     }
 
 

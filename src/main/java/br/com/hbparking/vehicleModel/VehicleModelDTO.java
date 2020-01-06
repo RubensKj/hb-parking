@@ -6,26 +6,21 @@ public class VehicleModelDTO {
     private Long idMarca;
     private String modelo;
 
-    public VehicleModelDTO() {
-    }
-
-    public VehicleModelDTO(Long idMarca, String modelo) {
-        this.idMarca = idMarca;
-        this.modelo = modelo;
-    }
-
-    private VehicleModelDTO(Long id, Long idMarca, String modelo) {
-        this.id = id;
-        this.idMarca = idMarca;
-        this.modelo = modelo;
-    }
-
     public static VehicleModelDTO of(VehicleModel vehicleModel){
         return new VehicleModelDTO(
                 vehicleModel.getId(),
                 vehicleModel.getFkMarca().getId(),
                 vehicleModel.getModelo()
         );
+    }
+
+    public VehicleModelDTO() {
+    }
+
+    public VehicleModelDTO(Long id, Long idMarca, String modelo) {
+        this.id = id;
+        this.idMarca = idMarca;
+        this.modelo = modelo;
     }
 
     public Long getId() {

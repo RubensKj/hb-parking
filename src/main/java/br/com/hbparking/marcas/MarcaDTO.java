@@ -1,6 +1,5 @@
 package br.com.hbparking.marcas;
 
-
 public class MarcaDTO {
 
     private Long id;
@@ -21,20 +20,16 @@ public class MarcaDTO {
         this.nome = nome;
     }
 
-    public static MarcaDTO of(Marca marca){
+    public static MarcaDTO of(Marca marca) {
         return new MarcaDTO(
                 marca.getId(),
                 marca.getTipoVeiculo(),
                 marca.getNome()
-                );
+        );
     }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public TipoVeiculoEnum getTipoVeiculo() {
@@ -51,14 +46,5 @@ public class MarcaDTO {
 
     public void setNome(String nome) {
         this.nome = nome;
-    }
-
-    @Override
-    public String toString() {
-        return "MarcaDTO{" +
-                "id=" + id +
-                ", Nome ='" + getNome() + '\'' +
-                ", Tipo veiculo: ='" + getTipoVeiculo().getDescricao() + '\'' +
-                '}';
     }
 }

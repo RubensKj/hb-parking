@@ -4,14 +4,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
-
-@CrossOrigin(origins = {"http://localhost:4200", "http://172.17.48.49", "http://172.17.48.49:4200", "http://192.168.32.95", "http://192.168.32.95:4200"})
 @RestController
 @RequestMapping("api/marcas")
 public class MarcaRest {
@@ -36,10 +35,7 @@ public class MarcaRest {
     public void uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("tipo") String tipo) throws Exception {
 
         marcaService.saveDataFromUploadFile(file, tipo);
-
-
-        LOGGER.info("{}",
-                "File Upload Successfully!");
+        LOGGER.info("Arquivo salvo com sucesso!");
     }
 
 
@@ -54,13 +50,15 @@ public class MarcaRest {
 
         LOGGER.info("Recebendo find by ID... id: [{}]", id);
 
-        return this.marcaService.findById(id);
+        return MarcaDTO.of(this.marcaService.findById(id));
     }
 
-    @RequestMapping("/allByTipo/{tipo}")
-    public Page<Marca> findMarcasByTipo(@PathVariable("tipo") String tipo, Pageable pageable) {
-
-        return marcaService.findAllByTipoPage(tipo, pageable);
+    @RequestMapping("/allByTipo/{tipo}/{page}/{size}")
+    public Page<Marca> findMarcasByTipo(@PathVariable("tipo") String tipo, @PathVariable("page") int page, @PathVariable("size") int size) {
+        PageRequest pageRequest = PageRequest.of(
+                page,
+                size);
+        return marcaService.findAllByTipoPage(tipo, pageRequest);
 
     }
 
@@ -78,5 +76,12 @@ public class MarcaRest {
 
         this.marcaService.delete(id);
     }
+
+    @GetMapping("/allByTipo/{tipo}")
+    public List<Marca> findMarcasByTipo(@PathVariable("tipo") String tipo){
+        return marcaService.findAllByTipoVeiculo(tipo);
+
+    }
+
 
 }

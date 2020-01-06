@@ -1,6 +1,7 @@
 package br.com.hbparking.csv;
 
 public class VehicleGroupDTO {
+
     private Long codigoMarca;
     private String modelo;
 

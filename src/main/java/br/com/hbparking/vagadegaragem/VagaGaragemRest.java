@@ -69,8 +69,8 @@ public class VagaGaragemRest {
         this.vagaGaragemService.delete(id);
     }
 
-    @GetMapping("/sort/{qtd}/{id}")
-    public List<VagaGaragem> sort(@PathVariable("qtd") int qtd,@PathVariable("id") Long id){
+    @GetMapping("/sort/{qtd}")
+    public List<VagaGaragem> sort(@PathVariable("qtd") int qtd){
 
         List<VagaGaragem> vagasSorteadas = this.sortingVaga.sortingVagas(qtd);
 

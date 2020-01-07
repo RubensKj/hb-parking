@@ -76,7 +76,7 @@ public class VagaGaragemRest {
         List<VagaGaragem> sorteados = this.vagaGaragemService.sorteioVagas(qtdVagas, tipoVeiculo);
 
         new Thread(() -> {
-            this.mailSender.sendEmailApproved(sorteados);
+            this.mailSender.successListToBeEmailed(sorteados);
         }).start();
 
 

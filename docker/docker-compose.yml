@@ -3,6 +3,6 @@ sqlserver:
   hostname: sqlserver
   environment:
     - ACCEPT_EULA=Y
-    - SA_PASSWORD=Teste!@#
+    - SA_PASSWORD=Teste123
   ports:
     - 1433:1433

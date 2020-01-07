@@ -50,12 +50,7 @@ public class PeriodoService {
 
     private void validarPeriodo(PeriodoDTO periodoDTO) {
         LOGGER.info("Validando periodo");
-        if (periodoDTO.getDataInicial().isAfter(periodoDTO.getDataFinal())) {
-            throw new IllegalArgumentException("Data final deve ser após data inicial");
-        }
-        if (periodoDTO.getDataInicial().isEqual(periodoDTO.getDataFinal())) {
-            throw new IllegalArgumentException("Um periodo deve ter data inicial e final distintas");
-        }
+
         if (periodoDTO.getDataInicial() == null) {
             throw new IllegalArgumentException("Data inicial não pode ser nula");
         }
@@ -64,6 +59,12 @@ public class PeriodoService {
         }
         if (periodoDTO.getVehicleType() == null) {
             throw new IllegalArgumentException("Tipo de veículo não pode ser nulo");
+        }
+        if (periodoDTO.getDataInicial().isAfter(periodoDTO.getDataFinal())) {
+            throw new IllegalArgumentException("Data final deve ser após data inicial");
+        }
+        if (periodoDTO.getDataInicial().isEqual(periodoDTO.getDataFinal())) {
+            throw new IllegalArgumentException("Um periodo deve ter data inicial e final distintas");
         }
     }
 }

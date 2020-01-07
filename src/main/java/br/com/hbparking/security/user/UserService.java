@@ -1,7 +1,5 @@
 package br.com.hbparking.security.user;
 
-import br.com.hbparking.marcas.CannotFindAnyMarcaWithId;
-import br.com.hbparking.marcas.Marca;
 import br.com.hbparking.security.role.Role;
 import br.com.hbparking.security.role.RoleService;
 import org.apache.commons.lang3.StringUtils;
@@ -20,19 +18,19 @@ public class UserService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
-    private final IUserRepository IUserRepository;
+    private final IUserRepository iUserRepository;
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public UserService(br.com.hbparking.security.user.IUserRepository iUserRepository, RoleService roleService, PasswordEncoder passwordEncoder) {
-        IUserRepository = iUserRepository;
+        this.iUserRepository = iUserRepository;
         this.roleService = roleService;
         this.passwordEncoder = passwordEncoder;
     }
 
     public User findByEmail(String email) {
-        return this.IUserRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Usuário não foi encontrado com esse email." + email));
+        return this.iUserRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Usuário não foi encontrado com esse email. " + email));
     }
 
     public String encryptUserDTOPassword(String password) {
@@ -47,11 +45,11 @@ public class UserService {
 
         Set<Role> rolesFromDatabase = roleService.findAllByNamesIn(userDTO.getRolesString());
 
-        return this.IUserRepository.save(new User(userDTO.getEmail(), userDTO.getNomeCompleto(), userDTO.getPassword(), rolesFromDatabase));
+        return this.iUserRepository.save(new User(userDTO.getEmail(), userDTO.getNomeCompleto(), userDTO.getPassword(), rolesFromDatabase));
     }
 
     public void saveAllUsers(List<User> userList) {
-        this.IUserRepository.saveAll(userList);
+        this.iUserRepository.saveAll(userList);
     }
 
     private void validate(UserDTO userDTO) {
@@ -61,7 +59,7 @@ public class UserService {
             throw new IllegalArgumentException("E-mail não pode ser nulo/vázio.");
         }
 
-        if (this.IUserRepository.existsByEmail(userDTO.getEmail())) {
+        if (this.iUserRepository.existsByEmail(userDTO.getEmail())) {
             throw new IllegalArgumentException("Usuário com este e-mail já existe.");
         }
 
@@ -79,7 +77,7 @@ public class UserService {
     }
 
     public User findEntityById(Long id) throws UsernameNotFoundException {
-        return this.IUserRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("Não foi possivel encontrar nenhum usuario com esse id. [" + id + "]"));
+        return this.iUserRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("Não foi possivel encontrar nenhum usuario com esse id. [" + id + "]"));
     }
   
     public void updateSenha(String password, String email) {
@@ -87,7 +85,17 @@ public class UserService {
 
         user.setPassword(this.encryptUserDTOPassword(password));
 
-        this.IUserRepository.save(user);
+        this.iUserRepository.save(user);
 
+    }
+
+    public User updateNome(User user, String nome) {
+        if (nome == null || nome.isEmpty()) {
+            throw new IllegalArgumentException("Nome completo não pode ser nulo/vazio");
+        }
+
+        user.setNomeCompleto(nome);
+
+        return this.iUserRepository.save(user);
     }
 }

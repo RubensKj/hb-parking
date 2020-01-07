@@ -228,14 +228,14 @@ public class VagaGaragemService {
         }
         for (VagaGaragem vaga: vagasSorteadas) {
             this.changeStatusVaga(vaga.getId(), StatusVaga.VIGENTE);
-            LOGGER.info("Update vaga aprovada: ", vaga.getId());
+            LOGGER.debug("Update vaga aprovada: {}", vaga.getId());
         }
 
         List<VagaGaragem> listaReprovados = this.iVagaGaragemRepository.findAllByStatusVagaAndTipoVeiculo(StatusVaga.EMAPROVACAO, VehicleType.valueOf(tipoVeiculo));
 
         for(VagaGaragem reprovado : listaReprovados){
             this.changeStatusVaga(reprovado.getId(), StatusVaga.REPROVADO);
-            LOGGER.info("Update vaga reprovada: ", reprovado.getId());
+            LOGGER.debug("Update vaga reprovada: {}", reprovado.getId());
         }
 
         return vagasSorteadas;

@@ -21,43 +21,42 @@ public class MailSenderService {
 
     private SimpleMailMessage message = new SimpleMailMessage();
 
-    public void sendEmailApproved(List<VagaGaragem> vagasSorteadas){
+    public void successListToBeEmailed(List<VagaGaragem> vagasSorteadas) {
 
         try{
-
-            for(int i = 0; i < vagasSorteadas.size(); i++){
-                String dataInicial = DateHelper.formatDate(vagasSorteadas.get(i).getPeriodo().getDataInicial());
-                String dataFinal = DateHelper.formatDate(vagasSorteadas.get(i).getPeriodo().getDataFinal());
-
-                message.setTo(vagasSorteadas.get(i).getColaborador().getEmail());
-                message.setSubject("Atualização do status da vaga");
-                message.setText("Olá, " + vagasSorteadas.get(i).getColaborador().getNome() +
-                        ". Sua solicitação de vaga para o " + vagasSorteadas.get(i).getVehicleModel().getModelo() + " de placa " + vagasSorteadas.get(i).getPlaca() +
-                        " foi aprovada para o período de " + dataInicial + " até " + dataFinal +
-                        ".\nFaça bom proveito! \n\nWe're here for tech and beer!");
-
-                javaMailSender.send(message);
-            }
-
-        }catch (Exception e){
+            vagasSorteadas.forEach(this::sendEmailSuccess);
+        } catch (Exception e) {
             LOGGER.error("Erro: {}", e.getMessage());
         }
     }
 
-    public void sendEmailReproved(List<VagaGaragem> vagasSorteadas){
+    public void sendEmailSuccess(VagaGaragem vagaGaragem) {
 
-        try{
+        String dataInicial = DateHelper.formatDate(vagaGaragem.getPeriodo().getDataInicial());
+        String dataFinal = DateHelper.formatDate(vagaGaragem.getPeriodo().getDataFinal());
 
-            for(int i = 0; i < vagasSorteadas.size(); i++){
+        message.setTo(vagaGaragem.getColaborador().getEmail());
+        message.setSubject("Atualização do status da vaga");
+        message.setText("Olá, " + vagaGaragem.getColaborador().getNome() +
+                ". Sua solicitação de vaga para o " + vagaGaragem.getVehicleModel().getModelo() + " de placa " + vagaGaragem.getPlaca() +
+                " foi aprovada para o período de " + dataInicial + " até " + dataFinal +
+                ".\nFaça bom proveito! \n\nWe're here for tech and beer!");
 
+        javaMailSender.send(message);
+    }
 
-                message.setTo(vagasSorteadas.get(i).getColaborador().getEmail());
-                message.setSubject("Atualização do status da vaga");
-                message.setText("Parabéns colaborador, sua vaga foi reprovada :D");
+    public void sendEmailDisapproved(VagaGaragem vagaGaragem) {
+        message.setTo(vagaGaragem.getColaborador().getEmail());
+        message.setSubject("Atualização do status da vaga");
+        message.setText("Parabéns colaborador, sua vaga foi reprovada :D");
 
-                javaMailSender.send(message);
-            }
+        javaMailSender.send(message);
+    }
 
+    public void disapprovedListToBeEmailed(List<VagaGaragem> vagasSorteadas) {
+
+        try {
+            vagasSorteadas.forEach(this::sendEmailDisapproved);
         }catch (Exception e){
             LOGGER.error("Deu pau: {}", e.getMessage());
         }

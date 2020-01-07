@@ -8,6 +8,10 @@ import br.com.hbparking.marcas.MarcaService;
 import br.com.hbparking.periodo.Periodo;
 import br.com.hbparking.periodo.PeriodoService;
 import br.com.hbparking.tipoveiculo.VehicleType;
+import br.com.hbparking.vagaInfo.VagaInfo;
+import br.com.hbparking.vagaInfo.VagaInfoDTO;
+import br.com.hbparking.vagaInfo.VagaInfoNotFoundException;
+import br.com.hbparking.vagaInfo.VagaInfoService;
 import br.com.hbparking.vehicleModel.VehicleModel;
 import br.com.hbparking.vehicleModel.VehicleModelService;
 import lombok.AllArgsConstructor;
@@ -19,6 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,6 +40,7 @@ public class VagaGaragemService {
     private final PeriodoService periodoService;
     private ValidadeOnHBEmployee validadeOnHBEmployee;
     private final ColaboradorService colaboradorService;
+    private final VagaInfoService vagaInfoService;
     private static final String ID_INEXISTENTE = "ID %s não existe";
 
     public VagaGaragemDTO save(VagaGaragemDTO vagaGaragemDTO) throws Exception {
@@ -206,4 +212,31 @@ public class VagaGaragemService {
         }
     }
 
+    public VagaGaragemDTO approveVaga(VagaGaragemDTO vagaGaragemDTO) throws VagaInfoNotFoundException {
+
+        VagaInfo vagaInfo = this.vagaInfoService.findByPeriodoAndVehicleType(this.periodoService.findById(vagaGaragemDTO.getPeriodo()), vagaGaragemDTO.getTipoVeiculo());
+        vagaInfo.setQuantidade(updateNumberOfVagasLeft(vagaInfo.getQuantidade()));
+
+        this.vagaInfoService.update(VagaInfoDTO.of(vagaInfo), vagaInfo.getId());
+
+        return this.changeStatusVaga(vagaGaragemDTO.getId(), StatusVaga.APROVADA);
+    }
+
+    public void approveAllVagas(List<VagaGaragemDTO> vagaGaragemDTOList) {
+        vagaGaragemDTOList.forEach(vagaGaragemDTO -> {
+            try {
+                this.approveVaga(vagaGaragemDTO);
+            } catch (VagaInfoNotFoundException e) {
+                LOGGER.error("", e);
+            }
+        });
+    }
+
+    public int updateNumberOfVagasLeft(int quantidade) {
+
+        if (quantidade > 0) {
+            return quantidade - 1;
+        }
+        throw new IllegalArgumentException("Todas as vagas já foram preenchidas");
+    }
 }

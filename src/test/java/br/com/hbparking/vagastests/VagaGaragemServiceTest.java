@@ -12,6 +12,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest(classes = MarcaServiceTest.class)
@@ -144,5 +148,19 @@ public class VagaGaragemServiceTest {
         });
 
     }
+//    @Test
+//    public void correctPrioritarios(){
+//        List<VagaGaragem> prioritarios = new ArrayList<VagaGaragem>(new String[]{"tipo", "marca", "modelo", "color", "placa", "periodo", "colaborador", "status"},
+//                new String[]{"tipo1", "marca1", "modelo1", "color1", "placa1", "periodo1", "colaborador1", "status1"});
+//    }
+//
+//            this.tipoVeiculo = tipoVeiculo;
+//        this.marca = marca;
+//        this.vehicleModel = vehicleModel;
+//        this.color = color;
+//        this.placa = placa;
+//        this.periodo = periodo;
+//        this.colaborador = colaborador;
+//        this.statusVaga = statusVaga;
 
 }

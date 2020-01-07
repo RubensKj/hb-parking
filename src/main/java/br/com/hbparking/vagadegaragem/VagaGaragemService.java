@@ -5,11 +5,15 @@ import br.com.hbparking.colaborador.ColaboradorService;
 import br.com.hbparking.cor.Color;
 import br.com.hbparking.marcas.Marca;
 import br.com.hbparking.marcas.MarcaService;
+import br.com.hbparking.marcas.TipoVeiculoEnum;
 import br.com.hbparking.periodo.Periodo;
 import br.com.hbparking.periodo.PeriodoService;
 import br.com.hbparking.tipoveiculo.VehicleType;
 import br.com.hbparking.vehicleModel.VehicleModel;
 import br.com.hbparking.vehicleModel.VehicleModelService;
+import com.opencsv.CSVWriter;
+import com.opencsv.CSVWriterBuilder;
+import com.opencsv.ICSVWriter;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.EnumUtils;
 import org.slf4j.Logger;
@@ -17,11 +21,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor
@@ -206,4 +216,36 @@ public class VagaGaragemService {
         }
     }
 
+    @Transactional(readOnly = true)
+    public void exportInformationTenant(HttpServletResponse response, VagaGaragemDTO vagaGaragemDTO) throws IOException {
+        if (EnumUtils.isValidEnum(TipoVeiculoEnum.class, vagaGaragemDTO.getTipoVeiculo().getDescricao()) &&
+                EnumUtils.isValidEnum(Color.class, vagaGaragemDTO.getColor().getDescricao()) && EnumUtils.isValidEnum(StatusVaga.class, vagaGaragemDTO.getStatusVaga().getDescricao())) {
+            final String[] header = {"NOME", "EMAIL", "TIPO_VEICULO", "MARCA", "MODELO", "COR", "PLACA", "STATUS", "VALOR"};
+            String fileName = "InformaçõesLocatario.csv";
+            response.setContentType("text/csv");
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"");
+            PrintWriter printWriter = response.getWriter();
+            ICSVWriter icsvWriter = new CSVWriterBuilder(printWriter).
+                    withSeparator(';').
+                    withEscapeChar(CSVWriter.DEFAULT_ESCAPE_CHARACTER).
+                    withLineEnd(CSVWriter.DEFAULT_LINE_END).
+                    build();
+            icsvWriter.writeNext(header);
+
+            Stream<VagaGaragem> allVagas = iVagaGaragemRepository.streamAll();
+
+            allVagas.forEach(vagaGaragem -> icsvWriter.writeNext(new String[]
+                    {
+                            vagaGaragem.getColaborador().getNome(),
+                            vagaGaragem.getColaborador().getEmail(),
+                            vagaGaragem.getTipoVeiculo().toString(),
+                            vagaGaragem.getMarca().getNome(),
+                            vagaGaragem.getVehicleModel().getModelo(),
+                            vagaGaragem.getColor().toString(),
+                            vagaGaragem.getPlaca(),
+                            vagaGaragem.getStatusVaga().toString()
+                    }));
+        }
+
+    }
 }

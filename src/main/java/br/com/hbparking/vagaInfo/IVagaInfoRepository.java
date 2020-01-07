@@ -10,5 +10,7 @@ import java.util.Optional;
 @Repository
 public interface IVagaInfoRepository extends JpaRepository<VagaInfo, Long> {
 
-    Optional<VagaInfo> findByPeriodoAndVehicleTypeIs(Periodo periodo, VehicleType vehicleType);
+    Optional<VagaInfo> findByPeriodoAndVehicleTypeAndTurno(Periodo periodo, VehicleType vehicleType, Turno turno);
+
+    boolean existsByPeriodoAndVehicleTypeAndTurno(Periodo periodo, VehicleType vehicleType, Turno turno);
 }

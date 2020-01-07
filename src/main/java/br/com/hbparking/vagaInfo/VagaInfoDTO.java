@@ -14,14 +14,17 @@ public class VagaInfoDTO {
 
     private double valor;
 
+    private Turno turno;
+
     public VagaInfoDTO() {
     }
 
-    public VagaInfoDTO(Long id, int quantidade, VehicleType vehicleType, double valor) {
+    public VagaInfoDTO(Long id, int quantidade, VehicleType vehicleType, double valor, Turno turno) {
         this.id = id;
         this.quantidade = quantidade;
         this.vehicleType = vehicleType;
         this.valor = valor;
+        this.turno = turno;
     }
 
     public VagaInfoDTO(int quantidade, Long idPeriodo, VehicleType vehicleType, double valor) {
@@ -37,7 +40,8 @@ public class VagaInfoDTO {
                 vagaInfo.getId(),
                 vagaInfo.getQuantidade(),
                 vagaInfo.getVehicleType(),
-                vagaInfo.getValor()
+                vagaInfo.getValor(),
+                vagaInfo.getTurno()
         );
     }
 
@@ -79,6 +83,14 @@ public class VagaInfoDTO {
 
     public void setValor(double valor) {
         this.valor = valor;
+    }
+
+    public Turno getTurno() {
+        return turno;
+    }
+
+    public void setTurno(Turno turno) {
+        this.turno = turno;
     }
 }
 

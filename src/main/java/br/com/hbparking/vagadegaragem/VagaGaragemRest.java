@@ -15,11 +15,9 @@ public class VagaGaragemRest {
     private static final Logger LOGGER = LoggerFactory.getLogger(VagaGaragemRest.class);
 
     private final VagaGaragemService vagaGaragemService;
-    private final SortingVaga sortingVaga;
 
-    public VagaGaragemRest(VagaGaragemService vagaGaragemService, SortingVaga sortingVaga) {
+    public VagaGaragemRest(VagaGaragemService vagaGaragemService) {
         this.vagaGaragemService = vagaGaragemService;
-        this.sortingVaga = sortingVaga;
     }
 
     @PostMapping("/cadastrar")

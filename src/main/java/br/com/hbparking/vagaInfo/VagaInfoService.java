@@ -1,10 +1,14 @@
 package br.com.hbparking.vagaInfo;
 
+import br.com.hbparking.periodo.Periodo;
 import br.com.hbparking.periodo.PeriodoService;
+import br.com.hbparking.tipoveiculo.VehicleType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class VagaInfoService {
@@ -44,5 +48,30 @@ public class VagaInfoService {
         if (vagaInfoDTO.getVehicleType().getDescricao().equalsIgnoreCase("bicicleta") || vagaInfoDTO.getVehicleType().getDescricao().equalsIgnoreCase("patinete")) {
             throw new IllegalArgumentException("Patinete e bicicleta são considerados o mesmo tipo para o cadastro de quantidade");
         }
+    }
+
+    public VagaInfo findByPeriodoAndVehicleType(Periodo periodo, VehicleType vehicleType) throws VagaInfoNotFoundException {
+        return this.iVagaInfoRepository.findByPeriodoAndVehicleTypeIs(periodo, vehicleType).orElseThrow(() -> new VagaInfoNotFoundException("Não foi encontrado nenhuma informação de vaga com este periodo"));
+    }
+
+    public VagaInfoDTO update(VagaInfoDTO vagaInfoDTO, Long id) throws VagaInfoNotFoundException {
+
+        Optional<VagaInfo> vagaInfoOptional = this.iVagaInfoRepository.findById(id);
+
+        System.out.println(id);
+
+        if (vagaInfoOptional.isPresent()) {
+            System.out.println("ALOOOO");
+            VagaInfo vagaInfo = vagaInfoOptional.get();
+
+            vagaInfo.setQuantidade(vagaInfoDTO.getQuantidade());
+            vagaInfo.setPeriodo(this.periodoService.findById(id));
+            vagaInfo.setValor(vagaInfoDTO.getValor());
+            vagaInfo.setVehicleType(vagaInfoDTO.getVehicleType());
+
+            return VagaInfoDTO.of(this.iVagaInfoRepository.save(vagaInfo));
+        }
+
+        throw new VagaInfoNotFoundException("Não foi encontrada nenhuma informação de vaga com este id");
     }
 }

@@ -1,5 +1,6 @@
 package br.com.hbparking.vagadegaragem;
 
+import br.com.hbparking.vagaInfo.VagaInfoNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -68,4 +69,15 @@ public class VagaGaragemRest {
     public List<VagaGaragem> sort(@PathVariable("qtdVagas") int qtdVagas, @PathVariable("tipoVeiculo") String tipoVeiculo){
         return this.vagaGaragemService.sorteioVagas(qtdVagas, tipoVeiculo);
     }
+
+    @PostMapping("/approve")
+    public VagaGaragemDTO approve(@RequestBody VagaGaragemDTO vagaGaragemDTO) throws VagaInfoNotFoundException {
+        return this.vagaGaragemService.approveVaga(vagaGaragemDTO);
+    }
+
+    @PostMapping("/approveAll")
+    public void approveAll(@RequestBody List<VagaGaragemDTO> vagaGaragemDTOList) {
+        this.vagaGaragemService.approveAllVagas(vagaGaragemDTOList);
+    }
+
 }

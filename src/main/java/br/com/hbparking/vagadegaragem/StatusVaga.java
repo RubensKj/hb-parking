@@ -5,7 +5,8 @@ public enum StatusVaga {
     EMAPROVACAO("EM APROVACAO"),
     REPROVADO("REPROVADO"),
     VENCIDO("VENCIDO"),
-    FILADEESPERA("FILA DE ESPERA");
+    FILADEESPERA("FILA DE ESPERA"),
+    APROVADA("APROVADA");
 
     private final String descricao;
 

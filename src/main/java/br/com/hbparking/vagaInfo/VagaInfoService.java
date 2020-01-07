@@ -1,10 +1,14 @@
 package br.com.hbparking.vagaInfo;
 
+import br.com.hbparking.periodo.Periodo;
 import br.com.hbparking.periodo.PeriodoService;
+import br.com.hbparking.tipoveiculo.VehicleType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class VagaInfoService {
@@ -21,11 +25,16 @@ public class VagaInfoService {
         this.periodoService = periodoService;
     }
 
-    public VagaInfoDTO cadastrar(VagaInfoDTO vagaInfoDTO) {
+    public VagaInfoDTO cadastrar(VagaInfoDTO vagaInfoDTO) throws PeriodoAlreadyExistsException {
         LOGGER.info("Cadastrando informações de vaga");
         this.validarVagaInfo(vagaInfoDTO);
 
-        return VagaInfoDTO.of(this.iVagaInfoRepository.save(new VagaInfo(vagaInfoDTO.getQuantidade(), vagaInfoDTO.getValor(), vagaInfoDTO.getVehicleType(), periodoService.findById(vagaInfoDTO.getIdPeriodo()))));
+        Periodo periodo = periodoService.findById(vagaInfoDTO.getIdPeriodo());
+        if (!this.iVagaInfoRepository.existsByPeriodoAndVehicleTypeAndTurno(periodo, vagaInfoDTO.getVehicleType(), vagaInfoDTO.getTurno())) {
+            return VagaInfoDTO.of(this.iVagaInfoRepository.save(new VagaInfo(vagaInfoDTO.getQuantidade(), vagaInfoDTO.getValor(), vagaInfoDTO.getVehicleType(), periodo, vagaInfoDTO.getTurno())));
+        }
+        throw new PeriodoAlreadyExistsException("Periodo já cadastrado no banco");
+
     }
 
     public VagaInfo findById(Long id) throws VagaInfoNotFoundException {
@@ -44,5 +53,21 @@ public class VagaInfoService {
         if (vagaInfoDTO.getVehicleType().getDescricao().equalsIgnoreCase("bicicleta") || vagaInfoDTO.getVehicleType().getDescricao().equalsIgnoreCase("patinete")) {
             throw new IllegalArgumentException("Patinete e bicicleta são considerados o mesmo tipo para o cadastro de quantidade");
         }
+    }
+
+    public VagaInfo findByPeriodoAndVehicleTypeAndTurno(Periodo periodo, VehicleType vehicleType, Turno turno) throws VagaInfoNotFoundException {
+        return this.iVagaInfoRepository.findByPeriodoAndVehicleTypeAndTurno(periodo, vehicleType, turno).orElseThrow(() -> new VagaInfoNotFoundException("Não foi encontrado nenhuma informação de vaga com este periodo"));
+    }
+
+    public VagaInfoDTO update(VagaInfoDTO vagaInfoDTO, Long id) throws VagaInfoNotFoundException {
+        LOGGER.info("Atualizando vaga info");
+        this.validarVagaInfo(vagaInfoDTO);
+        VagaInfo vagaInfo = this.findById(id);
+        vagaInfo.setQuantidade(vagaInfoDTO.getQuantidade());
+        vagaInfo.setPeriodo(this.periodoService.findById(id));
+        vagaInfo.setValor(vagaInfoDTO.getValor());
+        vagaInfo.setVehicleType(vagaInfoDTO.getVehicleType());
+
+        return VagaInfoDTO.of(this.iVagaInfoRepository.save(vagaInfo));
     }
 }

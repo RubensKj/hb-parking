@@ -224,12 +224,9 @@ public class VagaGaragemService {
 
         List<VagaGaragem> vagasSorteadas = this.selectPrioritarios(vagaGaragemList);
 
-        while (qtdVagas > vagasSorteadas.size()) {
+        while (qtdVagas > vagasSorteadas.size() || !(vagaGaragemList.size() == vagasSorteadas.size())) {
             vagasSorteadas.add(vagaGaragemList.get(sorteio.nextInt(vagaGaragemList.size())));
-            vagasSorteadas = vagasSorteadas.stream().distinct().sorted(Comparator.comparing((vagaSorteada -> vagaSorteada.getColaborador().getEmail()))).collect(Collectors.toList());
-            if(vagaGaragemList.size() == vagasSorteadas.size()){
-                break;
-            }
+            vagasSorteadas = vagasSorteadas.stream().distinct().sorted(Comparator.comparing((VagaGaragem::getPlaca))).collect(Collectors.toList());
         }
         for (VagaGaragem vaga: vagasSorteadas) {
             this.changeStatusVaga(vaga.getId(), StatusVaga.VIGENTE);

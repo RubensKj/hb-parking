@@ -16,14 +16,12 @@ public class VagaGaragemRest {
     private static final Logger LOGGER = LoggerFactory.getLogger(VagaGaragemRest.class);
 
     private final VagaGaragemService vagaGaragemService;
-    private final SortingVaga sortingVaga;
 
-    public VagaGaragemRest(VagaGaragemService vagaGaragemService, SortingVaga sortingVaga) {
+    public VagaGaragemRest(VagaGaragemService vagaGaragemService) {
         this.vagaGaragemService = vagaGaragemService;
-        this.sortingVaga = sortingVaga;
     }
 
-    @PostMapping
+    @PostMapping("/cadastrar")
     public VagaGaragemDTO save(@RequestBody VagaGaragemDTO vagaGaragemDTO) throws Exception {
         LOGGER.info("Recebendo solicitação de persistência de vaga de garagem...");
         LOGGER.debug("Payaload: {}", vagaGaragemDTO);
@@ -67,9 +65,9 @@ public class VagaGaragemRest {
         this.vagaGaragemService.delete(id);
     }
 
-    @GetMapping("/sort/{qtd}")
-    public List<VagaGaragem> sort(@PathVariable("qtd") int qtd){
-        return this.sortingVaga.sortingVagas(qtd);
+    @GetMapping("/sort/{qtdVagas}/{tipoVeiculo}")
+    public List<VagaGaragem> sort(@PathVariable("qtdVagas") int qtdVagas, @PathVariable("tipoVeiculo") String tipoVeiculo){
+        return this.vagaGaragemService.sorteioVagas(qtdVagas, tipoVeiculo);
     }
 
     @PostMapping("/approve")

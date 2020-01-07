@@ -2,6 +2,7 @@ package br.com.hbparking.vagadegaragem;
 
 import br.com.hbparking.colaborador.Colaborador;
 import br.com.hbparking.colaborador.ColaboradorService;
+import br.com.hbparking.colaborador.NoConnectionAPIException;
 import br.com.hbparking.cor.Color;
 import br.com.hbparking.marcas.Marca;
 import br.com.hbparking.marcas.MarcaService;
@@ -23,10 +24,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.*;
 import java.util.List;
 import java.util.Optional;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -42,8 +47,9 @@ public class VagaGaragemService {
     private final ColaboradorService colaboradorService;
     private final VagaInfoService vagaInfoService;
     private static final String ID_INEXISTENTE = "ID %s não existe";
+    private final Random sorteio = new Random();
 
-    public VagaGaragemDTO save(VagaGaragemDTO vagaGaragemDTO) throws Exception {
+    public VagaGaragemDTO save(VagaGaragemDTO vagaGaragemDTO) throws NoConnectionAPIException, InvalidVagaViolation {
         this.validate(vagaGaragemDTO);
         LOGGER.info("Salvando Vaga");
         LOGGER.debug("Vaga: {}", vagaGaragemDTO);
@@ -57,8 +63,11 @@ public class VagaGaragemService {
             vagaSave.setVehicleModel(null);
             vagaSave.setColor(null);
         }
-        validateTipoPeriodo(vagaSave);
-
+        try {
+            validateTipoPeriodo(vagaSave);
+        } catch (InvalidVehicleTipoFromPeriodo invalidVehicleTipoFromPeriodo) {
+            LOGGER.debug(String.valueOf(invalidVehicleTipoFromPeriodo));
+        }
 
         ResponseHBEmployeeDTO response = validadeOnHBEmployee.validate("http://localhost:8090/api/teste");
 
@@ -72,7 +81,6 @@ public class VagaGaragemService {
                 throw new InvalidVagaViolation("Erro ao salvar vaga de garagem ", ex);
             }
         }
-
 
         return VagaGaragemDTO.of(vagaSave);
     }
@@ -210,6 +218,47 @@ public class VagaGaragemService {
         if (vagaGaragem.getPeriodo().getTipoVeiculo() != vagaGaragem.getTipoVeiculo()) {
             throw new InvalidVehicleTipoFromPeriodo("Periodo inválido para o tipo de veiculo desejado");
         }
+    }
+  
+    public List<VagaGaragem> sorteioVagas(int qtdVagas, String tipoVeiculo) {
+
+
+        List<VagaGaragem> vagaGaragemList = this.iVagaGaragemRepository.findAllByStatusVagaAndTipoVeiculo(StatusVaga.EMAPROVACAO, VehicleType.valueOf(tipoVeiculo));
+
+        List<VagaGaragem> vagasSorteadas = this.selectPrioritarios(vagaGaragemList);
+
+        while (qtdVagas > vagasSorteadas.size()) {
+            vagasSorteadas.add(vagaGaragemList.get(sorteio.nextInt(vagaGaragemList.size())));
+            vagasSorteadas = vagasSorteadas.stream().distinct().sorted(Comparator.comparing((vagaSorteada -> vagaSorteada.getColaborador().getEmail()))).collect(Collectors.toList());
+            if(vagaGaragemList.size() == vagasSorteadas.size()){
+                break;
+            }
+        }
+        for (VagaGaragem vaga: vagasSorteadas) {
+            this.changeStatusVaga(vaga.getId(), StatusVaga.VIGENTE);
+            LOGGER.debug("Update vaga aprovada: {}", vaga.getId());
+        }
+
+        List<VagaGaragem> listaReprovados = this.iVagaGaragemRepository.findAllByStatusVagaAndTipoVeiculo(StatusVaga.EMAPROVACAO, VehicleType.valueOf(tipoVeiculo));
+
+        for(VagaGaragem reprovado : listaReprovados){
+            this.changeStatusVaga(reprovado.getId(), StatusVaga.REPROVADO);
+            LOGGER.debug("Update vaga reprovada: {}", reprovado.getId());
+        }
+
+        return vagasSorteadas;
+    }
+
+    public List<VagaGaragem> selectPrioritarios(List<VagaGaragem> vagaGaragemList) {
+
+        List<VagaGaragem> vagaPrioritaria = new ArrayList<>();
+
+        vagaPrioritaria.addAll(vagaGaragemList.stream().filter(vagaGaragem -> vagaGaragem.getColaborador().isPcd()).collect((Collectors.toList())));
+        vagaPrioritaria.addAll(vagaGaragemList.stream().filter(vagaGaragem -> LocalDate.now().getYear() - vagaGaragem.getColaborador().getDataNascimento().getYear() >= 60).collect(Collectors.toList()));
+        vagaPrioritaria.addAll(vagaGaragemList.stream().filter(vagaGaragem -> vagaGaragem.getColaborador().isResideForaBlumenau()).collect(Collectors.toList()));
+        vagaPrioritaria.addAll(vagaGaragemList.stream().filter(vagaGaragem -> vagaGaragem.getColaborador().isOfereceCarona()).collect(Collectors.toList()));
+
+        return vagaPrioritaria;
     }
 
     public VagaGaragemDTO approveVaga(VagaGaragemDTO vagaGaragemDTO) throws VagaInfoNotFoundException {

@@ -1,5 +1,6 @@
 package br.com.hbparking.vagadegaragem;
 
+import br.com.hbparking.colaborador.NoConnectionAPIException;
 import br.com.hbparking.vagaInfo.Turno;
 import br.com.hbparking.vagaInfo.VagaInfoNotFoundException;
 import org.slf4j.Logger;
@@ -23,7 +24,7 @@ public class VagaGaragemRest {
     }
 
     @PostMapping("/cadastrar")
-    public VagaGaragemDTO save(@RequestBody VagaGaragemDTO vagaGaragemDTO) {
+    public VagaGaragemDTO save(@RequestBody VagaGaragemDTO vagaGaragemDTO) throws NoConnectionAPIException, InvalidVagaViolation {
         LOGGER.info("Recebendo solicitação de persistência de vaga de garagem...");
         LOGGER.debug("Payaload: {}", vagaGaragemDTO);
         return this.vagaGaragemService.save(vagaGaragemDTO);

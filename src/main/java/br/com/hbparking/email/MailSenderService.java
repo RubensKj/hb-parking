@@ -26,7 +26,6 @@ public class MailSenderService {
         try{
 
             for(int i = 0; i < vagasSorteadas.size(); i++){
-
                 String dataInicial = DateHelper.formatDate(vagasSorteadas.get(i).getPeriodo().getDataInicial());
                 String dataFinal = DateHelper.formatDate(vagasSorteadas.get(i).getPeriodo().getDataFinal());
 

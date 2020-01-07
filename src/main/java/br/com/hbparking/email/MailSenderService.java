@@ -1,5 +1,6 @@
 package br.com.hbparking.email;
 
+import br.com.hbparking.util.DateHelper;
 import br.com.hbparking.vagadegaragem.VagaGaragem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,20 +21,43 @@ public class MailSenderService {
 
     private SimpleMailMessage message = new SimpleMailMessage();
 
-
-    public void sendEmails(List<VagaGaragem> vagasSorteadas){
+    public void sendEmailApproved(List<VagaGaragem> vagasSorteadas){
 
         try{
 
         for(int i = 0; i < vagasSorteadas.size(); i++){
 
+            String dataInicial = DateHelper.formatDate(vagasSorteadas.get(i).getPeriodo().getDataInicial());
+            String dataFinal = DateHelper.formatDate(vagasSorteadas.get(i).getPeriodo().getDataFinal());
 
             message.setTo(vagasSorteadas.get(i).getColaborador().getEmail());
             message.setSubject("Atualização do status da vaga");
-            message.setText("Parabéns colaborador, sua vaga foi aprovada!");
+            message.setText("Olá, " + vagasSorteadas.get(i).getColaborador().getNome() +
+                    ". Sua solicitação de vaga para o " + vagasSorteadas.get(i).getVehicleModel().getModelo() + " de placa " + vagasSorteadas.get(i).getPlaca() +
+                    " foi aprovada para o período de " + dataInicial + " até " + dataFinal +
+                    ".\nFaça bom proveito! \n\nWe're here for tech and beer!");
 
             javaMailSender.send(message);
         }
+
+        }catch (Exception e){
+            LOGGER.error("Erro: {}", e.getMessage());
+        }
+    }
+
+    public void sendEmailReproved(List<VagaGaragem> vagasSorteadas){
+
+        try{
+
+            for(int i = 0; i < vagasSorteadas.size(); i++){
+
+
+                message.setTo(vagasSorteadas.get(i).getColaborador().getEmail());
+                message.setSubject("Atualização do status da vaga");
+                message.setText("Parabéns colaborador, sua vaga foi reprovada :D");
+
+                javaMailSender.send(message);
+            }
 
         }catch (Exception e){
             LOGGER.error("Deu pau: {}", e.getMessage());

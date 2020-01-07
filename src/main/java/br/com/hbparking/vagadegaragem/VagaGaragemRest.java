@@ -74,7 +74,7 @@ public class VagaGaragemRest {
 
         List<VagaGaragem> vagasSorteadas = this.sortingVaga.sortingVagas(qtd);
 
-        this.mailSender.sendEmails(vagasSorteadas);
+        this.mailSender.sendEmailApproved(vagasSorteadas);
 
         return vagasSorteadas;
     }

@@ -1,5 +1,8 @@
 package br.com.hbparking.vagadegaragem;
 
+import br.com.hbparking.email.MailSenderService;
+import br.com.hbparking.colaborador.NoConnectionAPIException;
+import br.com.hbparking.vagaInfo.Turno;
 import br.com.hbparking.vagaInfo.VagaInfoNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,13 +19,15 @@ public class VagaGaragemRest {
     private static final Logger LOGGER = LoggerFactory.getLogger(VagaGaragemRest.class);
 
     private final VagaGaragemService vagaGaragemService;
+    private final MailSenderService mailSender;
 
-    public VagaGaragemRest(VagaGaragemService vagaGaragemService) {
+    public VagaGaragemRest(VagaGaragemService vagaGaragemService,  MailSenderService mailSender) {
         this.vagaGaragemService = vagaGaragemService;
+        this.mailSender = mailSender;
     }
 
     @PostMapping("/cadastrar")
-    public VagaGaragemDTO save(@RequestBody VagaGaragemDTO vagaGaragemDTO) throws Exception {
+    public VagaGaragemDTO save(@RequestBody VagaGaragemDTO vagaGaragemDTO) throws NoConnectionAPIException, InvalidVagaViolation {
         LOGGER.info("Recebendo solicitação de persistência de vaga de garagem...");
         LOGGER.debug("Payaload: {}", vagaGaragemDTO);
         return this.vagaGaragemService.save(vagaGaragemDTO);
@@ -67,17 +72,26 @@ public class VagaGaragemRest {
 
     @GetMapping("/sort/{qtdVagas}/{tipoVeiculo}")
     public List<VagaGaragem> sort(@PathVariable("qtdVagas") int qtdVagas, @PathVariable("tipoVeiculo") String tipoVeiculo){
-        return this.vagaGaragemService.sorteioVagas(qtdVagas, tipoVeiculo);
+
+        List<VagaGaragem> sorteados = this.vagaGaragemService.sorteioVagas(qtdVagas, tipoVeiculo);
+
+        new Thread(() -> {
+            this.mailSender.sendEmailApproved(sorteados);
+        }).start();
+
+
+
+        return sorteados;
     }
 
-    @PostMapping("/approve")
-    public VagaGaragemDTO approve(@RequestBody VagaGaragemDTO vagaGaragemDTO) throws VagaInfoNotFoundException {
-        return this.vagaGaragemService.approveVaga(vagaGaragemDTO);
+    @PostMapping("/approve/{turno}")
+    public VagaGaragemDTO approve(@RequestBody VagaGaragemDTO vagaGaragemDTO, @PathVariable("turno") Turno turno) throws VagaInfoNotFoundException {
+        return this.vagaGaragemService.approveVaga(vagaGaragemDTO, turno);
     }
 
-    @PostMapping("/approveAll")
-    public void approveAll(@RequestBody List<VagaGaragemDTO> vagaGaragemDTOList) {
-        this.vagaGaragemService.approveAllVagas(vagaGaragemDTOList);
+    @PostMapping("/approveAll/{turno}")
+    public void approveAll(@RequestBody List<VagaGaragemDTO> vagaGaragemDTOList, @PathVariable("turno") Turno turno) {
+        this.vagaGaragemService.approveAllVagas(vagaGaragemDTOList, turno);
     }
 
 }

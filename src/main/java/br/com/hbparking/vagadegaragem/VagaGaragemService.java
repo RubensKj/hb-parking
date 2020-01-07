@@ -9,10 +9,7 @@ import br.com.hbparking.marcas.MarcaService;
 import br.com.hbparking.periodo.Periodo;
 import br.com.hbparking.periodo.PeriodoService;
 import br.com.hbparking.tipoveiculo.VehicleType;
-import br.com.hbparking.vagaInfo.VagaInfo;
-import br.com.hbparking.vagaInfo.VagaInfoDTO;
-import br.com.hbparking.vagaInfo.VagaInfoNotFoundException;
-import br.com.hbparking.vagaInfo.VagaInfoService;
+import br.com.hbparking.vagaInfo.*;
 import br.com.hbparking.vehicleModel.VehicleModel;
 import br.com.hbparking.vehicleModel.VehicleModelService;
 import lombok.AllArgsConstructor;
@@ -227,12 +224,9 @@ public class VagaGaragemService {
 
         List<VagaGaragem> vagasSorteadas = this.selectPrioritarios(vagaGaragemList);
 
-        while (qtdVagas > vagasSorteadas.size()) {
+        while (qtdVagas > vagasSorteadas.size() || !(vagaGaragemList.size() == vagasSorteadas.size())) {
             vagasSorteadas.add(vagaGaragemList.get(sorteio.nextInt(vagaGaragemList.size())));
-            vagasSorteadas = vagasSorteadas.stream().distinct().sorted(Comparator.comparing((vagaSorteada -> vagaSorteada.getColaborador().getEmail()))).collect(Collectors.toList());
-            if(vagaGaragemList.size() == vagasSorteadas.size()){
-                break;
-            }
+            vagasSorteadas = vagasSorteadas.stream().distinct().sorted(Comparator.comparing((VagaGaragem::getPlaca))).collect(Collectors.toList());
         }
         for (VagaGaragem vaga: vagasSorteadas) {
             this.changeStatusVaga(vaga.getId(), StatusVaga.VIGENTE);
@@ -261,9 +255,9 @@ public class VagaGaragemService {
         return vagaPrioritaria;
     }
 
-    public VagaGaragemDTO approveVaga(VagaGaragemDTO vagaGaragemDTO) throws VagaInfoNotFoundException {
+    public VagaGaragemDTO approveVaga(VagaGaragemDTO vagaGaragemDTO, Turno turno) throws VagaInfoNotFoundException {
 
-        VagaInfo vagaInfo = this.vagaInfoService.findByPeriodoAndVehicleType(this.periodoService.findById(vagaGaragemDTO.getPeriodo()), vagaGaragemDTO.getTipoVeiculo());
+        VagaInfo vagaInfo = this.vagaInfoService.findByPeriodoAndVehicleTypeAndTurno(this.periodoService.findById(vagaGaragemDTO.getPeriodo()), vagaGaragemDTO.getTipoVeiculo(), turno);
         vagaInfo.setQuantidade(updateNumberOfVagasLeft(vagaInfo.getQuantidade()));
 
         this.vagaInfoService.update(VagaInfoDTO.of(vagaInfo), vagaInfo.getId());
@@ -271,10 +265,10 @@ public class VagaGaragemService {
         return this.changeStatusVaga(vagaGaragemDTO.getId(), StatusVaga.APROVADA);
     }
 
-    public void approveAllVagas(List<VagaGaragemDTO> vagaGaragemDTOList) {
+    public void approveAllVagas(List<VagaGaragemDTO> vagaGaragemDTOList, Turno turno) {
         vagaGaragemDTOList.forEach(vagaGaragemDTO -> {
             try {
-                this.approveVaga(vagaGaragemDTO);
+                this.approveVaga(vagaGaragemDTO, turno);
             } catch (VagaInfoNotFoundException e) {
                 LOGGER.error("", e);
             }

@@ -25,11 +25,16 @@ public class VagaInfoService {
         this.periodoService = periodoService;
     }
 
-    public VagaInfoDTO cadastrar(VagaInfoDTO vagaInfoDTO) {
+    public VagaInfoDTO cadastrar(VagaInfoDTO vagaInfoDTO) throws PeriodoAlreadyExistsException {
         LOGGER.info("Cadastrando informações de vaga");
         this.validarVagaInfo(vagaInfoDTO);
 
-        return VagaInfoDTO.of(this.iVagaInfoRepository.save(new VagaInfo(vagaInfoDTO.getQuantidade(), vagaInfoDTO.getValor(), vagaInfoDTO.getVehicleType(), periodoService.findById(vagaInfoDTO.getIdPeriodo()))));
+        Periodo periodo = periodoService.findById(vagaInfoDTO.getIdPeriodo());
+        if (!this.iVagaInfoRepository.existsByPeriodoAndVehicleTypeAndTurno(periodo, vagaInfoDTO.getVehicleType(), vagaInfoDTO.getTurno())) {
+            return VagaInfoDTO.of(this.iVagaInfoRepository.save(new VagaInfo(vagaInfoDTO.getQuantidade(), vagaInfoDTO.getValor(), vagaInfoDTO.getVehicleType(), periodo, vagaInfoDTO.getTurno())));
+        }
+        throw new PeriodoAlreadyExistsException("Periodo já cadastrado no banco");
+
     }
 
     public VagaInfo findById(Long id) throws VagaInfoNotFoundException {
@@ -50,28 +55,19 @@ public class VagaInfoService {
         }
     }
 
-    public VagaInfo findByPeriodoAndVehicleType(Periodo periodo, VehicleType vehicleType) throws VagaInfoNotFoundException {
-        return this.iVagaInfoRepository.findByPeriodoAndVehicleTypeIs(periodo, vehicleType).orElseThrow(() -> new VagaInfoNotFoundException("Não foi encontrado nenhuma informação de vaga com este periodo"));
+    public VagaInfo findByPeriodoAndVehicleTypeAndTurno(Periodo periodo, VehicleType vehicleType, Turno turno) throws VagaInfoNotFoundException {
+        return this.iVagaInfoRepository.findByPeriodoAndVehicleTypeAndTurno(periodo, vehicleType, turno).orElseThrow(() -> new VagaInfoNotFoundException("Não foi encontrado nenhuma informação de vaga com este periodo"));
     }
 
     public VagaInfoDTO update(VagaInfoDTO vagaInfoDTO, Long id) throws VagaInfoNotFoundException {
+        LOGGER.info("Atualizando vaga info");
+        this.validarVagaInfo(vagaInfoDTO);
+        VagaInfo vagaInfo = this.findById(id);
+        vagaInfo.setQuantidade(vagaInfoDTO.getQuantidade());
+        vagaInfo.setPeriodo(this.periodoService.findById(id));
+        vagaInfo.setValor(vagaInfoDTO.getValor());
+        vagaInfo.setVehicleType(vagaInfoDTO.getVehicleType());
 
-        Optional<VagaInfo> vagaInfoOptional = this.iVagaInfoRepository.findById(id);
-
-        System.out.println(id);
-
-        if (vagaInfoOptional.isPresent()) {
-            System.out.println("ALOOOO");
-            VagaInfo vagaInfo = vagaInfoOptional.get();
-
-            vagaInfo.setQuantidade(vagaInfoDTO.getQuantidade());
-            vagaInfo.setPeriodo(this.periodoService.findById(id));
-            vagaInfo.setValor(vagaInfoDTO.getValor());
-            vagaInfo.setVehicleType(vagaInfoDTO.getVehicleType());
-
-            return VagaInfoDTO.of(this.iVagaInfoRepository.save(vagaInfo));
-        }
-
-        throw new VagaInfoNotFoundException("Não foi encontrada nenhuma informação de vaga com este id");
+        return VagaInfoDTO.of(this.iVagaInfoRepository.save(vagaInfo));
     }
 }

@@ -47,7 +47,7 @@ public class VagaInfoServiceTest {
     private ArgumentCaptor<VagaInfo> argumentCaptor;
 
     @Test
-    public void cadastrar() {
+    public void cadastrar() throws PeriodoAlreadyExistsException {
         long id = 1;
         VagaInfoDTO vagaInfoDTO = new VagaInfoDTO(300, id, VehicleType.PATINETE_E_BICICLETA, 150.0);
 

@@ -31,6 +31,12 @@ public class Periodo {
         this.dataFinal = dataFinal;
     }
 
+    public Periodo(long id, LocalDate dataInicial, LocalDate dataFinal) {
+        this.id = id;
+        this.dataInicial = dataInicial;
+        this.dataFinal = dataFinal;
+    }
+
     public Long getId() {
         return id;
     }

@@ -1,0 +1,1 @@
+ALTER TABLE vaga_info ADD tipo_veiculo VARCHAR(15) NOT NULL;

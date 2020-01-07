@@ -16,7 +16,7 @@ public class VagaInfo {
     private int quantidade;
 
     @JoinColumn(name = "id_periodo", referencedColumnName = "id")
-    @OneToOne
+    @ManyToOne
     private Periodo periodo;
 
     @Enumerated(EnumType.STRING)
@@ -24,6 +24,10 @@ public class VagaInfo {
     private VehicleType vehicleType;
 
     private double valor;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "turno", nullable = false)
+    private Turno turno;
 
     public VagaInfo() {
     }
@@ -36,11 +40,12 @@ public class VagaInfo {
         this.periodo = periodo;
     }
 
-    public VagaInfo(int quantidade, double valor, VehicleType vehicleType, Periodo periodo) {
+    public VagaInfo(int quantidade, double valor, VehicleType vehicleType, Periodo periodo, Turno turno) {
         this.quantidade = quantidade;
         this.valor = valor;
         this.vehicleType = vehicleType;
         this.periodo = periodo;
+        this.turno = turno;
     }
 
     public Long getId() {
@@ -81,5 +86,13 @@ public class VagaInfo {
 
     public void setValor(double valor) {
         this.valor = valor;
+    }
+
+    public Turno getTurno() {
+        return turno;
+    }
+
+    public void setTurno(Turno turno) {
+        this.turno = turno;
     }
 }

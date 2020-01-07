@@ -4,6 +4,7 @@ import br.com.hbparking.colaborador.Colaborador;
 import br.com.hbparking.colaborador.ColaboradorService;
 import br.com.hbparking.colaborador.NoConnectionAPIException;
 import br.com.hbparking.cor.Color;
+import br.com.hbparking.email.MailSenderService;
 import br.com.hbparking.marcas.Marca;
 import br.com.hbparking.marcas.MarcaService;
 import br.com.hbparking.periodo.Periodo;
@@ -45,6 +46,7 @@ public class VagaGaragemService {
     private final VagaInfoService vagaInfoService;
     private static final String ID_INEXISTENTE = "ID %s não existe";
     private final Random sorteio = new Random();
+    private final MailSenderService mailSenderService;
 
     public VagaGaragemDTO save(VagaGaragemDTO vagaGaragemDTO) throws NoConnectionAPIException, InvalidVagaViolation {
         this.validate(vagaGaragemDTO);
@@ -206,6 +208,15 @@ public class VagaGaragemService {
             VagaGaragem vagaExsitente = vagaGaragemOptional.get();
             vagaExsitente.setStatusVaga(statusVaga);
             this.iVagaGaragemRepository.save(vagaExsitente);
+
+            new Thread(() -> {
+                if (statusVaga.getDescricao().equalsIgnoreCase("APROVADA")) {
+                    this.mailSenderService.sendEmailSuccess(vagaExsitente);
+                }
+                if (statusVaga.getDescricao().equalsIgnoreCase("REPROVADO")) {
+                    this.mailSenderService.sendEmailDisapproved(vagaExsitente);
+                }
+            }).start();
             return VagaGaragemDTO.of(vagaExsitente);
         }
         throw new IllegalArgumentException(String.format(ID_INEXISTENTE, id));

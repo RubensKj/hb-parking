@@ -10,4 +10,5 @@ import java.util.List;
 public interface IPeriodoRepository extends JpaRepository<Periodo, Long> {
     List<Periodo> findAllByTipoVeiculo(VehicleType tipoVeiculo);
 
+
 }

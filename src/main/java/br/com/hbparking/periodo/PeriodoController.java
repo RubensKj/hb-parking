@@ -25,4 +25,10 @@ public class PeriodoController {
     public List<PeriodoDTO> findAllByVehicleType(@PathVariable("tipo") VehicleType vehicleType) {
         return this.periodoService.findPeriodoByVehicleType(vehicleType);
     }
+
+    @GetMapping("/periodo/buscar-periodo")
+    public List<PeriodoDTO> findAllPeriodos() {
+        return this.periodoService.findAllPeriodos();
+    }
+
 }

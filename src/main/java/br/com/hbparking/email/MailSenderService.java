@@ -48,7 +48,9 @@ public class MailSenderService {
     public void sendEmailDisapproved(VagaGaragem vagaGaragem) {
         message.setTo(vagaGaragem.getColaborador().getEmail());
         message.setSubject("Atualização do status da vaga");
-        message.setText("Parabéns colaborador, sua vaga foi reprovada :D");
+        message.setText("Olá, " + vagaGaragem.getColaborador().getNome() +
+                        ". Sua solicitação de vaga para o " + vagaGaragem.getVehicleModel().getModelo() + " de placa " + vagaGaragem.getPlaca() +
+                        " foi reprovada.");
 
         javaMailSender.send(message);
     }
@@ -58,7 +60,7 @@ public class MailSenderService {
         try {
             vagasSorteadas.forEach(this::sendEmailDisapproved);
         }catch (Exception e){
-            LOGGER.error("Deu pau: {}", e.getMessage());
+            LOGGER.error("Erro: {}", e.getMessage());
         }
     }
 

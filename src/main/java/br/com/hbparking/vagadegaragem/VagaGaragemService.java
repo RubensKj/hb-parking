@@ -57,8 +57,9 @@ public class VagaGaragemService {
         this.validate(vagaGaragemDTO);
         LOGGER.info("Salvando Vaga");
         LOGGER.debug("Vaga: {}", vagaGaragemDTO);
+        vagaGaragemDTO.setStatusVaga(StatusVaga.EMAPROVACAO);
         VagaGaragem vagaSave = this.dtoToVaga(vagaGaragemDTO);
-        vagaSave.setStatusVaga(StatusVaga.EMAPROVACAO);
+
         if (isCarroOrMoto(vagaSave.getTipoVeiculo())) {
             vagaSave.setPlaca(placaValidator(vagaGaragemDTO.getPlaca()));
         } else {

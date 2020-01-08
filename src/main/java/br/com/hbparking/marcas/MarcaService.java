@@ -142,7 +142,7 @@ public class MarcaService {
     }
 
     private void readDataFromCsv(MultipartFile file, String tipo) throws IOException, ContentDispositionException {
-        InputStreamReader reader = new InputStreamReader(file.getInputStream(), StandardCharsets.ISO_8859_1);
+        InputStreamReader reader = new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8);
         CSVParser parser = new CSVParserBuilder().build();
         CSVReader csvReader = new CSVReaderBuilder(reader)
                 .withCSVParser(parser)

@@ -241,7 +241,7 @@ public class VagaGaragemService {
 
         List<VagaGaragem> vagasSorteadas = this.selectPrioritarios(vagaGaragemList);
 
-        while (qtdVagas > vagasSorteadas.size() || !(vagaGaragemList.size() == vagasSorteadas.size())) {
+        while (qtdVagas > vagasSorteadas.size() || vagaGaragemList.size() != vagasSorteadas.size()) {
             vagasSorteadas.add(vagaGaragemList.get(sorteio.nextInt(vagaGaragemList.size())));
             vagasSorteadas = vagasSorteadas.stream().distinct().sorted(Comparator.comparing((VagaGaragem::getPlaca))).collect(Collectors.toList());
         }

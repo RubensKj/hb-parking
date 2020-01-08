@@ -41,6 +41,18 @@ public class PeriodoService {
         throw new IllegalArgumentException(String.format("ID %s de periodo não existe", id));
     }
 
+    public List<PeriodoDTO> findAllPeriodos() {
+        return this.parsePeriodoListToPeriodoDTOList(this.iPeriodoRepository.findAll());
+    }
+
+    public List<PeriodoDTO> parsePeriodoListToDTO(List<Periodo> periodoList) {
+        List<PeriodoDTO> periodoDTOList = new ArrayList<>();
+        periodoList.forEach(periodo -> periodoDTOList.add(PeriodoDTO.of(periodo)));
+        return periodoDTOList;
+    }
+
+
+
     public List<PeriodoDTO> parsePeriodoListToPeriodoDTOList(List<Periodo> periodosList) {
         List<PeriodoDTO> periodoDTOList = new ArrayList<>();
         List<Periodo> periodosFiltrada = periodosList.stream().filter(periodo -> periodo.getDataFinal().isAfter(LocalDate.now())).collect(Collectors.toList());

@@ -26,7 +26,7 @@ public class VagaGaragemRest {
         this.mailSender = mailSender;
     }
 
-    @PostMapping("/cadastrar")
+    @PostMapping
     public VagaGaragemDTO save(@RequestBody VagaGaragemDTO vagaGaragemDTO) throws NoConnectionAPIException, InvalidVagaViolation {
         LOGGER.info("Recebendo solicitação de persistência de vaga de garagem...");
         LOGGER.debug("Payaload: {}", vagaGaragemDTO);
@@ -78,8 +78,6 @@ public class VagaGaragemRest {
         new Thread(() -> {
             this.mailSender.sendEmailApproved(sorteados);
         }).start();
-
-
 
         return sorteados;
     }

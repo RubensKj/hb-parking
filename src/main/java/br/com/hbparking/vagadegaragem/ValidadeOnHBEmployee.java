@@ -32,6 +32,7 @@ public class ValidadeOnHBEmployee {
 
         } catch (Exception e) {
             LOGGER.info("Vaga cadastrada, porém não foi possivel realizar uma conexão com a pai HbEmployee");
+
             throw new NoConnectionAPIException("Não foi possivel estabelecer uma conexão com HBEmployee");
         }
 

@@ -7,9 +7,12 @@ import br.com.hbparking.vagaInfo.VagaInfoNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -79,8 +82,6 @@ public class VagaGaragemRest {
             this.mailSender.successListToBeEmailed(sorteados);
         }).start();
 
-
-
         return sorteados;
     }
 
@@ -92,6 +93,18 @@ public class VagaGaragemRest {
     @PostMapping("/approveAll/{turno}")
     public void approveAll(@RequestBody List<VagaGaragemDTO> vagaGaragemDTOList, @PathVariable("turno") Turno turno) {
         this.vagaGaragemService.approveAllVagas(vagaGaragemDTOList, turno);
+    }
+
+    @GetMapping("/find/{idPeriodo}/{page}/{size}")
+    public Page<VagaGaragem> findAllByPeriodo(@PathVariable("idPeriodo") Long idPeriodo, @PathVariable("page") int page, @PathVariable("size") int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+
+        return this.vagaGaragemService.findAllFromPeriodo(idPeriodo, pageRequest);
+    }
+
+    @GetMapping("/export/{idPeriodo}")
+    public void export(HttpServletResponse response, @PathVariable("idPeriodo") Long idPeriodo) throws IOException {
+        this.vagaGaragemService.exportVagaGaragemCSVfromPeriodo(idPeriodo, response);
     }
 
 }

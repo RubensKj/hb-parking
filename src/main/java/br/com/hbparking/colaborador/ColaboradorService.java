@@ -41,7 +41,7 @@ public class ColaboradorService {
     }
 
     public ColaboradorDTO save(ColaboradorDTO colaboradorDTO) throws EmailAlreadyExistsException {
-        this.validate(colaboradorDTO);
+        this.validateWithEmailExists(colaboradorDTO);
 
         Colaborador colaborador = new Colaborador();
 
@@ -60,7 +60,7 @@ public class ColaboradorService {
         List<RoleName> roleNameList = new ArrayList<>();
         roleNameList.add(RoleName.ROLE_USER);
 
-        System.out.println(DateHelper.formatDateToPassword(colaboradorDTO.getDataNascimento()) + " DATA NASCIMENTO COM FORMAT");
+        System.err.println(DateHelper.formatDateToPassword(colaboradorDTO.getDataNascimento()) + " DATA NASCIMENTO COM FORMAT");
         this.userService.save(new UserDTO(colaboradorDTO.getEmail(), colaboradorDTO.getNome(), this.userService.encryptUserDTOPassword(DateHelper.formatDateToPassword(colaboradorDTO.getDataNascimento())), roleNameList));
 
         //notify hbemployee
@@ -74,16 +74,19 @@ public class ColaboradorService {
         return colaboradorSalvoDTO;
     }
 
-    private void validate(ColaboradorDTO colaboradorDTO) throws EmailAlreadyExistsException {
+    private void validateWithEmailExists(ColaboradorDTO colaboradorDTO) throws EmailAlreadyExistsException {
         LOGGER.info("Validando ColaboradorDTO");
         LOGGER.debug("ColaboradorDTO: {}", colaboradorDTO);
 
-        if (StringUtils.isEmpty(colaboradorDTO.getEmail())) {
-            throw new IllegalArgumentException("E-mail não pode ser nulo/vazio.");
-        }
-
+        this.validate(colaboradorDTO);
         if (this.colaboradorRepository.existsByEmail(colaboradorDTO.getEmail())) {
             throw new EmailAlreadyExistsException("E-mail já existe no banco, não podendo criar com o colaborador com esse e-mail.");
+        }
+    }
+
+    public void validate(ColaboradorDTO colaboradorDTO) {
+        if (StringUtils.isEmpty(colaboradorDTO.getEmail())) {
+            throw new IllegalArgumentException("E-mail não pode ser nulo/vazio.");
         }
 
         if (StringUtils.isEmpty(colaboradorDTO.getNome())) {
@@ -117,7 +120,10 @@ public class ColaboradorService {
     }
 
     public ColaboradorDTO update(ColaboradorDTO colaboradorDTO, Long id) {
+        this.validate(colaboradorDTO);
         Colaborador colaborador = this.getEntityById(id);
+        User user = this.userService.findByEmail(colaboradorDTO.getEmail());
+
         LocalDate localDate = colaboradorDTO.getDataNascimento();
         formatter.format(localDate);
 
@@ -125,11 +131,13 @@ public class ColaboradorService {
         colaborador.setEmail(colaboradorDTO.getEmail());
         colaborador.setNome(colaboradorDTO.getNome());
         colaborador.setPcd(colaboradorDTO.isPcd());
+        colaborador.setResideForaBlumenau(colaboradorDTO.isResideForaBlumenau());
+        colaborador.setOfereceCarona(colaboradorDTO.isOfereceCarona());
         colaborador.setTrabalhoNoturno(colaboradorDTO.isTrabalhoNoturno());
 
-        colaborador = this.colaboradorRepository.save(colaborador);
+        this.userService.updateNome(user, colaborador.getNome());
 
-        return ColaboradorDTO.of(colaborador);
+        return ColaboradorDTO.of(this.colaboradorRepository.save(colaborador));
     }
 
     public ColaboradorDTO getColaborador(Long id) {
@@ -158,7 +166,7 @@ public class ColaboradorService {
             LocalDate localDate = DateHelper.formatDateFromCSVToLocalDate(data.get(i)[2].split("/"));
             ColaboradorDTO colaboradorDTO = new ColaboradorDTO(data.get(i)[1], data.get(i)[0], localDate, this.convertStringToBoolean(data.get(i)[3]), this.convertStringToBoolean(data.get(i)[4]));
             try {
-                this.validate(colaboradorDTO);
+                this.validateWithEmailExists(colaboradorDTO);
             } catch (EmailAlreadyExistsException e) {
                 linhasErro.add((i + 2));
                 continue;
@@ -203,6 +211,10 @@ public class ColaboradorService {
             return colaborador.get();
         }
         throw new IllegalArgumentException(String.format("ID %s não existe", id));
+    }
+
+    public Colaborador findByEmail(String email) throws ColaboradorNotFoundException {
+        return this.colaboradorRepository.findByEmail(email).orElseThrow(() -> new ColaboradorNotFoundException("Colaborador não foi encontrado com esse email [" + email + "]"));
     }
 
     public boolean convertStringToBoolean(String afirmacao) {

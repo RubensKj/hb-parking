@@ -26,7 +26,7 @@ public class VagaGaragem {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "tipo_veiculo" , nullable = false)
+    @Column(name = "tipo_veiculo", nullable = false)
     private VehicleType tipoVeiculo;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
@@ -67,7 +67,4 @@ public class VagaGaragem {
         this.colaborador = colaborador;
         this.statusVaga = statusVaga;
     }
-
-
-
 }

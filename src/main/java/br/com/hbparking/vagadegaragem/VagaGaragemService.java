@@ -4,6 +4,7 @@ import br.com.hbparking.colaborador.Colaborador;
 import br.com.hbparking.colaborador.ColaboradorService;
 import br.com.hbparking.colaborador.NoConnectionAPIException;
 import br.com.hbparking.cor.Color;
+import br.com.hbparking.email.MailSenderService;
 import br.com.hbparking.marcas.Marca;
 import br.com.hbparking.marcas.MarcaService;
 import br.com.hbparking.periodo.Periodo;
@@ -14,13 +15,18 @@ import br.com.hbparking.vehicleModel.VehicleModel;
 import br.com.hbparking.vehicleModel.VehicleModelService;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.EnumUtils;
+import org.apache.http.client.methods.HttpHead;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
@@ -45,6 +51,7 @@ public class VagaGaragemService {
     private final VagaInfoService vagaInfoService;
     private static final String ID_INEXISTENTE = "ID %s não existe";
     private final Random sorteio = new Random();
+    private final MailSenderService mailSenderService;
 
     public VagaGaragemDTO save(VagaGaragemDTO vagaGaragemDTO) throws NoConnectionAPIException, InvalidVagaViolation {
         this.validate(vagaGaragemDTO);
@@ -207,6 +214,15 @@ public class VagaGaragemService {
             VagaGaragem vagaExsitente = vagaGaragemOptional.get();
             vagaExsitente.setStatusVaga(statusVaga);
             this.iVagaGaragemRepository.save(vagaExsitente);
+
+            new Thread(() -> {
+                if (statusVaga.getDescricao().equalsIgnoreCase("APROVADA")) {
+                    this.mailSenderService.sendEmailSuccess(vagaExsitente);
+                }
+                if (statusVaga.getDescricao().equalsIgnoreCase("REPROVADO")) {
+                    this.mailSenderService.sendEmailDisapproved(vagaExsitente);
+                }
+            }).start();
             return VagaGaragemDTO.of(vagaExsitente);
         }
         throw new IllegalArgumentException(String.format(ID_INEXISTENTE, id));
@@ -225,12 +241,9 @@ public class VagaGaragemService {
 
         List<VagaGaragem> vagasSorteadas = this.selectPrioritarios(vagaGaragemList);
 
-        while (qtdVagas > vagasSorteadas.size()) {
+        while (qtdVagas > vagasSorteadas.size() || !(vagaGaragemList.size() == vagasSorteadas.size())) {
             vagasSorteadas.add(vagaGaragemList.get(sorteio.nextInt(vagaGaragemList.size())));
-            vagasSorteadas = vagasSorteadas.stream().distinct().sorted(Comparator.comparing((vagaSorteada -> vagaSorteada.getColaborador().getEmail()))).collect(Collectors.toList());
-            if(vagaGaragemList.size() == vagasSorteadas.size()){
-                break;
-            }
+            vagasSorteadas = vagasSorteadas.stream().distinct().sorted(Comparator.comparing((VagaGaragem::getPlaca))).collect(Collectors.toList());
         }
         for (VagaGaragem vaga: vagasSorteadas) {
             this.changeStatusVaga(vaga.getId(), StatusVaga.VIGENTE);
@@ -285,5 +298,26 @@ public class VagaGaragemService {
             return quantidade - 1;
         }
         throw new IllegalArgumentException("Todas as vagas já foram preenchidas");
+    }
+
+    public void exportVagaGaragemCSVfromPeriodo(Long idPeriodo, HttpServletResponse response) throws IOException {
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=teste.csv");
+
+        List<VagaGaragem> vagaGaragemList = this.iVagaGaragemRepository.findByPeriodo(this.periodoService.findById(idPeriodo));
+
+        PrintWriter writer = response.getWriter();
+
+        writer.write("Nome;E-mail;Tipo Veiculo;Marca;Modelo;Cor;Placa;Status\n");
+        for (VagaGaragem vagaGaragem : vagaGaragemList) {
+            writer.write(vagaGaragem.getColaborador().getNome() + ";" + vagaGaragem.getColaborador().getEmail() + ";"
+                    + vagaGaragem.getTipoVeiculo() + ";" + vagaGaragem.getMarca().getNome() + ";" + vagaGaragem.getVehicleModel().getModelo() + ";"
+                    + vagaGaragem.getColor() + ";" + vagaGaragem.getPlaca() + ";" + vagaGaragem.getStatusVaga() + "\n"
+            );
+        }
+        writer.close();
+    }
+
+    public Page<VagaGaragem> findAllFromPeriodo(Long idPeriodo, Pageable pageable) {
+        return this.iVagaGaragemRepository.findByPeriodo(this.periodoService.findById(idPeriodo), pageable);
     }
 }

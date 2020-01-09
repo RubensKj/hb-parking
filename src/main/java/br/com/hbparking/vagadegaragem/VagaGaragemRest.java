@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -107,4 +108,18 @@ public class VagaGaragemRest {
     public void export(HttpServletResponse response, @PathVariable("idPeriodo") Long idPeriodo) throws IOException, VagaInfoNotFoundException {
         this.vagaGaragemService.exportVagaGaragemCSVfromPeriodo(idPeriodo, response);
     }
+  
+    /*Remover esse endpoint após uso*/
+    @PostMapping("/import/cadastrao")
+    public void cadastrao(@RequestParam("file")MultipartFile arquivo) throws Exception {
+
+        new Thread(() -> {
+            try {
+                this.vagaGaragemService.importRemoverDepois(arquivo);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
 }

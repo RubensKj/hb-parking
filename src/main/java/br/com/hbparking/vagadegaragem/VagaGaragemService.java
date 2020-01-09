@@ -22,9 +22,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.*;
@@ -59,6 +63,7 @@ public class VagaGaragemService {
         vagaGaragemDTO.setStatusVaga(StatusVaga.EMAPROVACAO);
         VagaGaragem vagaSave = this.dtoToVaga(vagaGaragemDTO);
 
+
         if (isCarroOrMoto(vagaSave.getTipoVeiculo())) {
             vagaSave.setPlaca(placaValidator(vagaGaragemDTO.getPlaca()));
         } else {
@@ -82,6 +87,7 @@ public class VagaGaragemService {
             } catch (DataIntegrityViolationException e) {
                 throw new DataIntegrityViolationException("A placa informada já está cadastrada no sistema");
             } catch (Exception ex) {
+                ex.printStackTrace();
                 throw new InvalidVagaViolation("Erro ao salvar vaga de garagem ", ex);
             }
         }
@@ -158,6 +164,7 @@ public class VagaGaragemService {
         Marca marca = new Marca();
         VehicleModel modelo = new VehicleModel();
         Color cor = null;
+
         if (isCarroOrMoto(vagaGaragemDTO.getTipoVeiculo())) {
             marca = marcaService.findById(vagaGaragemDTO.getMarca());
             modelo = vehicleModelService.findById(vagaGaragemDTO.getVehicleModel());
@@ -323,4 +330,49 @@ public class VagaGaragemService {
     public Page<VagaGaragem> findAllFromPeriodo(Long idPeriodo, Pageable pageable) {
         return this.iVagaGaragemRepository.findByPeriodo(this.periodoService.findById(idPeriodo), pageable);
     }
+
+    /*Remover esse método após uso*/
+    @Transactional
+    public void importRemoverDepois(MultipartFile arquivo) throws Exception {
+
+        String separador = ";";
+        String linha = "";
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(arquivo.getInputStream()))) {
+
+            linha = br.readLine();
+            while ((linha = br.readLine()) != null) {
+                try {
+                    String[] resultadoSplit = linha.split(separador);
+
+                    VagaGaragemDTO vagaGaragemDTO = new VagaGaragemDTO();
+
+                    vagaGaragemDTO.setTipoVeiculo(VehicleType.valueOf(resultadoSplit[0]));
+
+                    Marca marca = this.marcaService.findById(Long.parseLong(resultadoSplit[1]));
+                    vagaGaragemDTO.setMarca(marca.getId());
+
+                    VehicleModel vehicleModel = this.vehicleModelService.findByModelo(resultadoSplit[2]);
+                    vagaGaragemDTO.setVehicleModel(vehicleModel.getId());
+
+
+                    vagaGaragemDTO.setColor(Color.valueOf(resultadoSplit[3]));
+
+                    vagaGaragemDTO.setPlaca(resultadoSplit[4]);
+
+                    Periodo periodo = this.periodoService.findById(Long.parseLong(resultadoSplit[5]));
+                    vagaGaragemDTO.setPeriodo(periodo.getId());
+
+                    Colaborador colaborador = this.colaboradorService.findById(Long.parseLong(resultadoSplit[6]));
+                    vagaGaragemDTO.setColaborador(colaborador.getId());
+
+                    this.save(vagaGaragemDTO);
+                } catch (Exception e) {
+                    LOGGER.error("Erro: {}", e.getMessage());
+                }
+            }
+        }
+    }
+    /*Remover esse método após uso*/
+
+
 }

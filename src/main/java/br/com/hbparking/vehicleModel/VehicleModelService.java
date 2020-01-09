@@ -53,4 +53,17 @@ public class VehicleModelService {
         return this.vehicleModelRepository.findByFkMarcaAndModeloContains(fkMarca, modelo);
     }
 
+    /*Remover esse método após uso*/
+    public VehicleModel findByModelo(String modelo){
+
+        Optional<VehicleModel> vehicleModel = this.vehicleModelRepository.findByModelo(modelo);
+
+        if(vehicleModel.isPresent()){
+            return vehicleModel.get();
+        }else{
+            throw new IllegalArgumentException("Erro");
+        }
+
+    }
+
 }

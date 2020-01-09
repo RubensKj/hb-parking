@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Repository
@@ -20,4 +21,7 @@ public interface IVehicleModelRepository extends JpaRepository<VehicleModel, Lon
     boolean existsByModelo(String modelo);
 
     List<VehicleModel> findByFkMarcaAndModeloContains(Marca fkMarca, String modelo);
+
+    /*Remover esse método após uso*/
+    Optional<VehicleModel> findByModelo(String modelo);
 }

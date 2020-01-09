@@ -1,9 +1,6 @@
 package br.com.hbparking.vagaInfo;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/vaga-info")
@@ -18,5 +15,10 @@ public class VagaInfoController {
     @PostMapping("/cadastrar")
     public VagaInfoDTO create(@RequestBody VagaInfoDTO vagaInfoDTO) throws PeriodoAlreadyExistsException {
         return this.vagaInfoService.cadastrar(vagaInfoDTO);
+    }
+
+    @GetMapping("/find/{id}")
+    public VagaInfoDTO findById(@PathVariable("id") Long id) throws VagaInfoNotFoundException {
+        return VagaInfoDTO.of(this.vagaInfoService.findById(id));
     }
 }

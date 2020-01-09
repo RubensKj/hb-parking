@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
 @Service
 public class VagaInfoService {
@@ -30,8 +29,8 @@ public class VagaInfoService {
         this.validarVagaInfo(vagaInfoDTO);
 
         Periodo periodo = periodoService.findById(vagaInfoDTO.getIdPeriodo());
-        if (!this.iVagaInfoRepository.existsByPeriodoAndVehicleTypeAndTurno(periodo, vagaInfoDTO.getVehicleType(), vagaInfoDTO.getTurno())) {
-            return VagaInfoDTO.of(this.iVagaInfoRepository.save(new VagaInfo(vagaInfoDTO.getQuantidade(), vagaInfoDTO.getValor(), vagaInfoDTO.getVehicleType(), periodo, vagaInfoDTO.getTurno())));
+        if (!this.iVagaInfoRepository.existsByPeriodoAndVehicleTypeAndTurno(periodo, periodo.getTipoVeiculo(), vagaInfoDTO.getTurno())) {
+            return VagaInfoDTO.of(this.iVagaInfoRepository.save(new VagaInfo(vagaInfoDTO.getQuantidade(), vagaInfoDTO.getValor(), periodo.getTipoVeiculo(), periodo, vagaInfoDTO.getTurno())));
         }
         throw new PeriodoAlreadyExistsException("Periodo já cadastrado no banco");
 
@@ -50,9 +49,6 @@ public class VagaInfoService {
         if (vagaInfoDTO.getValor() < 0) {
             throw new IllegalArgumentException("Valor deve ser maior que zero");
         }
-        if (vagaInfoDTO.getVehicleType().getDescricao().equalsIgnoreCase("bicicleta") || vagaInfoDTO.getVehicleType().getDescricao().equalsIgnoreCase("patinete")) {
-            throw new IllegalArgumentException("Patinete e bicicleta são considerados o mesmo tipo para o cadastro de quantidade");
-        }
     }
 
     public VagaInfo findByPeriodoAndVehicleTypeAndTurno(Periodo periodo, VehicleType vehicleType, Turno turno) throws VagaInfoNotFoundException {
@@ -63,10 +59,12 @@ public class VagaInfoService {
         LOGGER.info("Atualizando vaga info");
         this.validarVagaInfo(vagaInfoDTO);
         VagaInfo vagaInfo = this.findById(id);
+        Periodo periodo = this.periodoService.findById(id);
+
         vagaInfo.setQuantidade(vagaInfoDTO.getQuantidade());
-        vagaInfo.setPeriodo(this.periodoService.findById(id));
+        vagaInfo.setPeriodo(periodo);
         vagaInfo.setValor(vagaInfoDTO.getValor());
-        vagaInfo.setVehicleType(vagaInfoDTO.getVehicleType());
+        vagaInfo.setVehicleType(periodo.getTipoVeiculo());
 
         return VagaInfoDTO.of(this.iVagaInfoRepository.save(vagaInfo));
     }

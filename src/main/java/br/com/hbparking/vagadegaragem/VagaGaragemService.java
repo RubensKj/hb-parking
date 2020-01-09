@@ -32,9 +32,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.List;
-import java.util.Optional;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -56,7 +53,7 @@ public class VagaGaragemService {
     private final Random sorteio = new Random();
     private final MailSenderService mailSenderService;
 
-    public VagaGaragemDTO save(VagaGaragemDTO vagaGaragemDTO) throws NoConnectionAPIException, InvalidVagaViolation {
+    public VagaGaragemDTO save(VagaGaragemDTO vagaGaragemDTO) throws NoConnectionAPIException, InvalidVagaViolation, PlateAlreadyExistsException {
         this.validate(vagaGaragemDTO);
         LOGGER.info("Salvando Vaga");
         LOGGER.debug("Vaga: {}", vagaGaragemDTO);
@@ -85,9 +82,9 @@ public class VagaGaragemService {
             try {
                 vagaSave = this.iVagaGaragemRepository.save(vagaSave);
             } catch (DataIntegrityViolationException e) {
-                throw new DataIntegrityViolationException("A placa informada já está cadastrada no sistema");
+                throw new PlateAlreadyExistsException("A placa informada já está cadastrada no sistema");
             } catch (Exception ex) {
-                ex.printStackTrace();
+                LOGGER.info(ex.getMessage());
                 throw new InvalidVagaViolation("Erro ao salvar vaga de garagem ", ex);
             }
         }
@@ -95,9 +92,9 @@ public class VagaGaragemService {
         return VagaGaragemDTO.of(vagaSave);
     }
 
-    public Page<VagaGaragem> findAllByTipoPage(Pageable pageable) {
+    public Page<VagaGaragem> findAllByTipoPage(VehicleType vehicleType, Pageable pageable) {
         LOGGER.info("Retornando vagas em paginas");
-        return iVagaGaragemRepository.findAll(pageable);
+        return iVagaGaragemRepository.findAllByTipoVeiculo(vehicleType, pageable);
     }
 
     public VagaGaragem findById(Long id) {
@@ -239,9 +236,12 @@ public class VagaGaragemService {
             throw new InvalidVehicleTipoFromPeriodo("Periodo inválido para o tipo de veiculo desejado");
         }
     }
-  
-    public List<VagaGaragem> sorteioVagas(int qtdVagas, String tipoVeiculo) {
 
+    public List<VagaGaragem> sorteioVagas(Long periodoId, String tipoVeiculo, Turno turno) throws VagaInfoNotFoundException {
+        int qtdVagas = 0;
+        Periodo periodo = this.periodoService.findById(periodoId);
+        VagaInfo vagaInfo = this.vagaInfoService.findByPeriodoAndVehicleTypeAndTurno(periodo, VehicleType.valueOf(tipoVeiculo), turno);
+        qtdVagas = vagaInfo.getQuantidade();
 
         List<VagaGaragem> vagaGaragemList = this.iVagaGaragemRepository.findAllByStatusVagaAndTipoVeiculo(StatusVaga.EMAPROVACAO, VehicleType.valueOf(tipoVeiculo));
 
@@ -249,22 +249,25 @@ public class VagaGaragemService {
 
         while (qtdVagas > vagasSorteadas.size() || vagaGaragemList.size() != vagasSorteadas.size()) {
             vagasSorteadas.add(vagaGaragemList.get(sorteio.nextInt(vagaGaragemList.size())));
+            if (turno.getDescricao().equalsIgnoreCase("NOTURNO")) {
+                vagasSorteadas.addAll(vagaGaragemList.stream().filter(vagaGaragem -> vagaGaragem.getColaborador().isTrabalhoNoturno()).collect(Collectors.toList()));
+            }
             vagasSorteadas = vagasSorteadas.stream().distinct().sorted(Comparator.comparing((VagaGaragem::getPlaca))).collect(Collectors.toList());
         }
-        for (VagaGaragem vaga: vagasSorteadas) {
-            this.changeStatusVaga(vaga.getId(), StatusVaga.VIGENTE);
+
+        for (VagaGaragem vaga : vagasSorteadas) {
+            this.approveVaga(VagaGaragemDTO.of(vaga), turno);
             LOGGER.debug("Update vaga aprovada: {}", vaga.getId());
         }
 
         List<VagaGaragem> listaReprovados = this.iVagaGaragemRepository.findAllByStatusVagaAndTipoVeiculo(StatusVaga.EMAPROVACAO, VehicleType.valueOf(tipoVeiculo));
-
-        for(VagaGaragem reprovado : listaReprovados){
+        for (VagaGaragem reprovado : listaReprovados) {
             this.changeStatusVaga(reprovado.getId(), StatusVaga.REPROVADO);
             LOGGER.debug("Update vaga reprovada: {}", reprovado.getId());
         }
-
         return vagasSorteadas;
     }
+
 
     public List<VagaGaragem> selectPrioritarios(List<VagaGaragem> vagaGaragemList) {
 
@@ -333,7 +336,7 @@ public class VagaGaragemService {
 
     /*Remover esse método após uso*/
     @Transactional
-    public void importRemoverDepois(MultipartFile arquivo) throws Exception {
+    public void importRemoverDepois(MultipartFile arquivo) throws IOException {
 
         String separador = ";";
         String linha = "";

@@ -17,4 +17,6 @@ public interface IVagaGaragemRepository extends JpaRepository<VagaGaragem, Long>
     Page<VagaGaragem> findByPeriodo(Periodo periodo, Pageable pageable);
 
     List<VagaGaragem> findByPeriodo(Periodo periodo);
+
+    Page<VagaGaragem> findAllByTipoVeiculo(VehicleType vehicleType, Pageable pageable);
 }

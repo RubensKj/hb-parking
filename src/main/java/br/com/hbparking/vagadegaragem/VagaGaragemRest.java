@@ -1,9 +1,9 @@
 package br.com.hbparking.vagadegaragem;
 
-import br.com.hbparking.email.MailSenderService;
 import br.com.hbparking.colaborador.NoConnectionAPIException;
+import br.com.hbparking.email.MailSenderService;
+import br.com.hbparking.tipoveiculo.VehicleType;
 import br.com.hbparking.vagaInfo.Turno;
-import br.com.hbparking.vagaInfo.VagaInfoDTO;
 import br.com.hbparking.vagaInfo.VagaInfoNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,30 +18,22 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/vagas")
+@RequestMapping("/api/vagas")
 public class VagaGaragemRest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VagaGaragemRest.class);
 
     private final VagaGaragemService vagaGaragemService;
-    private final MailSenderService mailSender;
 
-    public VagaGaragemRest(VagaGaragemService vagaGaragemService,  MailSenderService mailSender) {
+    public VagaGaragemRest(VagaGaragemService vagaGaragemService) {
         this.vagaGaragemService = vagaGaragemService;
-        this.mailSender = mailSender;
     }
 
     @PostMapping
-    public VagaGaragemDTO save(@RequestBody VagaGaragemDTO vagaGaragemDTO) throws NoConnectionAPIException, InvalidVagaViolation {
+    public VagaGaragemDTO save(@RequestBody VagaGaragemDTO vagaGaragemDTO) throws NoConnectionAPIException, InvalidVagaViolation, PlateAlreadyExistsException {
         LOGGER.info("Recebendo solicitação de persistência de vaga de garagem...");
         LOGGER.debug("Payaload: {}", vagaGaragemDTO);
         return this.vagaGaragemService.save(vagaGaragemDTO);
-    }
-
-    @GetMapping(value = "/allVagasByPage")
-    public Page<VagaGaragem> findAllVagas(Pageable pageable) {
-        LOGGER.info("Recebendo requisição para buscar todas as vagas em paginas");
-        return vagaGaragemService.findAllByTipoPage(pageable);
     }
 
     @GetMapping("/{id}")
@@ -75,16 +67,9 @@ public class VagaGaragemRest {
         this.vagaGaragemService.delete(id);
     }
 
-    @GetMapping("/sort/{qtdVagas}/{tipoVeiculo}")
-    public List<VagaGaragem> sort(@PathVariable("qtdVagas") int qtdVagas, @PathVariable("tipoVeiculo") String tipoVeiculo){
-
-        List<VagaGaragem> sorteados = this.vagaGaragemService.sorteioVagas(qtdVagas, tipoVeiculo);
-
-        new Thread(() -> {
-            this.mailSender.successListToBeEmailed(sorteados);
-        }).start();
-
-        return sorteados;
+    @GetMapping("/sort/{periodoId}/{tipoVeiculo}/{turno}")
+    public List<VagaGaragem> sort(@PathVariable("periodoId") Long periodoId, @PathVariable("tipoVeiculo") String tipoVeiculo, @PathVariable("turno") String turno) throws VagaInfoNotFoundException {
+        return this.vagaGaragemService.sorteioVagas(periodoId, tipoVeiculo, Turno.valueOf(turno));
     }
 
     @PostMapping("/approve/{turno}")
@@ -104,20 +89,26 @@ public class VagaGaragemRest {
         return this.vagaGaragemService.findAllFromPeriodo(idPeriodo, pageRequest);
     }
 
+    @GetMapping("/findby/{tipo}/{page}/{limit}")
+    public Page<VagaGaragem> findAllByTipo(@PathVariable("tipo") VehicleType vehicleType, @PathVariable("page") int page, @PathVariable("limit") int limit) {
+        Pageable pageable = PageRequest.of(page, limit);
+        return this.vagaGaragemService.findAllByTipoPage(vehicleType, pageable);
+    }
+
     @GetMapping("/export/{idPeriodo}")
     public void export(HttpServletResponse response, @PathVariable("idPeriodo") Long idPeriodo) throws IOException, VagaInfoNotFoundException {
         this.vagaGaragemService.exportVagaGaragemCSVfromPeriodo(idPeriodo, response);
     }
-  
+
     /*Remover esse endpoint após uso*/
     @PostMapping("/import/cadastrao")
-    public void cadastrao(@RequestParam("file")MultipartFile arquivo) throws Exception {
+    public void cadastrao(@RequestParam("file") MultipartFile arquivo) {
 
         new Thread(() -> {
             try {
                 this.vagaGaragemService.importRemoverDepois(arquivo);
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.info(e.getMessage());
             }
         }).start();
     }

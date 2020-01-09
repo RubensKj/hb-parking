@@ -131,10 +131,11 @@ public class VagaGaragemServiceTest {
         this.vagaGaragemService.placaValidator("MCI5965");// placa Antiga
     }
 
-    @org.junit.Test(expected = NoConnectionAPIException.class)
+    /*@org.junit.Test(expected = NoConnectionAPIException.class)
     public void noConnectioToApiThrowException() throws Exception {
         validadeOnHBEmployee.validate("teste");
-    }
+    }*/
+
     @Test
     public void invalidVehicleTypeFromPeiodo() {
         VagaGaragem vagaGaragem = new VagaGaragem();

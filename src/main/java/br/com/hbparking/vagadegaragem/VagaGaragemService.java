@@ -15,7 +15,6 @@ import br.com.hbparking.vehicleModel.VehicleModel;
 import br.com.hbparking.vehicleModel.VehicleModelService;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.EnumUtils;
-import org.apache.http.client.methods.HttpHead;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -300,18 +299,22 @@ public class VagaGaragemService {
         throw new IllegalArgumentException("Todas as vagas já foram preenchidas");
     }
 
-    public void exportVagaGaragemCSVfromPeriodo(Long idPeriodo, HttpServletResponse response) throws IOException {
+    public void exportVagaGaragemCSVfromPeriodo(Long idPeriodo, HttpServletResponse response) throws IOException, VagaInfoNotFoundException {
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=teste.csv");
 
         List<VagaGaragem> vagaGaragemList = this.iVagaGaragemRepository.findByPeriodo(this.periodoService.findById(idPeriodo));
-
         PrintWriter writer = response.getWriter();
-
-        writer.write("Nome;E-mail;Tipo Veiculo;Marca;Modelo;Cor;Placa;Status\n");
+        double valor = 0;
+        writer.write("Nome;E-mail;Tipo Veiculo;Marca;Modelo;Cor;Placa;Status;Valor\n");
         for (VagaGaragem vagaGaragem : vagaGaragemList) {
+            if (vagaGaragem.getColaborador().isTrabalhoNoturno()) {
+                valor = this.vagaInfoService.findByPeriodoAndVehicleTypeAndTurno(vagaGaragem.getPeriodo(), vagaGaragem.getTipoVeiculo(), Turno.NOTURNO).getValor();
+            } else {
+                valor = this.vagaInfoService.findByPeriodoAndVehicleTypeAndTurno(vagaGaragem.getPeriodo(), vagaGaragem.getTipoVeiculo(), Turno.INTEGRAL).getValor();
+            }
             writer.write(vagaGaragem.getColaborador().getNome() + ";" + vagaGaragem.getColaborador().getEmail() + ";"
                     + vagaGaragem.getTipoVeiculo() + ";" + vagaGaragem.getMarca().getNome() + ";" + vagaGaragem.getVehicleModel().getModelo() + ";"
-                    + vagaGaragem.getColor() + ";" + vagaGaragem.getPlaca() + ";" + vagaGaragem.getStatusVaga() + "\n"
+                    + vagaGaragem.getColor() + ";" + vagaGaragem.getPlaca() + ";" + vagaGaragem.getStatusVaga() + ";" + valor + ";" + "\n"
             );
         }
         writer.close();

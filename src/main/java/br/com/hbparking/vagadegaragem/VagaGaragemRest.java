@@ -3,6 +3,7 @@ package br.com.hbparking.vagadegaragem;
 import br.com.hbparking.email.MailSenderService;
 import br.com.hbparking.colaborador.NoConnectionAPIException;
 import br.com.hbparking.vagaInfo.Turno;
+import br.com.hbparking.vagaInfo.VagaInfoDTO;
 import br.com.hbparking.vagaInfo.VagaInfoNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,8 +104,7 @@ public class VagaGaragemRest {
     }
 
     @GetMapping("/export/{idPeriodo}")
-    public void export(HttpServletResponse response, @PathVariable("idPeriodo") Long idPeriodo) throws IOException {
+    public void export(HttpServletResponse response, @PathVariable("idPeriodo") Long idPeriodo) throws IOException, VagaInfoNotFoundException {
         this.vagaGaragemService.exportVagaGaragemCSVfromPeriodo(idPeriodo, response);
     }
-
 }

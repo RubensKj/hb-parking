@@ -49,7 +49,7 @@ public class VagaInfoServiceTest {
     @Test
     public void cadastrar() throws PeriodoAlreadyExistsException {
         long id = 1;
-        VagaInfoDTO vagaInfoDTO = new VagaInfoDTO(300, id, VehicleType.PATINETE_E_BICICLETA, 150.0);
+        VagaInfoDTO vagaInfoDTO = new VagaInfoDTO(300, id, 150.0);
 
         when(iPeriodoRepository.findById(any())).thenReturn(java.util.Optional.of(new Periodo(VehicleType.CARRO, LocalDate.of(2019, 10, 7), LocalDate.of(2019, 10, 10))));
 

@@ -1,6 +1,7 @@
 package br.com.hbparking.tipoveiculo;
 
 public enum VehicleType {
+
     CARRO("CARRO"),
     BICICLETA("BICICLETA"),
     MOTO("MOTO"),

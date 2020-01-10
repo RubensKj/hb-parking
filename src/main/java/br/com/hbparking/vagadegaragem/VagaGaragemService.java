@@ -296,7 +296,7 @@ public class VagaGaragemService {
             try {
                 this.approveVaga(VagaGaragemDTO.of(vagaGaragem), turno);
             } catch (VagaInfoNotFoundException e) {
-                LOGGER.error("", e);
+                LOGGER.error(e.getMessage());
             }
         });
     }

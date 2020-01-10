@@ -73,13 +73,13 @@ public class VagaGaragemRest {
     }
 
     @PostMapping("/approve/{turno}")
-    public VagaGaragemDTO approve(@RequestBody VagaGaragemDTO vagaGaragemDTO, @PathVariable("turno") Turno turno) throws VagaInfoNotFoundException {
-        return this.vagaGaragemService.approveVaga(vagaGaragemDTO, turno);
+    public VagaGaragemDTO approve(@RequestBody VagaGaragem vagaGaragem, @PathVariable("turno") Turno turno) throws VagaInfoNotFoundException {
+        return this.vagaGaragemService.approveVaga(VagaGaragemDTO.of(vagaGaragem), turno);
     }
 
     @PostMapping("/approveAll/{turno}")
-    public void approveAll(@RequestBody List<VagaGaragemDTO> vagaGaragemDTOList, @PathVariable("turno") Turno turno) {
-        this.vagaGaragemService.approveAllVagas(vagaGaragemDTOList, turno);
+    public void approveAll(@RequestBody List<VagaGaragem> vagaGaragemList, @PathVariable("turno") Turno turno) {
+        this.vagaGaragemService.approveAllVagas(vagaGaragemList, turno);
     }
 
     @GetMapping("/find/{idPeriodo}/{page}/{size}")

@@ -291,10 +291,10 @@ public class VagaGaragemService {
         return this.changeStatusVaga(vagaGaragemDTO.getId(), StatusVaga.APROVADA);
     }
 
-    public void approveAllVagas(List<VagaGaragemDTO> vagaGaragemDTOList, Turno turno) {
-        vagaGaragemDTOList.forEach(vagaGaragemDTO -> {
+    public void approveAllVagas(List<VagaGaragem> vagaGaragemList, Turno turno) {
+        vagaGaragemList.forEach(vagaGaragem -> {
             try {
-                this.approveVaga(vagaGaragemDTO, turno);
+                this.approveVaga(VagaGaragemDTO.of(vagaGaragem), turno);
             } catch (VagaInfoNotFoundException e) {
                 LOGGER.error("", e);
             }

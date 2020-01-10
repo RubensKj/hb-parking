@@ -286,7 +286,7 @@ public class VagaGaragemService {
         VagaInfo vagaInfo = this.vagaInfoService.findByPeriodoAndVehicleTypeAndTurno(this.periodoService.findById(vagaGaragemDTO.getPeriodo()), vagaGaragemDTO.getTipoVeiculo(), turno);
         vagaInfo.setQuantidade(updateNumberOfVagasLeft(vagaInfo.getQuantidade()));
 
-        this.vagaInfoService.update(VagaInfoDTO.of(vagaInfo), vagaInfo.getId());
+        this.vagaInfoService.update(VagaInfoDTO.of(vagaInfo), vagaGaragemDTO.getPeriodo());
 
         return this.changeStatusVaga(vagaGaragemDTO.getId(), StatusVaga.APROVADA);
     }
@@ -380,8 +380,8 @@ public class VagaGaragemService {
         }
     }
 
-    public int getTotalElementsFilter(VehicleType vehicleType, boolean trabalhoNoturno, Long idPeriodo) {
-        return this.iVagaGaragemRepository.findAllByTipoVeiculoAndColaborador_TrabalhoNoturnoAndPeriodo_Id(vehicleType, trabalhoNoturno, idPeriodo).size();
+    public int getTotalElementsFilter(VehicleType vehicleType, boolean trabalhoNoturno, Long idPeriodo, StatusVaga statusVaga) {
+        return this.iVagaGaragemRepository.findAllByTipoVeiculoAndColaborador_TrabalhoNoturnoAndPeriodo_IdAndStatusVaga(vehicleType, trabalhoNoturno, idPeriodo, statusVaga).size();
     }
 
 }

@@ -20,5 +20,5 @@ public interface IVagaGaragemRepository extends JpaRepository<VagaGaragem, Long>
 
     Page<VagaGaragem> findAllByTipoVeiculo(VehicleType vehicleType, Pageable pageable);
 
-    List<VagaGaragem> findAllByTipoVeiculoAndColaborador_TrabalhoNoturnoAndPeriodo_Id(VehicleType vehicleType, boolean trabalhoNoturno, Long periodoId);
+    List<VagaGaragem> findAllByTipoVeiculoAndColaborador_TrabalhoNoturnoAndPeriodo_IdAndStatusVaga(VehicleType vehicleType, boolean trabalhoNoturno, Long periodoId, StatusVaga statusVaga);
 }

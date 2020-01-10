@@ -2,6 +2,7 @@ package br.com.hbparking.vagaInfo;
 
 import br.com.hbparking.periodo.PeriodoService;
 import br.com.hbparking.tipoveiculo.VehicleType;
+import br.com.hbparking.vagadegaragem.StatusVaga;
 import br.com.hbparking.vagadegaragem.VagaGaragemService;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,12 +35,12 @@ public class VagaInfoController {
         return VagaInfoDTO.of(this.vagaInfoService.findByPeriodoAndVehicleTypeAndTurno(this.periodoService.findById(idPeriodo), tipo, turno));
     }
 
-    @GetMapping("/findAll/{turno}/{tipo}/{idPeriodo}")
-    public int findAllAndReturnedFiltrada(@PathVariable("turno") Turno turno, @PathVariable("tipo") VehicleType tipo, @PathVariable("idPeriodo") Long idPeriodo) {
+    @GetMapping("/findAll/{turno}/{tipo}/{idPeriodo}/{status}")
+    public int findAllAndReturnedFiltrada(@PathVariable("turno") Turno turno, @PathVariable("tipo") VehicleType tipo, @PathVariable("idPeriodo") Long idPeriodo, @PathVariable("status") StatusVaga statusVaga) {
         if (turno == Turno.NOTURNO) {
-            return this.vagaGaragemService.getTotalElementsFilter(tipo, true, idPeriodo);
+            return this.vagaGaragemService.getTotalElementsFilter(tipo, true, idPeriodo, statusVaga);
         } else {
-            return this.vagaGaragemService.getTotalElementsFilter(tipo, false, idPeriodo);
+            return this.vagaGaragemService.getTotalElementsFilter(tipo, false, idPeriodo, statusVaga);
         }
     }
 }

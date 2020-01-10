@@ -1,7 +1,6 @@
 package br.com.hbparking.vagadegaragem;
 
 import br.com.hbparking.colaborador.NoConnectionAPIException;
-import br.com.hbparking.email.MailSenderService;
 import br.com.hbparking.tipoveiculo.VehicleType;
 import br.com.hbparking.vagaInfo.Turno;
 import br.com.hbparking.vagaInfo.VagaInfoNotFoundException;
@@ -78,8 +77,8 @@ public class VagaGaragemRest {
     }
 
     @PostMapping("/approveAll/{turno}")
-    public void approveAll(@RequestBody List<VagaGaragem> vagaGaragemList, @PathVariable("turno") Turno turno) {
-        this.vagaGaragemService.approveAllVagas(vagaGaragemList, turno);
+    public List<VagaGaragemDTO> approveAll(@RequestBody List<VagaGaragem> vagaGaragemList, @PathVariable("turno") Turno turno) {
+        return this.vagaGaragemService.approveAllVagas(vagaGaragemList, turno);
     }
 
     @GetMapping("/find/{idPeriodo}/{page}/{size}")

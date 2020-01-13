@@ -108,29 +108,6 @@ public class VagaGaragemServiceTest {
             this.vagaGaragemService.validate(vagaGaragemDTO);
     }
 
-    @Test
-    public void vagaCarroPlacaInvalida() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            this.vagaGaragemService.placaValidator("999999");
-        });
-        assertThrows(IllegalArgumentException.class, () -> {
-            this.vagaGaragemService.placaValidator("aaaaaa");
-        });
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            this.vagaGaragemService.placaValidator("a1");
-        });
-    }
-
-    @Test
-    public void vagaCarroPlacaValida() {
-       this.vagaGaragemService.placaValidator("123ABCD"); // placa do Paraguai
-        this.vagaGaragemService.placaValidator("ABC1234");// placa do Uruguai
-        this.vagaGaragemService.placaValidator("ABC1D23");// placa do Brasil
-        this.vagaGaragemService.placaValidator("AB123CD");// placa da Argentina
-        this.vagaGaragemService.placaValidator("MCI5965");// placa Antiga
-    }
-
     /*@org.junit.Test(expected = NoConnectionAPIException.class)
     public void noConnectioToApiThrowException() throws Exception {
         validadeOnHBEmployee.validate("teste");

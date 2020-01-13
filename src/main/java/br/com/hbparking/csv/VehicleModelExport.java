@@ -60,7 +60,7 @@ public class VehicleModelExport {
         writer.close();
     }
     private String generateFileName() {
-        String fileName = FILE_NAME.trim().replaceAll(" ", "_");
+        String fileName = FILE_NAME.trim().replace(" ", "_");
         fileName = fileName.concat("_" + new Date().getTime());
         return fileName;
     }

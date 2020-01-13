@@ -15,7 +15,7 @@ import java.util.List;
 @RequestMapping("api/marcas")
 public class MarcaRest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Marca.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MarcaRest.class);
 
     private final MarcaService marcaService;
 
@@ -53,7 +53,7 @@ public class MarcaRest {
         return MarcaDTO.of(this.marcaService.findById(id));
     }
 
-    @RequestMapping("/allByTipo/{tipo}/{page}/{size}")
+    @GetMapping("/allByTipo/{tipo}/{page}/{size}")
     public Page<Marca> findMarcasByTipo(@PathVariable("tipo") String tipo, @PathVariable("page") int page, @PathVariable("size") int size) {
         PageRequest pageRequest = PageRequest.of(
                 page,

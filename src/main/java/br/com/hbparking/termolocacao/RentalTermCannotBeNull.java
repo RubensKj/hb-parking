@@ -1,4 +1,4 @@
-package br.com.hbparking.termoLocacao;
+package br.com.hbparking.termolocacao;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

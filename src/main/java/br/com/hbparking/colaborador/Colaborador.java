@@ -1,7 +1,6 @@
 package br.com.hbparking.colaborador;
 
 import javax.persistence.*;
-import java.util.Calendar;
 import java.time.LocalDate;
 
 @Entity
@@ -27,8 +26,6 @@ public class Colaborador {
     @Column(name = "oferece_carona", nullable = false)
     private boolean ofereceCarona;
 
-    public Colaborador() {
-    }
 
     public Long getId() {
         return id;

@@ -29,7 +29,7 @@ public class VagaGaragemRest {
     }
 
     @PostMapping
-    public VagaGaragemDTO save(@RequestBody VagaGaragemDTO vagaGaragemDTO) throws NoConnectionAPIException, InvalidVagaViolation, PlateAlreadyExistsException, InvalidPlatePatternException {
+    public VagaGaragemDTO save(@RequestBody VagaGaragemDTO vagaGaragemDTO) throws NoConnectionAPIException, InvalidVagaViolation, EmailAlreadyExistsException, InvalidPlatePatternException {
         LOGGER.info("Recebendo solicitação de persistência de vaga de garagem...");
         LOGGER.debug("Payaload: {}", vagaGaragemDTO);
         return this.vagaGaragemService.save(vagaGaragemDTO);

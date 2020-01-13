@@ -36,9 +36,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static br.com.hbparking.util.PlacaUtils.transformPlate;
-import static br.com.hbparking.util.PlacaUtils.validatePlate;
-
 @Service
 @AllArgsConstructor
 public class VagaGaragemService {
@@ -56,15 +53,16 @@ public class VagaGaragemService {
     private final Random sorteio = new Random();
     private final MailSenderService mailSenderService;
 
-    public VagaGaragemDTO save(VagaGaragemDTO vagaGaragemDTO) throws NoConnectionAPIException, InvalidVagaViolation, PlateAlreadyExistsException, InvalidPlatePatternException {
+    public VagaGaragemDTO save(VagaGaragemDTO vagaGaragemDTO) throws NoConnectionAPIException, InvalidVagaViolation, EmailAlreadyExistsException {
         this.validate(vagaGaragemDTO);
-        validatePlate(vagaGaragemDTO.getPlaca());
         LOGGER.info("Salvando Vaga");
         LOGGER.debug("Vaga: {}", vagaGaragemDTO);
         vagaGaragemDTO.setStatusVaga(StatusVaga.EMAPROVACAO);
         VagaGaragem vagaSave = this.dtoToVaga(vagaGaragemDTO);
+
+
         if (isCarroOrMoto(vagaSave.getTipoVeiculo())) {
-            vagaSave.setPlaca(transformPlate(vagaGaragemDTO.getPlaca()));
+            vagaSave.setPlaca(placaValidator(vagaGaragemDTO.getPlaca()));
         } else {
             vagaSave.setMarca(null);
             vagaSave.setPlaca(null);
@@ -84,13 +82,13 @@ public class VagaGaragemService {
             try {
                 vagaSave = this.iVagaGaragemRepository.save(vagaSave);
             } catch (DataIntegrityViolationException e) {
-                throw new PlateAlreadyExistsException("A placa informada já está cadastrada no sistema");
+                vagaSave.setStatusVaga(StatusVaga.REPROVADO);
+                this.update(VagaGaragemDTO.of(vagaSave), vagaSave.getId());
+                throw new EmailAlreadyExistsException("A placa informada já está cadastrada no sistema");
             } catch (Exception ex) {
-                LOGGER.info(ex.getMessage());
                 throw new InvalidVagaViolation("Erro ao salvar vaga de garagem ", ex);
             }
         }
-
         return VagaGaragemDTO.of(vagaSave);
     }
 
@@ -107,17 +105,16 @@ public class VagaGaragemService {
         throw new IllegalArgumentException(String.format(ID_INEXISTENTE, id));
     }
 
-    public VagaGaragemDTO update(VagaGaragemDTO vagaGaragemDTO, Long id) throws InvalidPlatePatternException {
+    public VagaGaragemDTO update(VagaGaragemDTO vagaGaragemDTO, Long id) {
         Optional<VagaGaragem> vagaGaragemOptional = this.iVagaGaragemRepository.findById(id);
         if (vagaGaragemOptional.isPresent()) {
             VagaGaragem vagaExsitente = vagaGaragemOptional.get();
             validate(vagaGaragemDTO);
-            validatePlate(vagaGaragemDTO.getPlaca());
             LOGGER.info("Atualizando vaga... id: [{}]", vagaExsitente.getId());
             LOGGER.debug("Payload: {}", vagaGaragemDTO);
             LOGGER.debug("Vaga Existente: {}", vagaExsitente);
             if (isCarroOrMoto(vagaExsitente.getTipoVeiculo())) {
-                vagaExsitente.setPlaca(transformPlate(vagaGaragemDTO.getPlaca()));
+                vagaExsitente.setPlaca(placaValidator(vagaGaragemDTO.getPlaca()));
             } else {
                 vagaExsitente.setMarca(null);
                 vagaExsitente.setPlaca(null);
@@ -190,6 +187,22 @@ public class VagaGaragemService {
         this.iVagaGaragemRepository.deleteById(id);
     }
 
+    public String placaValidator(String placa) {
+        placa = placa.replaceAll("[^a-zA-Z0-9]", "");
+        placa = placa.toUpperCase();
+        Pattern pattern = Pattern.compile("[A-Z]{2,3}[0-9]{4}|[A-Z]{3,4}[0-9]{3}|[A-Z0-9]{7}");
+        Matcher mat = pattern.matcher(placa);
+        if (placa.length() > 0 && placa.length() < 8) {
+            if (mat.matches()) {
+                return placa;
+            } else {
+                throw new IllegalArgumentException("A placa informada não está no formato aceitável");
+            }
+        } else {
+            throw new IllegalArgumentException("A placa informada não está no formato aceitável");
+        }
+    }
+
     private boolean isCarroOrMoto(VehicleType vehicleType) {
 
         return VehicleType.CARRO == vehicleType || VehicleType.MOTO == vehicleType;
@@ -239,7 +252,7 @@ public class VagaGaragemService {
             if (turno.getDescricao().equalsIgnoreCase("NOTURNO")) {
                 vagasSorteadas.addAll(vagaGaragemList.stream().filter(vagaGaragem -> vagaGaragem.getColaborador().isTrabalhoNoturno()).collect(Collectors.toList()));
             }
-            vagasSorteadas = vagasSorteadas.stream().distinct().sorted(Comparator.comparing((VagaGaragem::getPlaca))).collect(Collectors.toList());
+            vagasSorteadas = vagasSorteadas.stream().distinct().sorted(Comparator.comparing((vagaGaragem -> vagaGaragem.getColaborador().getEmail()))).collect(Collectors.toList());
         }
 
         for (VagaGaragem vaga : vagasSorteadas) {
@@ -274,6 +287,12 @@ public class VagaGaragemService {
         vagaInfo.setQuantidade(updateNumberOfVagasLeft(vagaInfo.getQuantidade()));
 
         this.vagaInfoService.update(VagaInfoDTO.of(vagaInfo), vagaGaragemDTO.getPeriodo());
+        List<VagaGaragemDTO> placasDuplicadas = this.iVagaGaragemRepository.findAllByPlacaAndPeriodoAndStatusVaga(vagaGaragemDTO.getPlaca(), vagaInfo.getPeriodo(), StatusVaga.EMAPROVACAO);
+        placasDuplicadas.remove(vagaGaragemDTO);
+
+        for (VagaGaragemDTO duplicada : placasDuplicadas) {
+            this.changeStatusVaga(duplicada.getId(), StatusVaga.REPROVADO);
+        }
 
         return this.changeStatusVaga(vagaGaragemDTO.getId(), StatusVaga.APROVADA);
     }

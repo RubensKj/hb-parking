@@ -29,7 +29,7 @@ public class VagaGaragemRest {
     }
 
     @PostMapping
-    public VagaGaragemDTO save(@RequestBody VagaGaragemDTO vagaGaragemDTO) throws NoConnectionAPIException, InvalidVagaViolation, PlateAlreadyExistsException {
+    public VagaGaragemDTO save(@RequestBody VagaGaragemDTO vagaGaragemDTO) throws NoConnectionAPIException, InvalidVagaViolation, PlateAlreadyExistsException, InvalidPlatePatternException {
         LOGGER.info("Recebendo solicitação de persistência de vaga de garagem...");
         LOGGER.debug("Payaload: {}", vagaGaragemDTO);
         return this.vagaGaragemService.save(vagaGaragemDTO);
@@ -44,7 +44,7 @@ public class VagaGaragemRest {
     }
 
     @PutMapping("/{id}")
-    public VagaGaragemDTO udpate(@PathVariable("id") Long id, @RequestBody VagaGaragemDTO vagaGaragemDTO) {
+    public VagaGaragemDTO udpate(@PathVariable("id") Long id, @RequestBody VagaGaragemDTO vagaGaragemDTO) throws InvalidPlatePatternException {
         LOGGER.info("Recebendo Update para vaga de ID: {}", id);
         LOGGER.debug("Payload: {}", vagaGaragemDTO);
 

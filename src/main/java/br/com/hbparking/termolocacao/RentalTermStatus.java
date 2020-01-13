@@ -1,4 +1,4 @@
-package br.com.hbparking.termoLocacao;
+package br.com.hbparking.termolocacao;
 
 public enum RentalTermStatus {
     ATIVO,

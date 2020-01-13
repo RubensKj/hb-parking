@@ -1,4 +1,4 @@
-package br.com.hbparking.vagaInfo;
+package br.com.hbparking.vagainfo;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

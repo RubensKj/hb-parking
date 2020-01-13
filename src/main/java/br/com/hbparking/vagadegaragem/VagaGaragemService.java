@@ -10,7 +10,7 @@ import br.com.hbparking.marcas.MarcaService;
 import br.com.hbparking.periodo.Periodo;
 import br.com.hbparking.periodo.PeriodoService;
 import br.com.hbparking.tipoveiculo.VehicleType;
-import br.com.hbparking.vagaInfo.*;
+import br.com.hbparking.vagainfo.*;
 import br.com.hbparking.vehicleModel.VehicleModel;
 import br.com.hbparking.vehicleModel.VehicleModelService;
 import lombok.AllArgsConstructor;

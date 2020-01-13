@@ -5,6 +5,11 @@ import java.time.format.DateTimeFormatter;
 
 public class DateHelper {
 
+    private DateHelper(){
+        throw new IllegalStateException("Utility class");
+    }
+
+
     public static String formatDate(LocalDate date) {
         return DateTimeFormatter.ofPattern("dd/MM/yyyy").format(date);
     }

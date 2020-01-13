@@ -1,13 +1,11 @@
-package br.com.hbparking.termoLocacao;
+package br.com.hbparking.termolocacao;
 
 import br.com.hbparking.file.FileNotSupportedException;
 import br.com.hbparking.file.FileService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.MalformedURLException;
 
 @RestController
 @RequestMapping("/api")

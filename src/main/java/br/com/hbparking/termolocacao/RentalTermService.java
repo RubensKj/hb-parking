@@ -1,4 +1,4 @@
-package br.com.hbparking.termoLocacao;
+package br.com.hbparking.termolocacao;
 
 import br.com.hbparking.file.FileNotSupportedException;
 import br.com.hbparking.file.FileService;

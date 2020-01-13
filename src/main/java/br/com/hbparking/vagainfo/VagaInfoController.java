@@ -1,4 +1,4 @@
-package br.com.hbparking.vagaInfo;
+package br.com.hbparking.vagainfo;
 
 import br.com.hbparking.periodo.PeriodoService;
 import br.com.hbparking.tipoveiculo.VehicleType;

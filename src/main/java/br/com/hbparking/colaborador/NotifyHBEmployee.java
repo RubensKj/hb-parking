@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 @Component
 public class NotifyHBEmployee {
-    public void notify(String url) throws Exception {
+    public void notify(String url) throws NoConnectionAPIException {
         try {
             RestTemplate restTemplate = new RestTemplate();
 
@@ -16,7 +16,7 @@ public class NotifyHBEmployee {
             headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
             headers.set("Content-type", "application/json");
 
-            HttpEntity<String> entity = new HttpEntity<String>("teste", headers);
+            HttpEntity<String> entity = new HttpEntity<>("teste", headers);
 
             ResponseEntity<String> result = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
         } catch (Exception e) {

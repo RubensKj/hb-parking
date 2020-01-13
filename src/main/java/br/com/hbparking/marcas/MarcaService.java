@@ -29,6 +29,7 @@ import java.util.stream.Stream;
 public class MarcaService {
     private static final Logger LOGGER = LoggerFactory.getLogger(MarcaService.class);
     private final IMarcaRepository iMarcaRepository;
+    private static final String TIPOVEICULOINVALIDO = "Tipo de veiculo inválido";
 
     public MarcaService(IMarcaRepository iMarcaRepository) {
         this.iMarcaRepository = iMarcaRepository;
@@ -86,12 +87,12 @@ public class MarcaService {
                         String.valueOf(marca.getId()), marca.getNome()})
                 );
             } catch (Exception e) {
-                LOGGER.error("Erro: ", e);
-                throw new RuntimeException("Exceção ocorrida no Stream da base ", e);
+                LOGGER.error("Erro: {}", e.getMessage());
+                throw new RuntimeException("Exceção ocorrida no Stream da base: ", e.getCause());
             }
 
         } else {
-            throw new IllegalArgumentException("Tipo de veiculo inválido");
+            throw new IllegalArgumentException(TIPOVEICULOINVALIDO);
         }
 
     }
@@ -101,7 +102,7 @@ public class MarcaService {
             LOGGER.info("Retornando marcas em paginas");
             return iMarcaRepository.findAllBytipoVeiculo(TipoVeiculoEnum.valueOf(tipo), pageable);
         } else {
-            throw new IllegalArgumentException("Tipo de veiculo inválido");
+            throw new IllegalArgumentException(TIPOVEICULOINVALIDO);
         }
     }
 
@@ -135,8 +136,8 @@ public class MarcaService {
                 throw new Exception("Formato de arquivo invalido");
             }
         } else {
-            LOGGER.info("TIPO DE VEICULO INVÁLIDO");
-            throw new IllegalArgumentException("Tipo de veiculo inválido");
+            LOGGER.info(TIPOVEICULOINVALIDO);
+            throw new IllegalArgumentException(TIPOVEICULOINVALIDO);
         }
 
     }
@@ -162,7 +163,7 @@ public class MarcaService {
                 this.iMarcaRepository.save(marca);
                 qtdRegistros++;
             } catch (Exception e) {
-                LOGGER.error("Erro: {}", e.toString());
+                LOGGER.error("Erro: {}", e.getMessage());
             }
         }
         LOGGER.info("Quantidade de marcas novas cadastradas: {}", qtdRegistros);

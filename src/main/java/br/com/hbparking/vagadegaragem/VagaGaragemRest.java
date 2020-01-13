@@ -2,8 +2,8 @@ package br.com.hbparking.vagadegaragem;
 
 import br.com.hbparking.colaborador.NoConnectionAPIException;
 import br.com.hbparking.tipoveiculo.VehicleType;
-import br.com.hbparking.vagaInfo.Turno;
-import br.com.hbparking.vagaInfo.VagaInfoNotFoundException;
+import br.com.hbparking.vagainfo.Turno;
+import br.com.hbparking.vagainfo.VagaInfoNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;

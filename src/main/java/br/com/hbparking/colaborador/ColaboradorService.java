@@ -31,6 +31,7 @@ public class ColaboradorService {
     private final ReadFileCSV readFileCSV;
     private final UserService userService;
     private final RoleService roleService;
+    private static final String DATANASCIMENTOINVALIDA = "Data de nascimento inválida.";
 
     public ColaboradorService(ColaboradorRepository colaboradorRepository, NotifyHBEmployee notifyHBEmployee, ReadFileCSV readFileCSV, UserService userService, RoleService roleService) {
         this.colaboradorRepository = colaboradorRepository;
@@ -60,7 +61,7 @@ public class ColaboradorService {
         List<RoleName> roleNameList = new ArrayList<>();
         roleNameList.add(RoleName.ROLE_USER);
 
-        System.err.println(DateHelper.formatDateToPassword(colaboradorDTO.getDataNascimento()) + " DATA NASCIMENTO COM FORMAT");
+        LOGGER.error("DATA NASCIMENTO COM FORMAT:{}", DateHelper.formatDateToPassword(colaboradorDTO.getDataNascimento()));
         this.userService.save(new UserDTO(colaboradorDTO.getEmail(), colaboradorDTO.getNome(), this.userService.encryptUserDTOPassword(DateHelper.formatDateToPassword(colaboradorDTO.getDataNascimento())), roleNameList));
 
         //notify hbemployee
@@ -94,15 +95,15 @@ public class ColaboradorService {
         }
 
         if (colaboradorDTO.getDataNascimento().isEqual(LocalDate.now())) {
-            throw new IllegalArgumentException("Data de nascimento inválida.");
+            throw new IllegalArgumentException(DATANASCIMENTOINVALIDA);
         }
 
         if (colaboradorDTO.getDataNascimento().isAfter(LocalDate.now())) {
-            throw new IllegalArgumentException("Data de nascimento inválida.");
+            throw new IllegalArgumentException(DATANASCIMENTOINVALIDA);
         }
 
         if (colaboradorDTO.getDataNascimento().isBefore(LocalDate.of(1900, 12, 31))) {
-            throw new IllegalArgumentException("Data de nascimento inválida.");
+            throw new IllegalArgumentException(DATANASCIMENTOINVALIDA);
         }
     }
 

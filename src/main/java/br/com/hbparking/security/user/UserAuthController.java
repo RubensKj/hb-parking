@@ -27,14 +27,12 @@ public class UserAuthController {
 
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
-    private final RoleService roleService;
     private final JwtProvider jwtProvider;
 
     @Autowired
-    public UserAuthController(AuthenticationManager authenticationManager, UserService userService, RoleService roleService, JwtProvider jwtProvider) {
+    public UserAuthController(AuthenticationManager authenticationManager, UserService userService, JwtProvider jwtProvider) {
         this.authenticationManager = authenticationManager;
         this.userService = userService;
-        this.roleService = roleService;
         this.jwtProvider = jwtProvider;
     }
 

@@ -27,7 +27,6 @@ public class VagaGaragemDTO {
     private Long vehicleModel;
     private Color color;
     private String placa;
-
     @NotNull(message = "O periodo não pode ser nulo.")
     @NotBlank(message = "O periodo não pode estar em branco.")
     private Long periodo;

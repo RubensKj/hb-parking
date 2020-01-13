@@ -22,8 +22,9 @@ public class PeriodoService {
         this.iPeriodoRepository = iPeriodoRepository;
     }
 
-    public PeriodoDTO create(PeriodoDTO periodoDTO) {
+    public PeriodoDTO create(PeriodoDTO periodoDTO) throws InvalidPeriodDatesException {
         this.validarPeriodo(periodoDTO);
+        this.validateIfPeriodoIsBetween(periodoDTO);
         LOGGER.info("Criando periodo");
         return PeriodoDTO.of(this.iPeriodoRepository.save(new Periodo(periodoDTO.getVehicleType(), periodoDTO.getDataInicial(), periodoDTO.getDataFinal())));
     }
@@ -52,7 +53,6 @@ public class PeriodoService {
     }
 
 
-
     public List<PeriodoDTO> parsePeriodoListToPeriodoDTOList(List<Periodo> periodosList) {
         List<PeriodoDTO> periodoDTOList = new ArrayList<>();
         List<Periodo> periodosFiltrada = periodosList.stream().filter(periodo -> periodo.getDataFinal().isAfter(LocalDate.now())).collect(Collectors.toList());
@@ -77,6 +77,22 @@ public class PeriodoService {
         }
         if (periodoDTO.getDataInicial().isEqual(periodoDTO.getDataFinal())) {
             throw new IllegalArgumentException("Um periodo deve ter data inicial e final distintas");
+        }
+    }
+
+    private void validateIfPeriodoIsBetween(PeriodoDTO periodoDTO) throws InvalidPeriodDatesException {
+        for (Periodo periodo : this.iPeriodoRepository.findAll()) {
+            if (periodo.getTipoVeiculo().equals(periodoDTO.getVehicleType())) {
+                if (!periodoDTO.getDataInicial().isBefore(periodo.getDataInicial()) && periodoDTO.getDataInicial().isBefore(periodo.getDataFinal())) {
+                    throw new InvalidPeriodDatesException("Datas do período não podem sobrepor outros períodos vigentes");
+                }
+                if (!periodoDTO.getDataInicial().isAfter(periodo.getDataFinal()) && periodoDTO.getDataFinal().isAfter(periodo.getDataFinal())) {
+                    throw new InvalidPeriodDatesException("Datas do período não podem sobrepor outros períodos vigentes");
+                }
+                if (periodoDTO.getDataInicial().isEqual(periodo.getDataInicial()) || periodoDTO.getDataFinal().isEqual(periodo.getDataFinal()) || periodoDTO.getDataInicial().isEqual(periodo.getDataFinal()) || periodoDTO.getDataFinal().isEqual(periodo.getDataInicial())) {
+                    throw new InvalidPeriodDatesException("Datas do período não podem sobrepor outros periodos vigentes");
+                }
+            }
         }
     }
 }

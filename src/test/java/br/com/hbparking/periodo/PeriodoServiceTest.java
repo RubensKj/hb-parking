@@ -33,7 +33,7 @@ public class PeriodoServiceTest {
     }
 
     @Test
-    public void createPeriodo_ShouldReturnPeriodo() {
+    public void createPeriodo_ShouldReturnPeriodo() throws InvalidPeriodDatesException {
         PeriodoDTO periodoDTO = new PeriodoDTO(VehicleType.CARRO, LocalDate.parse("2019-12-12"), LocalDate.parse("2019-12-15"));
 
         when(iPeriodoRepository.save(any(Periodo.class))).thenReturn(new Periodo(VehicleType.CARRO, LocalDate.parse("2019-12-12"), LocalDate.parse("2019-12-15")));

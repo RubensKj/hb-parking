@@ -32,6 +32,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -280,7 +282,8 @@ public class VagaGaragemService {
 
     public VagaGaragemDTO approveVaga(VagaGaragemDTO vagaGaragemDTO, Turno turno) throws VagaInfoNotFoundException {
 
-        VagaInfo vagaInfo = this.vagaInfoService.findByPeriodoAndVehicleTypeAndTurno(this.periodoService.findById(vagaGaragemDTO.getPeriodo()), vagaGaragemDTO.getTipoVeiculo(), turno);
+        Periodo periodo = this.periodoService.findById(vagaGaragemDTO.getPeriodo());
+        VagaInfo vagaInfo = this.vagaInfoService.findByPeriodoAndVehicleTypeAndTurno(periodo, vagaGaragemDTO.getTipoVeiculo(), turno);
         vagaInfo.setQuantidade(updateNumberOfVagasLeft(vagaInfo.getQuantidade()));
 
         this.vagaInfoService.update(VagaInfoDTO.of(vagaInfo), vagaGaragemDTO.getPeriodo());

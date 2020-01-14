@@ -8,7 +8,9 @@ import br.com.hbparking.email.MailSenderService;
 import br.com.hbparking.marcas.Marca;
 import br.com.hbparking.marcas.MarcaService;
 import br.com.hbparking.periodo.Periodo;
+import br.com.hbparking.periodo.PeriodoDTO;
 import br.com.hbparking.periodo.PeriodoService;
+import br.com.hbparking.periodo.PeriodosNotFoundException;
 import br.com.hbparking.tipoveiculo.VehicleType;
 import br.com.hbparking.vagainfo.*;
 import br.com.hbparking.vehiclemodel.VehicleModel;
@@ -18,6 +20,7 @@ import org.apache.commons.lang3.EnumUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
@@ -340,12 +343,9 @@ public class VagaGaragemService {
 
                     vagaGaragemDTO.setTipoVeiculo(VehicleType.valueOf(resultadoSplit[0]));
 
-                    Marca marca = this.marcaService.findById(Long.parseLong(resultadoSplit[1]));
-                    vagaGaragemDTO.setMarca(marca.getId());
-
                     VehicleModel vehicleModel = this.vehicleModelService.findByModelo(resultadoSplit[2]);
                     vagaGaragemDTO.setVehicleModel(vehicleModel.getId());
-
+                    vagaGaragemDTO.setMarca(vehicleModel.getFkMarca().getId());
 
                     vagaGaragemDTO.setColor(Color.valueOf(resultadoSplit[3]));
 
@@ -359,7 +359,7 @@ public class VagaGaragemService {
 
                     this.save(vagaGaragemDTO);
                 } catch (Exception e) {
-                    LOGGER.error("Erro: {}", e.getMessage());
+                    LOGGER.error("Erro: {}", e.getStackTrace());
                 }
             }
         }
@@ -369,4 +369,20 @@ public class VagaGaragemService {
         return this.iVagaGaragemRepository.findAllByTipoVeiculoAndColaborador_TrabalhoNoturnoAndPeriodo_IdAndStatusVaga(vehicleType, trabalhoNoturno, idPeriodo, statusVaga).size();
     }
 
+    public Page<VagaGaragem> findByPeriodoAndStatusVagaAndVehicleType(Periodo periodo) {
+        return this.iVagaGaragemRepository.findByPeriodoAndStatusVagaAndTipoVeiculo(periodo, StatusVaga.EMAPROVACAO, periodo.getTipoVeiculo(), PageRequest.of(0, 10));
+    }
+
+    public VagasContent getVagasContent(VehicleType vehicleType, int page, int limit, Turno turno) throws PeriodosNotFoundException, VagaInfoNotFoundException {
+        List<PeriodoDTO> periodoByVehicleType = this.periodoService.findPeriodoByVehicleType(vehicleType);
+        PeriodoDTO periodoDTO = this.periodoService.findAnyInsideList(periodoByVehicleType);
+        Periodo periodo = this.periodoService.findById(periodoDTO.getId());
+
+        Pageable pageable = PageRequest.of(page, limit);
+
+        Page<VagaGaragem> vagasGaragem = this.iVagaGaragemRepository.findByPeriodoAndStatusVagaAndTipoVeiculo(periodo, StatusVaga.EMAPROVACAO, vehicleType, pageable);
+        VagaInfo vagaInfo = this.vagaInfoService.findByPeriodoAndVehicleTypeAndTurno(periodo, vehicleType, turno);
+
+        return new VagasContent(vagasGaragem, periodo, vagaInfo);
+    }
 }

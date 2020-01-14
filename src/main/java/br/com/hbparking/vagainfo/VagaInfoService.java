@@ -24,7 +24,7 @@ public class VagaInfoService {
         this.periodoService = periodoService;
     }
 
-    public VagaInfoDTO cadastrar(VagaInfoDTO vagaInfoDTO) throws PeriodoAlreadyExistsException {
+    VagaInfoDTO cadastrar(VagaInfoDTO vagaInfoDTO) throws VagaInfoAlreadyExistsException {
         LOGGER.info("Cadastrando informações de vaga");
         this.validarVagaInfo(vagaInfoDTO);
 
@@ -32,8 +32,7 @@ public class VagaInfoService {
         if (!this.iVagaInfoRepository.existsByPeriodoAndVehicleTypeAndTurno(periodo, periodo.getTipoVeiculo(), vagaInfoDTO.getTurno())) {
             return VagaInfoDTO.of(this.iVagaInfoRepository.save(new VagaInfo(vagaInfoDTO.getQuantidade(), vagaInfoDTO.getValor(), periodo.getTipoVeiculo(), periodo, vagaInfoDTO.getTurno())));
         }
-        throw new PeriodoAlreadyExistsException("Periodo já cadastrado no banco");
-
+        throw new VagaInfoAlreadyExistsException("Estas informações de vaga já existem no banco");
     }
 
     public VagaInfo findById(Long id) throws VagaInfoNotFoundException {
@@ -67,5 +66,9 @@ public class VagaInfoService {
         vagaInfo.setVehicleType(periodo.getTipoVeiculo());
 
         return VagaInfoDTO.of(this.iVagaInfoRepository.save(vagaInfo));
+    }
+
+    public VagaInfo findByPeriodo(Periodo periodo) throws VagaInfoNotFoundException {
+        return this.iVagaInfoRepository.findByPeriodo(periodo).orElseThrow(() -> new VagaInfoNotFoundException("Informação de vaga indisponível para esse período"));
     }
 }

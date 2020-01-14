@@ -12,5 +12,7 @@ public interface IVagaInfoRepository extends JpaRepository<VagaInfo, Long> {
 
     Optional<VagaInfo> findByPeriodoAndVehicleTypeAndTurno(Periodo periodo, VehicleType vehicleType, Turno turno);
 
+    Optional<VagaInfo> findByPeriodo(Periodo periodo);
+
     boolean existsByPeriodoAndVehicleTypeAndTurno(Periodo periodo, VehicleType vehicleType, Turno turno);
 }

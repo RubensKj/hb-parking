@@ -79,4 +79,8 @@ public class PeriodoService {
             throw new IllegalArgumentException("Um periodo deve ter data inicial e final distintas");
         }
     }
+
+    public PeriodoDTO findAnyInsideList(List<PeriodoDTO> periodos) throws PeriodosNotFoundException {
+        return periodos.stream().findAny().orElseThrow(() -> new PeriodosNotFoundException("Não foi encontrado nenhum período"));
+    }
 }

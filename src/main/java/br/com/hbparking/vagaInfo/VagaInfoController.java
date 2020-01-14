@@ -1,10 +1,14 @@
 package br.com.hbparking.vagaInfo;
 
+import br.com.hbparking.periodo.Periodo;
 import br.com.hbparking.periodo.PeriodoService;
 import br.com.hbparking.tipoveiculo.VehicleType;
 import br.com.hbparking.vagadegaragem.StatusVaga;
 import br.com.hbparking.vagadegaragem.VagaGaragemService;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/vaga-info")
@@ -43,4 +47,21 @@ public class VagaInfoController {
             return this.vagaGaragemService.getTotalElementsFilter(tipo, false, idPeriodo, statusVaga);
         }
     }
+
+    @GetMapping("/findByPeriodo/{idPeriodo}")
+    public List<Integer> findQtdVagasAndConcorrentes(@PathVariable("idPeriodo") Long idPeriodo) throws VagaInfoNotFoundException {
+
+        Periodo periodo = this.periodoService.findById(idPeriodo);
+        VagaInfo vagaInfo = this.vagaInfoService.findByPeriodo(periodo);
+
+        List<Integer> informacoes = new ArrayList<>();
+
+        informacoes.add(vagaInfo.getQuantidade());
+        informacoes.add(this.vagaGaragemService.findByPeriodoAndStatusVagaAndVehicleType(periodo).getNumberOfElements());
+
+        return informacoes;
+
+    }
+
+
 }

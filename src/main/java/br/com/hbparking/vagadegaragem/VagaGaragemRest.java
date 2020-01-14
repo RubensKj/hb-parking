@@ -1,6 +1,7 @@
 package br.com.hbparking.vagadegaragem;
 
 import br.com.hbparking.colaborador.NoConnectionAPIException;
+import br.com.hbparking.periodo.PeriodosNotFoundException;
 import br.com.hbparking.tipoveiculo.VehicleType;
 import br.com.hbparking.vagainfo.Turno;
 import br.com.hbparking.vagainfo.VagaInfoNotFoundException;
@@ -110,6 +111,11 @@ public class VagaGaragemRest {
                 LOGGER.info(e.getMessage());
             }
         }).start();
+    }
+
+    @GetMapping("/{tipo}/{page}/{limit}/{turno}")
+    public VagasContent getVagasContent(@PathVariable("tipo") VehicleType vehicleType, @PathVariable("page") int page, @PathVariable("limit") int limit, @PathVariable("turno") Turno turno) throws PeriodosNotFoundException, VagaInfoNotFoundException {
+        return this.vagaGaragemService.getVagasContent(vehicleType, page, limit, turno);
     }
 
 }

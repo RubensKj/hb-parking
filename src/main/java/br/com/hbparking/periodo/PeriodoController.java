@@ -17,7 +17,7 @@ public class PeriodoController {
     }
 
     @PostMapping("/periodo/criar")
-    public PeriodoDTO save(@RequestBody PeriodoDTO periodoDTO) {
+    public PeriodoDTO save(@RequestBody PeriodoDTO periodoDTO) throws InvalidPeriodDatesException {
         return this.periodoService.create(periodoDTO);
     }
 

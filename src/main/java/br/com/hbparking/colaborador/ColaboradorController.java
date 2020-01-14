@@ -2,7 +2,7 @@ package br.com.hbparking.colaborador;
 
 import br.com.hbparking.file.FileNotSupportedException;
 import br.com.hbparking.security.jwt.JwtProvider;
-import br.com.hbparking.vehicleException.ContentDispositionException;
+import br.com.hbparking.vehicleexception.ContentDispositionException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 

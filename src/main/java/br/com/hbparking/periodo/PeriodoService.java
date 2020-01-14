@@ -11,6 +11,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static br.com.hbparking.util.DateHelper.validateDateIsAfter;
+import static br.com.hbparking.util.DateHelper.validateDateIsEqual;
+import static br.com.hbparking.util.ValidationUtils.validateNotNull;
+
 @Service
 public class PeriodoService {
 
@@ -22,8 +26,9 @@ public class PeriodoService {
         this.iPeriodoRepository = iPeriodoRepository;
     }
 
-    public PeriodoDTO create(PeriodoDTO periodoDTO) {
+    public PeriodoDTO create(PeriodoDTO periodoDTO) throws InvalidPeriodDatesException {
         this.validarPeriodo(periodoDTO);
+        this.validateIfPeriodoIsBetween(periodoDTO);
         LOGGER.info("Criando periodo");
         return PeriodoDTO.of(this.iPeriodoRepository.save(new Periodo(periodoDTO.getVehicleType(), periodoDTO.getDataInicial(), periodoDTO.getDataFinal())));
     }
@@ -52,7 +57,6 @@ public class PeriodoService {
     }
 
 
-
     public List<PeriodoDTO> parsePeriodoListToPeriodoDTOList(List<Periodo> periodosList) {
         List<PeriodoDTO> periodoDTOList = new ArrayList<>();
         List<Periodo> periodosFiltrada = periodosList.stream().filter(periodo -> periodo.getDataFinal().isAfter(LocalDate.now())).collect(Collectors.toList());
@@ -60,23 +64,35 @@ public class PeriodoService {
         return periodoDTOList;
     }
 
-    private void validarPeriodo(PeriodoDTO periodoDTO) {
+    private void validarPeriodo(PeriodoDTO periodoDTO) throws InvalidPeriodDatesException {
         LOGGER.info("Validando periodo");
 
-        if (periodoDTO.getDataInicial() == null) {
-            throw new IllegalArgumentException("Data inicial não pode ser nula");
-        }
-        if (periodoDTO.getDataFinal() == null) {
-            throw new IllegalArgumentException("Data final não pode ser nula");
-        }
-        if (periodoDTO.getVehicleType() == null) {
-            throw new IllegalArgumentException("Tipo de veículo não pode ser nulo");
-        }
-        if (periodoDTO.getDataInicial().isAfter(periodoDTO.getDataFinal())) {
-            throw new IllegalArgumentException("Data final deve ser após data inicial");
-        }
-        if (periodoDTO.getDataInicial().isEqual(periodoDTO.getDataFinal())) {
-            throw new IllegalArgumentException("Um periodo deve ter data inicial e final distintas");
+        validateNotNull(periodoDTO, "Periodo DTO não pode ser nulo");
+        validateNotNull(periodoDTO.getDataFinal(), "Data Final não pode ser nula");
+        validateNotNull(periodoDTO.getDataInicial(), "Data inicial não pode ser nula");
+        validateNotNull(periodoDTO.getVehicleType(), "Tipo do veículo não pode ser nulo");
+        validateDateIsAfter(periodoDTO.getDataInicial(), periodoDTO.getDataFinal());
+        validateDateIsEqual(periodoDTO.getDataInicial(), periodoDTO.getDataFinal());
+
+        this.validateIfPeriodoIsBetween(periodoDTO);
+    }
+
+    public void validateIfPeriodoIsBetween(PeriodoDTO periodoDTO) throws InvalidPeriodDatesException {
+        for (Periodo periodo : this.iPeriodoRepository.findAll()) {
+            if (periodo.getTipoVeiculo().equals(periodoDTO.getVehicleType())) {
+                if (periodoDTO.getDataInicial().isAfter(periodo.getDataInicial()) && periodoDTO.getDataFinal().isBefore(periodo.getDataFinal())) {
+                    throw new InvalidPeriodDatesException("Período não pode iniciar e finalizar dentro de outro período");
+                }
+                if (periodoDTO.getDataInicial().isBefore(periodo.getDataFinal()) && periodoDTO.getDataFinal().isBefore(periodo.getDataFinal())) {
+                    throw new InvalidPeriodDatesException("Período não pode começar dentro de outro período que ainda está vigente");
+                }
+                if (periodoDTO.getDataInicial().isBefore(periodo.getDataInicial()) && periodoDTO.getDataFinal().isAfter(periodo.getDataFinal())) {
+                    throw new InvalidPeriodDatesException("Período não pode iniciar antes de um período já existente e finalizar depois dele");
+                }
+                if (periodoDTO.getDataInicial().isEqual(periodo.getDataInicial()) || periodoDTO.getDataFinal().isEqual(periodo.getDataFinal()) || periodoDTO.getDataInicial().isEqual(periodo.getDataFinal()) || periodoDTO.getDataFinal().isEqual(periodo.getDataInicial())) {
+                    throw new InvalidPeriodDatesException("Existem correspondências iguais de datas informadas");
+                }
+            }
         }
     }
 }

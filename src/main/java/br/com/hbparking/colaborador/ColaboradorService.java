@@ -9,7 +9,7 @@ import br.com.hbparking.security.user.UserDTO;
 import br.com.hbparking.security.user.UserService;
 import br.com.hbparking.util.DateHelper;
 import br.com.hbparking.util.ReadFileCSV;
-import br.com.hbparking.vehicleException.ContentDispositionException;
+import br.com.hbparking.vehicleexception.ContentDispositionException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

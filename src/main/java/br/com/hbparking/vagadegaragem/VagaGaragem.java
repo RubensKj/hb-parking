@@ -5,7 +5,7 @@ import br.com.hbparking.cor.Color;
 import br.com.hbparking.marcas.Marca;
 import br.com.hbparking.periodo.Periodo;
 import br.com.hbparking.tipoveiculo.VehicleType;
-import br.com.hbparking.vehicleModel.VehicleModel;
+import br.com.hbparking.vehiclemodel.VehicleModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

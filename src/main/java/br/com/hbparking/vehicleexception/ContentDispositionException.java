@@ -1,4 +1,4 @@
-package br.com.hbparking.vehicleException;
+package br.com.hbparking.vehicleexception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

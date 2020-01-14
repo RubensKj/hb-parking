@@ -29,7 +29,7 @@ public class PeriodoServiceTest {
     private PeriodoService periodoService;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         periodoService = new PeriodoService(iPeriodoRepository);
     }
 
@@ -77,8 +77,6 @@ public class PeriodoServiceTest {
 
         given(iPeriodoRepository.findAll()).willReturn(periodoList);
 
-        assertThrows(InvalidPeriodDatesException.class, () -> {
-            periodoService.validateIfPeriodoIsBetween(periodoDTO);
-        });
+        assertThrows(InvalidPeriodDatesException.class, () -> periodoService.validateIfPeriodoIsBetween(periodoDTO));
     }
 }

@@ -1,7 +1,7 @@
 package br.com.hbparking.marca;
 
 import br.com.hbparking.marcas.*;
-import br.com.hbparking.vehicleException.ContentDispositionException;
+import br.com.hbparking.vehicleexception.ContentDispositionException;
 import com.opencsv.CSVReader;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;

@@ -1,6 +1,6 @@
 package br.com.hbparking.csv;
 
-import br.com.hbparking.vehicleModel.VehicleModelService;
+import br.com.hbparking.vehiclemodel.VehicleModelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;

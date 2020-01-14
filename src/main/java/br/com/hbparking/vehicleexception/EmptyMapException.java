@@ -1,4 +1,4 @@
-package br.com.hbparking.vehicleException;
+package br.com.hbparking.vehicleexception;
 
 public class EmptyMapException extends Exception{
     public EmptyMapException(String message){

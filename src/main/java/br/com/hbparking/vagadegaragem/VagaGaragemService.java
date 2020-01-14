@@ -11,8 +11,8 @@ import br.com.hbparking.periodo.Periodo;
 import br.com.hbparking.periodo.PeriodoService;
 import br.com.hbparking.tipoveiculo.VehicleType;
 import br.com.hbparking.vagainfo.*;
-import br.com.hbparking.vehicleModel.VehicleModel;
-import br.com.hbparking.vehicleModel.VehicleModelService;
+import br.com.hbparking.vehiclemodel.VehicleModel;
+import br.com.hbparking.vehiclemodel.VehicleModelService;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.EnumUtils;
 import org.slf4j.Logger;
@@ -32,8 +32,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service

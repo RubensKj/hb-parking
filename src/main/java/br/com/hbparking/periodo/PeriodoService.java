@@ -80,7 +80,7 @@ public class PeriodoService {
         }
     }
 
-    private void validateIfPeriodoIsBetween(PeriodoDTO periodoDTO) throws InvalidPeriodDatesException {
+    public void validateIfPeriodoIsBetween(PeriodoDTO periodoDTO) throws InvalidPeriodDatesException {
         for (Periodo periodo : this.iPeriodoRepository.findAll()) {
             if (periodo.getTipoVeiculo().equals(periodoDTO.getVehicleType())) {
                 if (!periodoDTO.getDataInicial().isBefore(periodo.getDataInicial()) && periodoDTO.getDataInicial().isBefore(periodo.getDataFinal())) {

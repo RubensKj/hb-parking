@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
@@ -63,5 +64,21 @@ public class PeriodoServiceTest {
         assertThat(periodoFilteredWithVehicleType).isNotEmpty();
         assertThat(periodoFilteredWithVehicleType).isNotNull();
         assertEquals(2, periodoFilteredWithVehicleType.size());
+    }
+
+    @Test
+    public void validateIfPeriodoIsBetween() {
+        PeriodoDTO periodoDTO = new PeriodoDTO(VehicleType.CARRO, LocalDate.of(2019, 10, 7), LocalDate.of(2019, 10, 10));
+
+        List<Periodo> periodoList = new ArrayList<>();
+        periodoList.add(new Periodo(VehicleType.CARRO, LocalDate.of(2019, 10, 7), LocalDate.of(2019, 10, 10)));
+        periodoList.add(new Periodo(VehicleType.CARRO, LocalDate.of(2019, 10, 11), LocalDate.of(2019, 10, 20)));
+        periodoList.add(new Periodo(VehicleType.CARRO, LocalDate.of(2019, 10, 21), LocalDate.of(2019, 10, 23)));
+
+        given(iPeriodoRepository.findAll()).willReturn(periodoList);
+
+        assertThrows(InvalidPeriodDatesException.class, () -> {
+            periodoService.validateIfPeriodoIsBetween(periodoDTO);
+        });
     }
 }

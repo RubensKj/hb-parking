@@ -1,7 +1,6 @@
 package br.com.hbparking.periodo;
 
 import br.com.hbparking.tipoveiculo.VehicleType;
-import br.com.hbparking.util.DateHelper;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDate;

@@ -1,4 +1,4 @@
-package br.com.hbparking.vagaInfo;
+package br.com.hbparking.vagainfo;
 
 import br.com.hbparking.periodo.Periodo;
 import br.com.hbparking.periodo.PeriodoService;

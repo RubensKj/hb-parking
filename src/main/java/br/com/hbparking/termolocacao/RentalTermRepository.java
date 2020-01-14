@@ -1,4 +1,4 @@
-package br.com.hbparking.termoLocacao;
+package br.com.hbparking.termolocacao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

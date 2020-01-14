@@ -1,4 +1,4 @@
-package br.com.hbparking.vagaInfo;
+package br.com.hbparking.vagainfo;
 
 
 public class VagaInfoDTO {

@@ -57,6 +57,8 @@ public class VagaGaragemService {
     private final Random sorteio = new Random();
     private final MailSenderService mailSenderService;
 
+    private final VagaGaragemHistoryService vagaGaragemHistoryService;
+
     public VagaGaragemDTO save(VagaGaragemDTO vagaGaragemDTO) throws NoConnectionAPIException, ColaboradorAlreadyExistsInPeriodoException, InvalidPlatePatternException, InvalidVehicleTipoFromPeriodo {
         this.validate(vagaGaragemDTO);
         LOGGER.info("Salvando Vaga");
@@ -64,9 +66,11 @@ public class VagaGaragemService {
         vagaGaragemDTO.setStatusVaga(StatusVaga.EMAPROVACAO);
         VagaGaragem vagaSave = this.dtoToVaga(vagaGaragemDTO);
         validateTipoPeriodo(vagaSave);
-        
+
         if (validadeOnHBEmployee.validate("http://localhost:8090/api/teste").getParkingValid()) {
-            return VagaGaragemDTO.of(this.iVagaGaragemRepository.save(vagaSave));
+            VagaGaragem savedVaga = this.iVagaGaragemRepository.save(vagaSave);
+            this.vagaGaragemHistoryService.saveData(vagaSave);
+            return VagaGaragemDTO.of(savedVaga);
         }
         throw new ColaboradorAlreadyExistsInPeriodoException("Colaborador já cadastrado neste período com esta placa.");
     }
@@ -100,6 +104,7 @@ public class VagaGaragemService {
                 vagaExsitente.setVehicleModel(null);
             }
             this.iVagaGaragemRepository.save(vagaExsitente);
+            this.vagaGaragemHistoryService.saveUpdateAction(vagaExsitente, "ALTERACAO");
             vagaExsitente = this.dtoToVaga(vagaGaragemDTO);
             return VagaGaragemDTO.of(vagaExsitente);
         }
@@ -202,9 +207,11 @@ public class VagaGaragemService {
             new Thread(() -> {
                 if (statusVaga.getDescricao().equalsIgnoreCase("APROVADA")) {
                     this.mailSenderService.sendEmailSuccess(vagaExsitente);
+                    this.vagaGaragemHistoryService.saveUpdateAction(vagaExsitente, "APROVACAO");
                 }
                 if (statusVaga.getDescricao().equalsIgnoreCase("REPROVADO")) {
                     this.mailSenderService.sendEmailDisapproved(vagaExsitente);
+                    this.vagaGaragemHistoryService.saveUpdateAction(vagaExsitente, "REPROVACAO");
                 }
             }).start();
             return VagaGaragemDTO.of(vagaExsitente);

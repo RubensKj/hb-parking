@@ -25,7 +25,7 @@ public class VagaInfoController {
     }
 
     @PostMapping("/cadastrar")
-    public VagaInfoDTO create(@RequestBody VagaInfoDTO vagaInfoDTO) throws PeriodoAlreadyExistsException {
+    public VagaInfoDTO create(@RequestBody VagaInfoDTO vagaInfoDTO) throws VagaInfoAlreadyExistsException {
         return this.vagaInfoService.cadastrar(vagaInfoDTO);
     }
 

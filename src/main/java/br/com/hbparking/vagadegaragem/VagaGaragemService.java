@@ -82,7 +82,6 @@ public class VagaGaragemService {
             try {
                 vagaSave = this.iVagaGaragemRepository.save(vagaSave);
             } catch (DataIntegrityViolationException e) {
-                vagaSave.setStatusVaga(StatusVaga.REPROVADO);
                 this.update(VagaGaragemDTO.of(vagaSave), vagaSave.getId());
                 throw new EmailAlreadyExistsException("A placa informada já está cadastrada no sistema");
             } catch (Exception ex) {

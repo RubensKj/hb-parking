@@ -68,4 +68,8 @@ public class VagaInfoService {
 
         return VagaInfoDTO.of(this.iVagaInfoRepository.save(vagaInfo));
     }
+
+    public VagaInfo findByPeriodo(Periodo periodo) throws VagaInfoNotFoundException {
+        return this.iVagaInfoRepository.findByPeriodo(periodo).orElseThrow(() -> new VagaInfoNotFoundException("Informação de vaga indisponível para esse período"));
+    }
 }

@@ -1,4 +1,4 @@
-package br.com.hbparking.vehicleModel;
+package br.com.hbparking.vehiclemodel;
 
 import br.com.hbparking.marcas.Marca;
 

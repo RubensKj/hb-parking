@@ -1,7 +1,7 @@
 package br.com.hbparking.util;
 
 import br.com.hbparking.file.FileNotSupportedException;
-import br.com.hbparking.vehicleException.ContentDispositionException;
+import br.com.hbparking.vehicleexception.ContentDispositionException;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;

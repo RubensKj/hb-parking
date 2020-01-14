@@ -1,4 +1,4 @@
-package br.com.hbparking.vehicleModel;
+package br.com.hbparking.vehiclemodel;
 
 import br.com.hbparking.csv.VehicleGroupDTO;
 import br.com.hbparking.marcas.Marca;
@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @Repository
 public interface IVehicleModelRepository extends JpaRepository<VehicleModel, Long> {

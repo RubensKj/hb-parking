@@ -17,7 +17,6 @@ import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.EnumUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -36,6 +35,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static br.com.hbparking.util.PlacaUtils.validatePlate;
+
 @Service
 @AllArgsConstructor
 public class VagaGaragemService {
@@ -53,42 +54,18 @@ public class VagaGaragemService {
     private final Random sorteio = new Random();
     private final MailSenderService mailSenderService;
 
-    public VagaGaragemDTO save(VagaGaragemDTO vagaGaragemDTO) throws NoConnectionAPIException, InvalidVagaViolation, EmailAlreadyExistsException {
+    public VagaGaragemDTO save(VagaGaragemDTO vagaGaragemDTO) throws NoConnectionAPIException, ColaboradorAlreadyExistsInPeriodoException, InvalidPlatePatternException, InvalidVehicleTipoFromPeriodo {
         this.validate(vagaGaragemDTO);
         LOGGER.info("Salvando Vaga");
         LOGGER.debug("Vaga: {}", vagaGaragemDTO);
         vagaGaragemDTO.setStatusVaga(StatusVaga.EMAPROVACAO);
         VagaGaragem vagaSave = this.dtoToVaga(vagaGaragemDTO);
-
-
-        if (isCarroOrMoto(vagaSave.getTipoVeiculo())) {
-            vagaSave.setPlaca(placaValidator(vagaGaragemDTO.getPlaca()));
-        } else {
-            vagaSave.setMarca(null);
-            vagaSave.setPlaca(null);
-            vagaSave.setVehicleModel(null);
-            vagaSave.setColor(null);
+        validateTipoPeriodo(vagaSave);
+        
+        if (validadeOnHBEmployee.validate("http://localhost:8090/api/teste").getParkingValid()) {
+            return VagaGaragemDTO.of(this.iVagaGaragemRepository.save(vagaSave));
         }
-        try {
-            validateTipoPeriodo(vagaSave);
-        } catch (InvalidVehicleTipoFromPeriodo invalidVehicleTipoFromPeriodo) {
-            LOGGER.debug(String.valueOf(invalidVehicleTipoFromPeriodo));
-        }
-
-        ResponseHBEmployeeDTO response = validadeOnHBEmployee.validate("http://localhost:8090/api/teste");
-
-        boolean respostaDaApi = response.getParkingValid();
-        if (respostaDaApi) {
-            try {
-                vagaSave = this.iVagaGaragemRepository.save(vagaSave);
-            } catch (DataIntegrityViolationException e) {
-                this.update(VagaGaragemDTO.of(vagaSave), vagaSave.getId());
-                throw new EmailAlreadyExistsException("A placa informada já está cadastrada no sistema");
-            } catch (Exception ex) {
-                throw new InvalidVagaViolation("Erro ao salvar vaga de garagem ", ex);
-            }
-        }
-        return VagaGaragemDTO.of(vagaSave);
+        throw new ColaboradorAlreadyExistsInPeriodoException("Colaborador já cadastrado neste período com esta placa.");
     }
 
     public Page<VagaGaragem> findAllByTipoPage(VehicleType vehicleType, Pageable pageable) {
@@ -104,7 +81,7 @@ public class VagaGaragemService {
         throw new IllegalArgumentException(String.format(ID_INEXISTENTE, id));
     }
 
-    public VagaGaragemDTO update(VagaGaragemDTO vagaGaragemDTO, Long id) {
+    public VagaGaragemDTO update(VagaGaragemDTO vagaGaragemDTO, Long id) throws InvalidPlatePatternException {
         Optional<VagaGaragem> vagaGaragemOptional = this.iVagaGaragemRepository.findById(id);
         if (vagaGaragemOptional.isPresent()) {
             VagaGaragem vagaExsitente = vagaGaragemOptional.get();
@@ -126,7 +103,7 @@ public class VagaGaragemService {
         throw new IllegalArgumentException(String.format(ID_INEXISTENTE, id));
     }
 
-    public void validate(VagaGaragemDTO vagaGaragemDTO) {
+    public void validate(VagaGaragemDTO vagaGaragemDTO) throws InvalidPlatePatternException {
         LOGGER.info("Validando Vaga");
         if (vagaGaragemDTO == null) {
             throw new IllegalArgumentException("VagaDTO não deve ser nulo");
@@ -153,18 +130,20 @@ public class VagaGaragemService {
             if (vagaGaragemDTO.getPlaca() == null) {
                 throw new NullPointerException("Placa não deve ser nulo/vazio");
             }
+            validatePlate(vagaGaragemDTO.getPlaca());
         }
     }
 
     private VagaGaragem dtoToVaga(VagaGaragemDTO vagaGaragemDTO) {
         Marca marca = new Marca();
         VehicleModel modelo = new VehicleModel();
-        Color cor = null;
 
         if (isCarroOrMoto(vagaGaragemDTO.getTipoVeiculo())) {
             marca = marcaService.findById(vagaGaragemDTO.getMarca());
             modelo = vehicleModelService.findById(vagaGaragemDTO.getVehicleModel());
-            cor = vagaGaragemDTO.getColor();
+        }else{
+            marca = null;
+            modelo = null;
         }
         Periodo periodo = periodoService.findById(vagaGaragemDTO.getPeriodo());
         Colaborador colaborador = colaboradorService.findById(vagaGaragemDTO.getColaborador());
@@ -172,7 +151,7 @@ public class VagaGaragemService {
                 vagaGaragemDTO.getTipoVeiculo(),
                 marca,
                 modelo,
-                cor,
+                vagaGaragemDTO.getColor(),
                 vagaGaragemDTO.getPlaca(),
                 periodo,
                 colaborador,

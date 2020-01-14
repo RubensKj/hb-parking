@@ -96,14 +96,14 @@ public class VagaGaragemServiceTest {
     }
 
     @Test
-    public void vagaPatinete() {
+    public void vagaPatinete() throws InvalidPlatePatternException {
         VagaGaragemDTO vagaGaragemDTO = new VagaGaragemDTO(VehicleType.PATINETE, null, null, null, null, 1l, 2l, StatusVaga.EMAPROVACAO);
             this.vagaGaragemService.validate(vagaGaragemDTO);
 
     }
 
     @Test
-    public void vagaBicicleta() {
+    public void vagaBicicleta() throws InvalidPlatePatternException {
         VagaGaragemDTO vagaGaragemDTO = new VagaGaragemDTO(VehicleType.BICICLETA, null, null, null, null, 1l, 2l, StatusVaga.EMAPROVACAO);
             this.vagaGaragemService.validate(vagaGaragemDTO);
     }

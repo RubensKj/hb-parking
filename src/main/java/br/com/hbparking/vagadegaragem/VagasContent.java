@@ -1,7 +1,7 @@
 package br.com.hbparking.vagadegaragem;
 
 import br.com.hbparking.periodo.Periodo;
-import br.com.hbparking.vagaInfo.VagaInfo;
+import br.com.hbparking.vagainfo.VagaInfo;
 import org.springframework.data.domain.Page;
 
 public class VagasContent {

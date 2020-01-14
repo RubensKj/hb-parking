@@ -343,9 +343,6 @@ public class VagaGaragemService {
 
                     vagaGaragemDTO.setTipoVeiculo(VehicleType.valueOf(resultadoSplit[0]));
 
-//                    Marca marca = this.marcaService.findById(Long.parseLong(resultadoSplit[1]));
-//                    vagaGaragemDTO.setMarca(marca.getId());
-
                     VehicleModel vehicleModel = this.vehicleModelService.findByModelo(resultadoSplit[2]);
                     vagaGaragemDTO.setVehicleModel(vehicleModel.getId());
                     vagaGaragemDTO.setMarca(vehicleModel.getFkMarca().getId());

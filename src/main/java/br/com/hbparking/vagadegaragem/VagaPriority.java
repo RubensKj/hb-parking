@@ -1,8 +1,8 @@
 package br.com.hbparking.vagadegaragem;
 
 public class VagaPriority {
-    VagaGaragem vagaGaragem;
-    Integer priority;
+    private VagaGaragem vagaGaragem;
+    private Integer priority;
 
     public VagaPriority(VagaGaragem vagaGaragem, Integer priority) {
         this.vagaGaragem = vagaGaragem;

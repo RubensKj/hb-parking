@@ -259,13 +259,17 @@ public class VagaGaragemService {
     }
 
     public VagasContent sort(Long periodoId, String tipoVeiculo, Turno turno) throws VagaInfoNotFoundException {
-        Map<VagaGaragem, Integer> scoredMap = this.colaboradorService.getMapColaboradorAndPriority(this.iVagaGaragemRepository.findAllByStatusVagaAndTipoVeiculo(StatusVaga.EMAPROVACAO, VehicleType.valueOf(tipoVeiculo)));
+        VehicleType vehicleType = VehicleType.valueOf(tipoVeiculo.toUpperCase());
+
+        Map<VagaGaragem, Integer> scoredMap = this.colaboradorService.getMapColaboradorAndPriority(this.iVagaGaragemRepository.findAllByStatusVagaAndTipoVeiculo(StatusVaga.EMAPROVACAO, vehicleType));
         List<VagaPriority> vagaPriorityList = new ArrayList<>();
         List<Integer> priorityList = new ArrayList<>();
 
         scoredMap.forEach((vagaGaragem, priority) -> vagaPriorityList.add(new VagaPriority(vagaGaragem, priority)));
-
         vagaPriorityList.forEach(vagaPriority -> priorityList.add(vagaPriority.getPriority()));
+
+        Periodo periodo = this.periodoService.findById(periodoId);
+        VagaInfo vagaInfo = this.vagaInfoService.findByPeriodoAndVehicleTypeAndTurno(periodo, vehicleType, turno);
 
         int minimalIndex = priorityList.indexOf(Collections.min(priorityList));
 
@@ -276,14 +280,10 @@ public class VagaGaragemService {
                 this.iVagaGaragemRepository.save(vagaGaragem);
                 vagaPriorityList.remove(vagaPriorityList.get(i));
             } else {
-                VagaInfo vagaInfo = this.vagaInfoService.findByPeriodoAndVehicleTypeAndTurno(this.periodoService.findById(periodoId), VehicleType.valueOf(tipoVeiculo), turno);
                 this.finalSorting(vagaPriorityList, vagaInfo);
             }
         }
 
-        Periodo periodo = this.periodoService.findById(periodoId);
-        VehicleType vehicleType = VehicleType.valueOf(tipoVeiculo.toUpperCase());
-        VagaInfo vagaInfo = this.vagaInfoService.findByPeriodoAndVehicleTypeAndTurno(periodo, vehicleType, turno);
         Page<VagaGaragem> pageVagaGaragem = this.iVagaGaragemRepository.findByPeriodoAndStatusVagaAndTipoVeiculo(periodo, StatusVaga.APROVADA, vehicleType, PageRequest.of(0, 10));
 //        new VagasContent(pageVagaGaragem, PeriodoDTO.of(periodo), VagaInfoDTO.of(vagaInfo))
         return null;
@@ -409,7 +409,7 @@ public class VagaGaragemService {
 
                     this.save(vagaGaragemDTO);
                 } catch (Exception e) {
-                    LOGGER.error("Erro: {}", e.getStackTrace());
+                    LOGGER.error("Erro: {}", e.getMessage());
                 }
             }
         }

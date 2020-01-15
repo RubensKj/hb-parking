@@ -1,35 +1,44 @@
 package br.com.hbparking.vagadegaragem;
 
-import br.com.hbparking.periodo.Periodo;
-import br.com.hbparking.vagainfo.VagaInfo;
+import br.com.hbparking.periodo.PeriodoDTO;
+import br.com.hbparking.vagainfo.VagaInfoDTO;
 import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 public class VagasContent {
 
     private Page<VagaGaragem> vagaGaragemPage;
 
-    private Periodo periodo;
+    private PeriodoDTO periodoDTO;
 
-    private VagaInfo vagaInfo;
+    private VagaInfoDTO vagaInfoDTO;
+
+    private List<PeriodoDTO> periodosDTOOfVehicleType;
 
     public VagasContent() {
     }
 
-    public VagasContent(Page<VagaGaragem> vagaGaragemPage, Periodo periodo, VagaInfo vagaInfo) {
+    public VagasContent(Page<VagaGaragem> vagaGaragemPage, PeriodoDTO periodoDTO, VagaInfoDTO vagaInfoDTO, List<PeriodoDTO> periodosDTOOfVehicleType) {
         this.vagaGaragemPage = vagaGaragemPage;
-        this.periodo = periodo;
-        this.vagaInfo = vagaInfo;
+        this.periodoDTO = periodoDTO;
+        this.vagaInfoDTO = vagaInfoDTO;
+        this.periodosDTOOfVehicleType = periodosDTOOfVehicleType;
     }
 
     public Page<VagaGaragem> getVagaGaragemPage() {
         return vagaGaragemPage;
     }
 
-    public Periodo getPeriodo() {
-        return periodo;
+    public PeriodoDTO getPeriodoDTO() {
+        return periodoDTO;
     }
 
-    public VagaInfo getVagaInfo() {
-        return vagaInfo;
+    public VagaInfoDTO getVagaInfoDTO() {
+        return vagaInfoDTO;
+    }
+
+    public List<PeriodoDTO> getPeriodosDTOOfVehicleType() {
+        return periodosDTOOfVehicleType;
     }
 }

@@ -1,6 +1,8 @@
 package br.com.hbparking.vagainfo;
 
 
+import br.com.hbparking.tipoveiculo.VehicleType;
+
 public class VagaInfoDTO {
 
     private Long id;
@@ -11,33 +13,30 @@ public class VagaInfoDTO {
 
     private double valor;
 
+    private VehicleType vehicleType;
+
     private Turno turno;
 
     public VagaInfoDTO() {
     }
 
-    public VagaInfoDTO(Long id, int quantidade, double valor, Turno turno, Long idPeriodo) {
+    public VagaInfoDTO(Long id, int quantidade, Long idPeriodo, double valor, VehicleType vehicleType, Turno turno) {
         this.id = id;
         this.quantidade = quantidade;
+        this.idPeriodo = idPeriodo;
         this.valor = valor;
+        this.vehicleType = vehicleType;
         this.turno = turno;
-        this.idPeriodo = idPeriodo;
-    }
-
-    public VagaInfoDTO(int quantidade, Long idPeriodo, double valor) {
-        this.quantidade = quantidade;
-        this.idPeriodo = idPeriodo;
-        this.valor = valor;
     }
 
     public static VagaInfoDTO of(VagaInfo vagaInfo) {
-
         return new VagaInfoDTO(
                 vagaInfo.getId(),
                 vagaInfo.getQuantidade(),
+                vagaInfo.getPeriodo().getId(),
                 vagaInfo.getValor(),
-                vagaInfo.getTurno(),
-                vagaInfo.getPeriodo().getId()
+                vagaInfo.getVehicleType(),
+                vagaInfo.getTurno()
         );
     }
 
@@ -71,6 +70,10 @@ public class VagaInfoDTO {
 
     public void setValor(double valor) {
         this.valor = valor;
+    }
+
+    public VehicleType getVehicleType() {
+        return vehicleType;
     }
 
     public Turno getTurno() {

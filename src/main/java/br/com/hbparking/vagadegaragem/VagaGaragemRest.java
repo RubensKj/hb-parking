@@ -100,6 +100,16 @@ public class VagaGaragemRest {
         this.vagaGaragemService.exportVagaGaragemCSVfromPeriodo(idPeriodo, response);
     }
 
+    @GetMapping("/{tipo}/{page}/{limit}/{turno}")
+    public VagasContent getVagasContent(@PathVariable("tipo") VehicleType vehicleType, @PathVariable("page") int page, @PathVariable("limit") int limit, @PathVariable("turno") Turno turno) throws PeriodosNotFoundException, VagaInfoNotFoundException {
+        return this.vagaGaragemService.getVagasContent(vehicleType, page, limit, turno);
+    }
+
+    @GetMapping("/{tipo}/{page}/{limit}/{turno}/{idPeriodo}")
+    public VagasContent getVagasContentWithIdPeriodo(@PathVariable("tipo") VehicleType vehicleType, @PathVariable("page") int page, @PathVariable("limit") int limit, @PathVariable("turno") Turno turno, @PathVariable("idPeriodo") Long idPeriodo) throws VagaInfoNotFoundException {
+        return this.vagaGaragemService.getVagasContentByPeriodo(vehicleType, page, limit, turno, idPeriodo);
+    }
+
     /*Remover esse endpoint após uso*/
     @PostMapping("/import/cadastrao")
     public void cadastrao(@RequestParam("file") MultipartFile arquivo) {
@@ -112,10 +122,4 @@ public class VagaGaragemRest {
             }
         }).start();
     }
-
-    @GetMapping("/{tipo}/{page}/{limit}/{turno}")
-    public VagasContent getVagasContent(@PathVariable("tipo") VehicleType vehicleType, @PathVariable("page") int page, @PathVariable("limit") int limit, @PathVariable("turno") Turno turno) throws PeriodosNotFoundException, VagaInfoNotFoundException {
-        return this.vagaGaragemService.getVagasContent(vehicleType, page, limit, turno);
-    }
-
 }

@@ -370,7 +370,7 @@ public class VagaGaragemService {
     }
 
     public Page<VagaGaragem> findByPeriodoAndStatusVagaAndVehicleType(Periodo periodo) {
-        return this.iVagaGaragemRepository.findByPeriodoAndStatusVagaAndTipoVeiculo(periodo, StatusVaga.EMAPROVACAO, periodo.getTipoVeiculo(), PageRequest.of(0, 10));
+        return this.iVagaGaragemRepository.findByPeriodoAndStatusVagaAndTipoVeiculoAndColaborador_TrabalhoNoturno(periodo, StatusVaga.EMAPROVACAO, periodo.getTipoVeiculo(), false, PageRequest.of(0, 10));
     }
 
     public VagasContent getVagasContent(VehicleType vehicleType, int page, int limit, Turno turno) throws PeriodosNotFoundException, VagaInfoNotFoundException {
@@ -378,11 +378,36 @@ public class VagaGaragemService {
         PeriodoDTO periodoDTO = this.periodoService.findAnyInsideList(periodoByVehicleType);
         Periodo periodo = this.periodoService.findById(periodoDTO.getId());
 
-        Pageable pageable = PageRequest.of(page, limit);
+        Page<VagaGaragem> vagasGaragem = this.findVagaGaragem(periodo, StatusVaga.EMAPROVACAO, vehicleType, turno, getPageable(page, limit));
+        VagaInfoDTO vagaInfo = this.validateVagaInfoByPeriodoId(periodo, vehicleType, turno);
+        return new VagasContent(vagasGaragem, PeriodoDTO.of(periodo), vagaInfo, periodoByVehicleType);
+    }
 
-        Page<VagaGaragem> vagasGaragem = this.iVagaGaragemRepository.findByPeriodoAndStatusVagaAndTipoVeiculo(periodo, StatusVaga.EMAPROVACAO, vehicleType, pageable);
-        VagaInfo vagaInfo = this.vagaInfoService.findByPeriodoAndVehicleTypeAndTurno(periodo, vehicleType, turno);
+    public VagasContent getVagasContentByPeriodo(VehicleType vehicleType, int page, int limit, Turno turno, Long idPeriodo) throws VagaInfoNotFoundException {
+        List<PeriodoDTO> periodoByVehicleType = this.periodoService.findPeriodoByVehicleType(vehicleType);
+        Periodo periodo = this.periodoService.findById(idPeriodo);
 
-        return new VagasContent(vagasGaragem, periodo, vagaInfo);
+        Page<VagaGaragem> vagasGaragem = this.findVagaGaragem(periodo, StatusVaga.EMAPROVACAO, vehicleType, turno, getPageable(page, limit));
+        VagaInfoDTO vagaInfo = this.validateVagaInfoByPeriodoId(periodo, vehicleType, turno);
+        return new VagasContent(vagasGaragem, PeriodoDTO.of(periodo), vagaInfo, periodoByVehicleType);
+    }
+
+    private Pageable getPageable(int page, int limit) {
+        return PageRequest.of(page, limit);
+    }
+
+    private Page<VagaGaragem> findVagaGaragem(Periodo periodo, StatusVaga statusVaga, VehicleType vehicleType, Turno turno, Pageable pageable) {
+        if (turno.equals(Turno.INTEGRAL)) {
+            return this.iVagaGaragemRepository.findByPeriodoAndStatusVagaAndTipoVeiculoAndColaborador_TrabalhoNoturno(periodo, statusVaga, vehicleType, false, pageable);
+        } else {
+            return this.iVagaGaragemRepository.findByPeriodoAndStatusVagaAndTipoVeiculoAndColaborador_TrabalhoNoturno(periodo, statusVaga, vehicleType, true, pageable);
+        }
+    }
+
+    private VagaInfoDTO validateVagaInfoByPeriodoId(Periodo periodo, VehicleType vehicleType, Turno turno) throws VagaInfoNotFoundException {
+        if (this.vagaInfoService.existsByPeriodo(periodo.getId(), vehicleType, turno)) {
+            return VagaInfoDTO.of(this.vagaInfoService.findByPeriodoAndVehicleTypeAndTurno(periodo, vehicleType, turno));
+        }
+        return null;
     }
 }

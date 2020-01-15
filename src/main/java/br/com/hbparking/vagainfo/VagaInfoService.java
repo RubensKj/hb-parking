@@ -54,6 +54,10 @@ public class VagaInfoService {
         return this.iVagaInfoRepository.findByPeriodoAndVehicleTypeAndTurno(periodo, vehicleType, turno).orElseThrow(() -> new VagaInfoNotFoundException("Não foi encontrado nenhuma informação de vaga com este periodo"));
     }
 
+    public boolean existsByPeriodo(Long id, VehicleType vehicleType, Turno turno) {
+        return this.iVagaInfoRepository.existsByPeriodo_IdAndVehicleTypeAndTurno(id, vehicleType, turno);
+    }
+
     public VagaInfoDTO update(VagaInfoDTO vagaInfoDTO, Long id) throws VagaInfoNotFoundException {
         LOGGER.info("Atualizando vaga info");
         this.validarVagaInfo(vagaInfoDTO);

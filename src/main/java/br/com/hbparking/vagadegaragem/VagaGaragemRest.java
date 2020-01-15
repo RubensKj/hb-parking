@@ -68,8 +68,8 @@ public class VagaGaragemRest {
     }
 
     @GetMapping("/sort/{periodoId}/{tipoVeiculo}/{turno}")
-    public List<VagaGaragem> sort(@PathVariable("periodoId") Long periodoId, @PathVariable("tipoVeiculo") String tipoVeiculo, @PathVariable("turno") String turno) throws VagaInfoNotFoundException {
-        return this.vagaGaragemService.sorteioVagas(periodoId, tipoVeiculo, Turno.valueOf(turno));
+    public VagasContent sort(@PathVariable("periodoId") Long periodoId, @PathVariable("tipoVeiculo") String tipoVeiculo, @PathVariable("turno") String turno) throws VagaInfoNotFoundException {
+        return this.vagaGaragemService.sort(periodoId, tipoVeiculo, Turno.valueOf(turno));
     }
 
     @PostMapping("/approve/{turno}")

@@ -5,6 +5,7 @@ jdk:
 
 services:
   - docker
+  - mongodb
 
 before_install:
   - chmod +x mvnw

@@ -9,6 +9,7 @@ import br.com.hbparking.security.user.UserDTO;
 import br.com.hbparking.security.user.UserService;
 import br.com.hbparking.util.DateHelper;
 import br.com.hbparking.util.ReadFileCSV;
+import br.com.hbparking.vagadegaragem.VagaGaragem;
 import br.com.hbparking.vehicleexception.ContentDispositionException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -17,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
@@ -233,12 +233,23 @@ public class ColaboradorService {
         return ColaboradorDTO.of(this.colaboradorRepository.save(colaborador));
     }
 
-    public Map<Colaborador, Integer> getMapColaboradorAndPriority(List<Colaborador> colaboradorList) {
-        Map<Colaborador, Integer> mapColaboradorPriority = new HashMap<>();
+    public Map<VagaGaragem, Integer> getMapColaboradorAndPriority(List<VagaGaragem> vagaGaragems) {
+        Map<VagaGaragem, Integer> mapColaboradorPriority = new HashMap<>();
 
-        colaboradorList.forEach(colaborador -> mapColaboradorPriority.put(colaborador, getPriorityColaborador(colaborador)));
+        vagaGaragems.forEach(vagaGaragem -> mapColaboradorPriority.put(vagaGaragem, getPriorityColaborador(vagaGaragem.getColaborador())));
 
-        return mapColaboradorPriority;
+        return this.sortHashMapDescendingOrder(mapColaboradorPriority);
+    }
+
+    public Map<VagaGaragem, Integer> sortHashMapDescendingOrder(Map<VagaGaragem, Integer> vagaGaragemIntegerMap) {
+        Map<VagaGaragem, Integer> sortedMap = new HashMap<>();
+
+        vagaGaragemIntegerMap.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .forEachOrdered(item -> sortedMap.put(item.getKey(), item.getValue()));
+
+        return sortedMap;
     }
 
     public Integer getPriorityColaborador(Colaborador colaborador) {

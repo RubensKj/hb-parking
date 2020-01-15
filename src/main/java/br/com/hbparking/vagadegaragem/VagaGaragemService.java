@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,7 +70,7 @@ public class VagaGaragemService {
 
         if (validadeOnHBEmployee.validate("http://localhost:8090/api/teste").getParkingValid()) {
             VagaGaragem savedVaga = this.iVagaGaragemRepository.save(vagaSave);
-            this.vagaGaragemHistoryService.saveData(vagaSave);
+            this.vagaGaragemHistoryService.saveData(vagaSave, this.colaboradorService.getPriorityColaborador(savedVaga.getColaborador()));
             return VagaGaragemDTO.of(savedVaga);
         }
         throw new ColaboradorAlreadyExistsInPeriodoException("Colaborador já cadastrado neste período com esta placa.");
@@ -104,7 +105,7 @@ public class VagaGaragemService {
                 vagaExsitente.setVehicleModel(null);
             }
             this.iVagaGaragemRepository.save(vagaExsitente);
-            this.vagaGaragemHistoryService.saveUpdateAction(vagaExsitente, "ALTERACAO");
+            this.vagaGaragemHistoryService.saveUpdateAction(vagaExsitente, "ALTERACAO", this.colaboradorService.getPriorityColaborador(vagaExsitente.getColaborador()));
             vagaExsitente = this.dtoToVaga(vagaGaragemDTO);
             return VagaGaragemDTO.of(vagaExsitente);
         }
@@ -112,6 +113,7 @@ public class VagaGaragemService {
     }
 
     public void validate(VagaGaragemDTO vagaGaragemDTO) throws InvalidPlatePatternException {
+
         LOGGER.info("Validando Vaga");
         if (vagaGaragemDTO == null) {
             throw new IllegalArgumentException("VagaDTO não deve ser nulo");
@@ -207,11 +209,11 @@ public class VagaGaragemService {
             new Thread(() -> {
                 if (statusVaga.getDescricao().equalsIgnoreCase("APROVADA")) {
                     this.mailSenderService.sendEmailSuccess(vagaExsitente);
-                    this.vagaGaragemHistoryService.saveUpdateAction(vagaExsitente, "APROVACAO");
+                    this.vagaGaragemHistoryService.saveUpdateAction(vagaExsitente, "APROVACAO", this.colaboradorService.getPriorityColaborador(vagaExsitente.getColaborador()));
                 }
                 if (statusVaga.getDescricao().equalsIgnoreCase("REPROVADO")) {
                     this.mailSenderService.sendEmailDisapproved(vagaExsitente);
-                    this.vagaGaragemHistoryService.saveUpdateAction(vagaExsitente, "REPROVACAO");
+                    this.vagaGaragemHistoryService.saveUpdateAction(vagaExsitente, "REPROVACAO", this.colaboradorService.getPriorityColaborador(vagaExsitente.getColaborador()));
                 }
             }).start();
             return VagaGaragemDTO.of(vagaExsitente);

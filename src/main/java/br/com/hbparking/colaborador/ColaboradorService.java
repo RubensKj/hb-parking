@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -260,11 +261,11 @@ public class ColaboradorService {
     }
 
     public boolean colaboradorIsElder(Colaborador colaborador) {
-        Long ageInSeconds = Date.valueOf(LocalDate.now()).getTime() - Date.valueOf(colaborador.getDataNascimento()).getTime() / 1000;
-        if (ageInSeconds / 31556952 >= 60) {
+        if (Period.between(colaborador.getDataNascimento(), LocalDate.now()).getYears() > 60) {
             return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
 }

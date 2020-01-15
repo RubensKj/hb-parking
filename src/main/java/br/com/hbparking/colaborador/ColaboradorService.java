@@ -261,6 +261,7 @@ public class ColaboradorService {
     }
 
     public boolean colaboradorIsElder(Colaborador colaborador) {
+
         if (Period.between(colaborador.getDataNascimento(), LocalDate.now()).getYears() > 60) {
             return true;
         } else {

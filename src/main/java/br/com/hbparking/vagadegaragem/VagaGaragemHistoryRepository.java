@@ -6,5 +6,4 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
 
 public interface VagaGaragemHistoryRepository extends MongoRepository<VagaGaragemHistory, String> {
-    List<VagaGaragemHistory> findByVagaGaragem_Periodo(Periodo periodo);
 }

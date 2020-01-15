@@ -17,27 +17,27 @@ import java.util.stream.Collectors;
 @Service
 public class VagaGaragemHistoryService {
 
-    private final VagaGaragemHistoryRepository vagaGaragemHistoryRepository;
+    private final IVagaGaragemHistoryRepository iVagaGaragemHistoryRepository;
     private final PeriodoService periodoService;
     private final String FILE_NAME = "relatorio_locatarios";
 
-    public VagaGaragemHistoryService(VagaGaragemHistoryRepository vagaGaragemHistoryRepository, PeriodoService periodoService) {
-        this.vagaGaragemHistoryRepository = vagaGaragemHistoryRepository;
+    public VagaGaragemHistoryService(IVagaGaragemHistoryRepository iVagaGaragemHistoryRepository, PeriodoService periodoService) {
+        this.iVagaGaragemHistoryRepository = iVagaGaragemHistoryRepository;
         this.periodoService = periodoService;
-
+    }
 
     public void saveData(VagaGaragem vagaGaragem, Integer prioridade) {
-        this.IVagaGaragemHistoryRepository.save(new VagaGaragemHistory(vagaGaragem, prioridade, LocalDateTime.now(Clock.systemUTC()), "CRIACAO"));
+        this.iVagaGaragemHistoryRepository.save(new VagaGaragemHistory(vagaGaragem, prioridade, LocalDateTime.now(Clock.systemUTC()), "CRIACAO"));
     }
 
     public void saveUpdateAction(VagaGaragem vagaGaragem, String message, Integer prioridade) {
-        this.IVagaGaragemHistoryRepository.save(new VagaGaragemHistory(vagaGaragem, prioridade, LocalDateTime.now(Clock.systemUTC()), message));
+        this.iVagaGaragemHistoryRepository.save(new VagaGaragemHistory(vagaGaragem, prioridade, LocalDateTime.now(Clock.systemUTC()), message));
     }
 
 
     public void exportByColumns(HttpServletResponse response, Long idPeriodo, boolean marca, boolean email, boolean tipo, boolean cor) {
 
-        List<VagaGaragemHistory> completeList = this.vagaGaragemHistoryRepository.findByVagaGaragem_Periodo(periodoService.findById(idPeriodo));
+        List<VagaGaragemHistory> completeList = this.iVagaGaragemHistoryRepository.findByVagaGaragem_Periodo(periodoService.findById(idPeriodo));
 
         if(completeList.isEmpty()){
             throw new NoResultException("Nenhum registro localizado.");

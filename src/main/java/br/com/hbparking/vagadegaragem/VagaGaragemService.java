@@ -32,6 +32,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -56,8 +57,10 @@ public class VagaGaragemService {
     private static final String ID_INEXISTENTE = "ID %s não existe";
     private final Random sorteio = new Random();
     private final MailSenderService mailSenderService;
-
     private final VagaGaragemHistoryService vagaGaragemHistoryService;
+    private final VagaGaragemHistoryRepository vagaGaragemHistoryRepository;
+
+
 
     public VagaGaragemDTO save(VagaGaragemDTO vagaGaragemDTO) throws NoConnectionAPIException, ColaboradorAlreadyExistsInPeriodoException, InvalidPlatePatternException, InvalidVehicleTipoFromPeriodo {
         this.validate(vagaGaragemDTO);
@@ -69,7 +72,7 @@ public class VagaGaragemService {
 
         if (validadeOnHBEmployee.validate("http://localhost:8090/api/teste").getParkingValid()) {
             VagaGaragem savedVaga = this.iVagaGaragemRepository.save(vagaSave);
-            this.vagaGaragemHistoryService.saveData(vagaSave);
+            this.vagaGaragemHistoryService.saveData(vagaSave, this.colaboradorService.getPriorityColaborador(vagaSave.getColaborador()));
             return VagaGaragemDTO.of(savedVaga);
         }
         throw new ColaboradorAlreadyExistsInPeriodoException("Colaborador já cadastrado neste período com esta placa.");
@@ -104,7 +107,7 @@ public class VagaGaragemService {
                 vagaExsitente.setVehicleModel(null);
             }
             this.iVagaGaragemRepository.save(vagaExsitente);
-            this.vagaGaragemHistoryService.saveUpdateAction(vagaExsitente, "ALTERACAO");
+            this.vagaGaragemHistoryService.saveUpdateAction(vagaExsitente, "ALTERACAO", this.colaboradorService.getPriorityColaborador(vagaExsitente.getColaborador()));
             vagaExsitente = this.dtoToVaga(vagaGaragemDTO);
             return VagaGaragemDTO.of(vagaExsitente);
         }
@@ -149,7 +152,7 @@ public class VagaGaragemService {
         if (isCarroOrMoto(vagaGaragemDTO.getTipoVeiculo())) {
             marca = marcaService.findById(vagaGaragemDTO.getMarca());
             modelo = vehicleModelService.findById(vagaGaragemDTO.getVehicleModel());
-        }else{
+        } else {
             marca = null;
             modelo = null;
         }
@@ -166,7 +169,6 @@ public class VagaGaragemService {
                 vagaGaragemDTO.getStatusVaga()
         );
     }
-
 
     public void delete(Long id) {
         LOGGER.info("Executando delete para vaga de ID: [{}]", id);
@@ -207,11 +209,11 @@ public class VagaGaragemService {
             new Thread(() -> {
                 if (statusVaga.getDescricao().equalsIgnoreCase("APROVADA")) {
                     this.mailSenderService.sendEmailSuccess(vagaExsitente);
-                    this.vagaGaragemHistoryService.saveUpdateAction(vagaExsitente, "APROVACAO");
+                    this.vagaGaragemHistoryService.saveUpdateAction(vagaExsitente, "APROVACAO", this.colaboradorService.getPriorityColaborador(vagaExsitente.getColaborador()));
                 }
                 if (statusVaga.getDescricao().equalsIgnoreCase("REPROVADO")) {
                     this.mailSenderService.sendEmailDisapproved(vagaExsitente);
-                    this.vagaGaragemHistoryService.saveUpdateAction(vagaExsitente, "REPROVACAO");
+                    this.vagaGaragemHistoryService.saveUpdateAction(vagaExsitente, "REPROVACAO", this.colaboradorService.getPriorityColaborador(vagaExsitente.getColaborador()));
                 }
             }).start();
             return VagaGaragemDTO.of(vagaExsitente);
@@ -256,6 +258,47 @@ public class VagaGaragemService {
         return vagasSorteadas;
     }
 
+    public VagasContent sort(Long periodoId, String tipoVeiculo, Turno turno) throws VagaInfoNotFoundException {
+        Map<VagaGaragem, Integer> scoredMap = this.colaboradorService.getMapColaboradorAndPriority(this.iVagaGaragemRepository.findAllByStatusVagaAndTipoVeiculo(StatusVaga.EMAPROVACAO, VehicleType.valueOf(tipoVeiculo)));
+        List<VagaPriority> vagaPriorityList = new ArrayList<>();
+        List<Integer> priorityList = new ArrayList<>();
+
+        scoredMap.forEach((vagaGaragem, priority) -> vagaPriorityList.add(new VagaPriority(vagaGaragem, priority)));
+
+        vagaPriorityList.forEach(vagaPriority -> priorityList.add(vagaPriority.getPriority()));
+
+        int minimalIndex = priorityList.indexOf(Collections.min(priorityList));
+
+        for (int i = 0; i < vagaPriorityList.size(); i++) {
+            if (i != minimalIndex) {
+                VagaGaragem vagaGaragem = vagaPriorityList.get(i).getVagaGaragem();
+                vagaGaragem.setStatusVaga(StatusVaga.APROVADA);
+                this.iVagaGaragemRepository.save(vagaGaragem);
+                vagaPriorityList.remove(vagaPriorityList.get(i));
+            } else {
+                VagaInfo vagaInfo = this.vagaInfoService.findByPeriodoAndVehicleTypeAndTurno(this.periodoService.findById(periodoId), VehicleType.valueOf(tipoVeiculo), turno);
+                this.finalSorting(vagaPriorityList, vagaInfo);
+            }
+        }
+
+        Periodo periodo = this.periodoService.findById(periodoId);
+        VehicleType vehicleType = VehicleType.valueOf(tipoVeiculo.toUpperCase());
+        VagaInfo vagaInfo = this.vagaInfoService.findByPeriodoAndVehicleTypeAndTurno(periodo, vehicleType, turno);
+        Page<VagaGaragem> pageVagaGaragem = this.iVagaGaragemRepository.findByPeriodoAndStatusVagaAndTipoVeiculo(periodo, StatusVaga.APROVADA, vehicleType, PageRequest.of(0, 10));
+//        new VagasContent(pageVagaGaragem, PeriodoDTO.of(periodo), VagaInfoDTO.of(vagaInfo))
+        return null;
+    }
+
+    public void finalSorting(List<VagaPriority> vagaPriorityList, VagaInfo vagaInfo) throws VagaInfoNotFoundException {
+        SecureRandom random = new SecureRandom();
+        for (int i = 0; i < vagaInfo.getQuantidade(); i++) {
+            VagaGaragem vagaGaragem = vagaPriorityList.get(random.nextInt(vagaPriorityList.size())).getVagaGaragem();
+            vagaGaragem.setStatusVaga(StatusVaga.APROVADA);
+            this.iVagaGaragemRepository.save(vagaGaragem);
+            vagaInfo.setQuantidade(vagaInfo.getQuantidade() - 1);
+        }
+        this.vagaInfoService.update(VagaInfoDTO.of(vagaInfo), vagaInfo.getId());
+    }
 
     public List<VagaGaragem> selectPrioritarios(List<VagaGaragem> vagaGaragemList) {
 

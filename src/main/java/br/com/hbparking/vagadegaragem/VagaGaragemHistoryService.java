@@ -14,11 +14,11 @@ public class VagaGaragemHistoryService {
         this.vagaGaragemHistoryRepository = vagaGaragemHistoryRepository;
     }
 
-    public void saveData(VagaGaragem vagaGaragem) {
-        this.vagaGaragemHistoryRepository.save(new VagaGaragemHistory(vagaGaragem, 0, LocalDateTime.now(Clock.systemUTC()), "CRIACAO"));
+    public void saveData(VagaGaragem vagaGaragem, Integer prioridade) {
+        this.vagaGaragemHistoryRepository.save(new VagaGaragemHistory(vagaGaragem, prioridade, LocalDateTime.now(Clock.systemUTC()), "CRIACAO"));
     }
 
-    public void saveUpdateAction(VagaGaragem vagaGaragem, String message) {
-        this.vagaGaragemHistoryRepository.save(new VagaGaragemHistory(vagaGaragem, 0, LocalDateTime.now(Clock.systemUTC()), message));
+    public void saveUpdateAction(VagaGaragem vagaGaragem, String message, Integer prioridade) {
+        this.vagaGaragemHistoryRepository.save(new VagaGaragemHistory(vagaGaragem, prioridade, LocalDateTime.now(Clock.systemUTC()), message));
     }
 }

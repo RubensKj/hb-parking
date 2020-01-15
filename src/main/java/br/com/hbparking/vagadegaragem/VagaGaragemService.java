@@ -281,7 +281,7 @@ public class VagaGaragemService {
             }
         }
 
-        Page<VagaGaragem> pageVagaGaragem = this.iVagaGaragemRepository.findByPeriodoAndStatusVagaAndTipoVeiculo(periodo, StatusVaga.APROVADA, vehicleType, PageRequest.of(0, 10));
+//        Page<VagaGaragem> pageVagaGaragem = this.iVagaGaragemRepository.findByPeriodoAndStatusVagaAndTipoVeiculo(periodo, StatusVaga.APROVADA, vehicleType, PageRequest.of(0, 10));
 //        new VagasContent(pageVagaGaragem, PeriodoDTO.of(periodo), VagaInfoDTO.of(vagaInfo))
         return null;
     }

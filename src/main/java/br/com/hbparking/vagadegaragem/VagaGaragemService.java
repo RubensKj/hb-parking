@@ -278,7 +278,7 @@ public class VagaGaragemService {
 
         int sizePriority = vagaPriorityList.size();
         for (int i = 0; i < sizePriority; i++) {
-            VagaPriority vagaPriority = vagaPriorityList.get(0);
+            VagaPriority vagaPriority = vagaPriorityList.get(i);
             if (vagaInfo.getQuantidade() == 0) {
                 vagaGaragems.add(vagaPriority.getVagaGaragem());
                 continue;
@@ -291,9 +291,9 @@ public class VagaGaragemService {
                 vagaInfo.setQuantidade(vagaInfo.getQuantidade() - 1);
             } else {
                 this.finalSorting(vagaPriorityList, vagaInfo);
+                break;
             }
         }
-
         vagaGaragems.forEach(vagaGaragem -> this.changeStatusVaga(vagaGaragem.getId(), StatusVaga.REPROVADO));
 
         this.vagaInfoService.update(VagaInfoDTO.of(vagaInfo), vagaInfo.getId());
@@ -302,14 +302,22 @@ public class VagaGaragemService {
         return new VagasContent(pageVagaGaragem, PeriodoDTO.of(periodo), VagaInfoDTO.of(vagaInfo), this.periodoService.findPeriodosByVehicleType(vehicleType));
     }
 
-    public void finalSorting(List<VagaPriority> vagaPriorityList, VagaInfo vagaInfo) {
+    public void finalSorting(List<VagaPriority> vagaPriorityList, VagaInfo vagaInfo) throws VagaInfoNotFoundException {
         SecureRandom random = new SecureRandom();
-        for (int i = 0; i < vagaInfo.getQuantidade(); i++) {
-            VagaGaragem vagaGaragem = vagaPriorityList.get(random.nextInt(vagaPriorityList.size())).getVagaGaragem();
-            vagaGaragem.setStatusVaga(StatusVaga.APROVADA);
-            this.iVagaGaragemRepository.save(vagaGaragem);
+
+        while(vagaInfo.getQuantidade() > 0) {
+                VagaGaragem vagaGaragem = vagaPriorityList.get(random.nextInt(vagaPriorityList.size())).getVagaGaragem();
+                vagaGaragem.setStatusVaga(StatusVaga.APROVADA);
+                this.iVagaGaragemRepository.save(vagaGaragem);
+                vagaPriorityList.remove(vagaGaragem);
             vagaInfo.setQuantidade(vagaInfo.getQuantidade() - 1);
         }
+        for (VagaPriority reprovados : vagaPriorityList) {
+            VagaGaragem reprovado = reprovados.getVagaGaragem();
+            reprovado.setStatusVaga(StatusVaga.REPROVADO);
+            this.iVagaGaragemRepository.save(reprovado);
+        }
+        this.vagaInfoService.update(VagaInfoDTO.of(vagaInfo), vagaInfo.getId());
     }
 
     public List<VagaGaragem> selectPrioritarios(List<VagaGaragem> vagaGaragemList) {

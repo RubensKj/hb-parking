@@ -242,13 +242,8 @@ public class ColaboradorService {
     }
 
     public Map<VagaGaragem, Integer> sortHashMapDescendingOrder(Map<VagaGaragem, Integer> vagaGaragemIntegerMap) {
-        Map<VagaGaragem, Integer> sortedMap = new HashMap<>();
-
-        vagaGaragemIntegerMap.entrySet()
-                .stream()
-                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-                .forEachOrdered(item -> sortedMap.put(item.getKey(), item.getValue()));
-
+        Map<VagaGaragem, Integer> sortedMap = vagaGaragemIntegerMap;
+        //RESOLVER ESTE MÉTODO;
         return sortedMap;
     }
 

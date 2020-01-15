@@ -33,7 +33,7 @@ public class PeriodoService {
         return PeriodoDTO.of(this.iPeriodoRepository.save(new Periodo(periodoDTO.getVehicleType(), periodoDTO.getDataInicial(), periodoDTO.getDataFinal())));
     }
 
-    public List<PeriodoDTO> findPeriodoByVehicleType(VehicleType vehicleType) {
+    public List<PeriodoDTO> findPeriodosByVehicleType(VehicleType vehicleType) {
         List<Periodo> periodoList = this.iPeriodoRepository.findAllByTipoVeiculo(vehicleType);
         return this.parsePeriodoListToPeriodoDTOList(periodoList);
     }

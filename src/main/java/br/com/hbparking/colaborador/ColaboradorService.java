@@ -17,7 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.sql.Date;
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -25,13 +27,13 @@ import java.util.*;
 public class ColaboradorService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ColaboradorService.class);
+    private static final String DATANASCIMENTOINVALIDA = "Data de nascimento inválida.";
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private final ColaboradorRepository colaboradorRepository;
     private final NotifyHBEmployee notifyHBEmployee;
     private final ReadFileCSV readFileCSV;
     private final UserService userService;
     private final RoleService roleService;
-    private static final String DATANASCIMENTOINVALIDA = "Data de nascimento inválida.";
 
     public ColaboradorService(ColaboradorRepository colaboradorRepository, NotifyHBEmployee notifyHBEmployee, ReadFileCSV readFileCSV, UserService userService, RoleService roleService) {
         this.colaboradorRepository = colaboradorRepository;
@@ -230,4 +232,36 @@ public class ColaboradorService {
 
         return ColaboradorDTO.of(this.colaboradorRepository.save(colaborador));
     }
+
+    public Map<Colaborador, Integer> getMapColaboradorAndPriority(List<Colaborador> colaboradorList) {
+        Map<Colaborador, Integer> mapColaboradorPriority = new HashMap<>();
+
+        colaboradorList.forEach(colaborador -> mapColaboradorPriority.put(colaborador, getPriorityColaborador(colaborador)));
+
+        return mapColaboradorPriority;
+    }
+
+    public Integer getPriorityColaborador(Colaborador colaborador) {
+        int priorityNumber = 0;
+
+        if (colaborador.isPcd()) {
+            priorityNumber += 16;
+        }
+        if (colaboradorIsElder(colaborador)) {
+            priorityNumber += 8;
+        }
+        if (colaborador.isResideForaBlumenau()) {
+            priorityNumber += 4;
+        }
+        if (colaborador.isOfereceCarona()) {
+            priorityNumber += 2;
+        }
+
+        return priorityNumber;
+    }
+
+    public boolean colaboradorIsElder(Colaborador colaborador) {
+        return (Period.between(colaborador.getDataNascimento(), LocalDate.now()).getYears() >= 60);
+    }
+
 }

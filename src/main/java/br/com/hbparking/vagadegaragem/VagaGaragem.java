@@ -14,7 +14,6 @@ import javax.persistence.*;
 
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "vaga_garagem")
@@ -55,6 +54,9 @@ public class VagaGaragem {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private StatusVaga statusVaga;
+
+    public VagaGaragem() {
+    }
 
     public VagaGaragem(VehicleType tipoVeiculo, Marca marca, VehicleModel vehicleModel,
                        Color color, String placa, Periodo periodo, Colaborador colaborador, StatusVaga statusVaga) {

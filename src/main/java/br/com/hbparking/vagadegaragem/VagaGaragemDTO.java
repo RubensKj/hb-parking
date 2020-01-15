@@ -11,7 +11,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 
-@NoArgsConstructor
 @Data
 @AllArgsConstructor
 public class VagaGaragemDTO {
@@ -58,6 +57,9 @@ public class VagaGaragemDTO {
             vagaGaragemDTO.setPlaca(null);
         }
         return vagaGaragemDTO;
+    }
+
+    public VagaGaragemDTO() {
     }
 
     public VagaGaragemDTO(VehicleType tipoVeiculo, Long marca, Long vehicleModel, Color color,

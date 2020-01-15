@@ -43,4 +43,43 @@ public class VagaGaragemHistory {
         this.id = id;
     }
 
+    public VagaGaragem getVagaGaragem() {
+        return vagaGaragem;
+    }
+
+    public void setVagaGaragem(VagaGaragem vagaGaragem) {
+        this.vagaGaragem = vagaGaragem;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public String getEmailGestor() {
+        return emailGestor;
+    }
+
+    public void setEmailGestor(String emailGestor) {
+        this.emailGestor = emailGestor;
+    }
+
+    public LocalDateTime getHorarioAcao() {
+        return horarioAcao;
+    }
+
+    public void setHorarioAcao(LocalDateTime horarioAcao) {
+        this.horarioAcao = horarioAcao;
+    }
+
+    public String getAcao() {
+        return acao;
+    }
+
+    public void setAcao(String acao) {
+        this.acao = acao;
+    }
 }

@@ -8,17 +8,17 @@ import java.time.LocalDateTime;
 @Service
 public class VagaGaragemHistoryService {
 
-    private final VagaGaragemHistoryRepository vagaGaragemHistoryRepository;
+    private final IVagaGaragemHistoryRepository IVagaGaragemHistoryRepository;
 
-    public VagaGaragemHistoryService(VagaGaragemHistoryRepository vagaGaragemHistoryRepository) {
-        this.vagaGaragemHistoryRepository = vagaGaragemHistoryRepository;
+    public VagaGaragemHistoryService(IVagaGaragemHistoryRepository IVagaGaragemHistoryRepository) {
+        this.IVagaGaragemHistoryRepository = IVagaGaragemHistoryRepository;
     }
 
     public void saveData(VagaGaragem vagaGaragem, Integer prioridade) {
-        this.vagaGaragemHistoryRepository.save(new VagaGaragemHistory(vagaGaragem, prioridade, LocalDateTime.now(Clock.systemUTC()), "CRIACAO"));
+        this.IVagaGaragemHistoryRepository.save(new VagaGaragemHistory(vagaGaragem, prioridade, LocalDateTime.now(Clock.systemUTC()), "CRIACAO"));
     }
 
     public void saveUpdateAction(VagaGaragem vagaGaragem, String message, Integer prioridade) {
-        this.vagaGaragemHistoryRepository.save(new VagaGaragemHistory(vagaGaragem, prioridade, LocalDateTime.now(Clock.systemUTC()), message));
+        this.IVagaGaragemHistoryRepository.save(new VagaGaragemHistory(vagaGaragem, prioridade, LocalDateTime.now(Clock.systemUTC()), message));
     }
 }

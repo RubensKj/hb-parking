@@ -5,7 +5,9 @@ jdk:
 
 services:
   - docker
+  - mongodb
 
 before_install:
   - chmod +x mvnw
   - sudo docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Teste123" -p 1433:1433 --name sql1 -d microsoft/mssql-server-linux
+  - sudo docker run -e "MONGO_INITDB_ROOT_USERNAME=sa" -e "MONGO_INITDB_ROOT_PASSWORD=Teste123" -p 27017:27017 --name docker_mongo_1 -d mongodb

@@ -58,9 +58,6 @@ public class VagaGaragemService {
     private final Random sorteio = new Random();
     private final MailSenderService mailSenderService;
     private final VagaGaragemHistoryService vagaGaragemHistoryService;
-    private final VagaGaragemHistoryRepository vagaGaragemHistoryRepository;
-
-
 
     public VagaGaragemDTO save(VagaGaragemDTO vagaGaragemDTO) throws NoConnectionAPIException, ColaboradorAlreadyExistsInPeriodoException, InvalidPlatePatternException, InvalidVehicleTipoFromPeriodo {
         this.validate(vagaGaragemDTO);
